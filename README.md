@@ -1,2 +1,2 @@
 # FrontHrm
-FrontAccounting Human Resource Module
+FrontAccounting Payroll & Human Resource Module
