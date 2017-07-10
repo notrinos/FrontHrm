@@ -8,3 +8,7 @@
 |   Free software under GNU GPL                          |
 |                                                        |
 \=======================================================*/
+
+function db_has_employee() {
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."employee");
+}
