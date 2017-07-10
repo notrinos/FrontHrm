@@ -51,7 +51,7 @@ class hooks_FrontHrm extends hooks {
         return $this->update_databases($company, $updates, $check_only);
     }
 	
-	function deactivate_extension($company, $check_only=true) {
+    function deactivate_extension($company, $check_only=true) {
         global $db_connections;
 
         $updates = array('remove.sql' => array(''));
