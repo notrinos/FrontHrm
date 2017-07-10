@@ -12,6 +12,7 @@
 $page_security = 'SA_EMPL';
 $path_to_root  = '../../..';
 
+include_once($path_to_root . "/includes/db_pager.inc");
 include_once($path_to_root . "/includes/session.inc");
 add_access_extensions();
 
@@ -27,11 +28,44 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = "Manage Employees"), '', false, "", $js);
+function employees_list() {
+	
+	if(db_has_employee()) {
+		
+	}
+	else
+		display_note(_("No employee defined."), 1);
+}
 
-start_form(true);
+//--------------------------------------------------------------------------
 
+function employee_settings($cur_id) {
+	
+	
+}
 
+//--------------------------------------------------------------------------
+
+page(_($help_context = "Manage Employees"), false, false, "", $js);
+
+start_form();
+
+tabbed_content_start('tabs', array(
+			 'list' => array(_('Employees &List'), 999),
+             'add' => array(_('&Add/Edit Employee'), 999)));
+
+  switch (get_post('_tabs_sel')) {
+    default:
+	case 'list':
+		br();
+        employees_list();
+        break;
+    case 'add':
+		br();
+        employee_settings($cur_id);
+  }
+br();
+tabbed_content_end();
 
 end_form();
 end_page();
