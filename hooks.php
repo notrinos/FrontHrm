@@ -23,9 +23,8 @@ class FrontHrm_app extends application {
         
         $this->add_module(_("Maintenance"));
 		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/employee.php', 'SA_EMPL', MENU_ENTRY);
-        $this->add_lapp_function(2, 'Departments', $path_to_root.'/modules/FrontHrm/manage/department.php', 'SA_HRSETUP', MENU_MAINTENANCE);
-        
-        $this->add_extensions();
+		$this->add_lapp_function(2, 'Departments', $path_to_root.'/modules/FrontHrm/manage/department.php', 'SA_HRSETUP', MENU_MAINTENANCE);
+		$this->add_extensions();
     }
 }
 
