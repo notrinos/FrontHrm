@@ -55,6 +55,11 @@ function can_process() {
 		set_focus('EmpLastName');
 		return false;
 	}
+	if(!filter_var($_POST['EmpEmail'], FILTER_VALIDATE_EMAIL)) {
+		display_error(_("Invalid email."));
+		set_focus('EmpEmail');
+		return false;
+	}
 	return true;
 }
 
@@ -152,32 +157,21 @@ if (isset($_POST['submit'])) {
 	
 	if(!can_process())
 		return;
-	
-	if($cur_id) {
-		update_employee(
-			$cur_id,
-			$_POST['EmpFirstName'],
-			$_POST['EmpLastName'],
-			$_POST['EmpAddress'],
-			$_POST['EmpMobile'],
-			$_POST['EmpEmail'],
-			$_POST['EmpBirthDate'],
-			$_POST['EmpNotes']
-		);
+	write_employee(
+		$cur_id,
+		$_POST['EmpFirstName'],
+		$_POST['EmpLastName'],
+		$_POST['EmpAddress'],
+		$_POST['EmpMobile'],
+		$_POST['EmpEmail'],
+		$_POST['EmpBirthDate'],
+		$_POST['EmpNotes']
+	);
+	if($cur_id)
 		display_notification(_("Employee details has been updated."));
-	}
-	else {
-		add_employee(
-			$_POST['EmpFirstName'],
-			$_POST['EmpLastName'],
-			$_POST['EmpAddress'],
-			$_POST['EmpMobile'],
-			$_POST['EmpEmail'],
-			$_POST['EmpBirthDate'],
-			$_POST['EmpNotes']
-		);
+	else 
 		display_notification(_("A new employee has been added."));
-	}
+	
 	$Ajax->activate('_page_body');
 }
 elseif(isset($_POST['delete'])) {
