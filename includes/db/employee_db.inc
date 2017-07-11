@@ -15,35 +15,29 @@ function db_has_employee() {
 
 //--------------------------------------------------------------------------
 
-function add_employee($first_name, $last_name, $adrs, $mobile, $mail, $birth, $notes)
+function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mail, $birth, $notes)
 {
-	
-	$sql = "INSERT INTO ".TB_PREF."employee(
-	emp_first_name,
-	emp_last_name,
-	emp_address,
-	emp_mobile,
-	emp_email,
-	emp_birthdate,
-	emp_notes
-	) VALUES ("
-	.db_escape($first_name).", "
-	.db_escape($last_name).", "
-	.db_escape($adrs).", "
-	.db_escape($mobile).", "
-	.db_escape($mail).", '"
-	.date2sql($birth)."', "
-	.db_escape($notes)
-	.")";
-	
-	db_query($sql, 'Employee details could not be added.');
-}
-
-//--------------------------------------------------------------------------
-
-function update_employee($id, $first_name, $last_name, $adrs, $mobile, $mail, $birth, $notes)
-{
-	$sql = "UPDATE ".TB_PREF."employee SET 
+	if(!$id) {
+		$sql = "INSERT INTO ".TB_PREF."employee(
+		emp_first_name,
+		emp_last_name,
+		emp_address,
+		emp_mobile,
+		emp_email,
+		emp_birthdate,
+		emp_notes
+		) VALUES ("
+		.db_escape($first_name).", "
+		.db_escape($last_name).", "
+		.db_escape($adrs).", "
+		.db_escape($mobile).", "
+		.db_escape($mail).", '"
+		.date2sql($birth)."', "
+		.db_escape($notes)
+		.")";
+	}
+	else {
+		$sql = "UPDATE ".TB_PREF."employee SET 
 		emp_first_name = ".db_escape($first_name).", 
 		emp_last_name = ".db_escape($last_name).", 
 		emp_address = ".db_escape($adrs).", 
@@ -52,6 +46,7 @@ function update_employee($id, $first_name, $last_name, $adrs, $mobile, $mail, $b
 		emp_birthdate = '".date2sql($birth)."', 
 		emp_notes = ".db_escape($notes)." 
 		WHERE emp_id = ".db_escape($id);
+	}
 	
 	db_query($sql, 'Could not write employee data');
 }
