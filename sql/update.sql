@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `0_employee` (
     `emp_first_name` varchar(100) DEFAULT NULL,
     `emp_last_name` varchar(100) DEFAULT NULL,
     `emp_address` tinytext,
-    `emp_phone` varchar(30) DEFAULT NULL,
+    `emp_mobile` varchar(30) DEFAULT NULL,
     `emp_email` varchar(100) DEFAULT NULL,
     `emp_birthdate` date NOT NULL,
     `emp_notes` tinytext NOT NULL,
