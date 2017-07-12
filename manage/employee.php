@@ -89,7 +89,13 @@ function employees_list() {
 	$_SESSION['emp_id'] = '';
 	if(db_has_employee()) {
 		
-		$sql = "SELECT * FROM ".TB_PREF."employee WHERE !inactive";
+		start_table(TABLESTYLE_NOBORDER);
+		start_row();
+		check_cells(_("Show resigned:"), 'show_inactive', null, true);
+		end_row();
+		end_table();
+		
+		$sql = get_employees(false, check_value('show_inactive'));
 
         $cols = array(
           _('ID') => array('fun'=>'id_link'),
@@ -192,16 +198,10 @@ tabbed_content_start('tabs', array(
 			 'list' => array(_('Employees &List'), 999),
              'add' => array(_('&Add/Edit Employee'), 999)));
 
-  switch (get_post('_tabs_sel')) {
-    default:
-	case 'list':
-		br();
-        employees_list();
-        break;
-    case 'add':
-		br();
-        employee_settings($cur_id);
-  }
+if(get_post('_tabs_sel') == 'list')
+	employees_list();
+elseif(get_post('_tabs_sel') == 'add')
+	employee_settings($cur_id);
 br();
 tabbed_content_end();
 
