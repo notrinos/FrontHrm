@@ -53,18 +53,22 @@ function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mai
 
 //--------------------------------------------------------------------------
 
-function get_employees($id=false, $all = false) {
+function get_employees($id = false, $all = false) {
 	
 	$sql = "SELECT *, CONCAT(emp_first_name, ' ', emp_last_name) AS name FROM ".TB_PREF."employee";
 	$where = array();
 	
+	if(!$all)
+		$where[] = "!inactive";
 	if($id)
 		$where[] = "emp_id=".db_escape($id);
 		
 	if(count($where))
 		$sql .= ' WHERE '.implode(' AND ', $where);
+	else
+		$sql .= ' WHERE 1';
 
-	$result = db_query($sql, "could not get teacher");
+	$result = db_query($sql, "Could not get employee data.");
 	
 	if($id)
 		return db_fetch($result);
