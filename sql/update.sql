@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS `0_employee` (
     KEY `salary_scale_id` (`salary_scale_id`),
     KEY `department_id` (`department_id`)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `0_department` (
+    `dept_id` int(11) NOT NULL AUTO_INCREMENT,
+    `dept_name` tinytext NOT NULL,
+    `inactive` tinyint(1) NOT NULL DEFAULT '0',
+    PRIMARY KEY (`dept_id`)
+) ENGINE=InnoDB;
