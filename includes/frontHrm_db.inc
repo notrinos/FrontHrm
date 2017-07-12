@@ -10,3 +10,4 @@
 \=======================================================*/
 
 include_once($path_to_root."/modules/FrontHrm/includes/db/employee_db.inc");
+include_once($path_to_root."/modules/FrontHrm/includes/db/department_db.inc");
