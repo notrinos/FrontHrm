@@ -60,7 +60,7 @@ function can_process() {
 		set_focus('EmpEmail');
 		return false;
 	}
-	if (!is_date($_POST['EmpHireDate'])) {
+	if (!is_date($_POST['EmpHireDate']) && $_POST['EmpHireDate'] != null) {
 		display_error( _("Invalid date."));
 		set_focus('EmpHireDate');
 		return false;
@@ -72,7 +72,8 @@ function can_process() {
 
 function can_delete($cur_id) {
 	$employee = get_employees($cur_id);
-	if($employee['emp_hiredate'] != null) {
+	if($employee['emp_hiredate'] && $employee['emp_hiredate'] != '0000-00-00')
+	{
 		display_error('Employed person cannot be deleted.');
 		return false;
 	}
@@ -151,7 +152,7 @@ function employee_settings($cur_id) {
 	
 	table_section_title(_("Job Information"));
 	
-	date_row(_("Hire Date:"), 'EmpHireDate');
+	date_row(_("Hire Date:"), 'EmpHireDate', null, null, 0, 0, 1001);
 	department_list_row(_('Department:'), 'DepartmentId', null, _('Select department'));
 	textarea_row(_("Notes:"), 'EmpNotes', null, 35, 5);
 	
