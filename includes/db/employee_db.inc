@@ -15,7 +15,7 @@ function db_has_employee() {
 
 //--------------------------------------------------------------------------
 
-function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mail, $birth, $notes)
+function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mail, $birth, $notes, $hire_date, $department)
 {
 	if(!$id) {
 		$sql = "INSERT INTO ".TB_PREF."employee(
@@ -25,7 +25,9 @@ function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mai
 		emp_mobile,
 		emp_email,
 		emp_birthdate,
-		emp_notes
+		emp_notes,
+		emp_hiredate,
+		department_id
 		) VALUES ("
 		.db_escape($first_name).", "
 		.db_escape($last_name).", "
@@ -33,7 +35,9 @@ function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mai
 		.db_escape($mobile).", "
 		.db_escape($mail).", '"
 		.date2sql($birth)."', "
-		.db_escape($notes)
+		.db_escape($notes).", '"
+		.date2sql($hire_date)."', "
+		.db_escape($department)
 		.")";
 	}
 	else {
@@ -44,7 +48,9 @@ function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mai
 		emp_mobile = ".db_escape($mobile).", 
 		emp_email = ".db_escape($mail).", 
 		emp_birthdate = '".date2sql($birth)."', 
-		emp_notes = ".db_escape($notes)." 
+		emp_notes = ".db_escape($notes).", 
+		emp_hiredate = '".date2sql($hire_date)."', 
+		department_id = ".db_escape($department)." 
 		WHERE emp_id = ".db_escape($id);
 	}
 	
@@ -53,7 +59,7 @@ function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mai
 
 //--------------------------------------------------------------------------
 
-function get_employees($id = false, $all = false) {
+function get_employees($id = false, $all = false, $department = false) {
 	
 	$sql = "SELECT *, CONCAT(emp_first_name, ' ', emp_last_name) AS name FROM ".TB_PREF."employee";
 	$where = array();
@@ -62,6 +68,8 @@ function get_employees($id = false, $all = false) {
 		$where[] = "!inactive";
 	if($id)
 		$where[] = "emp_id=".db_escape($id);
+	if($department)
+		$where[] = "department_id = ".db_escape($department);
 		
 	if(count($where))
 		$sql .= ' WHERE '.implode(' AND ', $where);
