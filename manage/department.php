@@ -97,6 +97,6 @@ text_row_ex(_("Department Name:"), 'name', 50, 60);
 end_table(1);
 
 submit_add_or_update_center($selected_id == '', '', 'both');
-echo $selected_id;
+
 end_form();
 end_page();
