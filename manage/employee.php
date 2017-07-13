@@ -60,6 +60,11 @@ function can_process() {
 		set_focus('EmpEmail');
 		return false;
 	}
+	if (!is_date($_POST['EmpHireDate'])) {
+		display_error( _("Invalid date."));
+		set_focus('EmpHireDate');
+		return false;
+	}
 	return true;
 }
 
@@ -84,19 +89,19 @@ function get_name($row) {
 }
 
 function employees_list() {
-	global $Ajax;
 	
 	$_SESSION['emp_id'] = '';
 	if(db_has_employee()) {
 		
+		$sql = get_employees(false, check_value('show_inactive'), get_post('DepartmentList'));
+		
 		start_table(TABLESTYLE_NOBORDER);
 		start_row();
+		department_list_cells(_('Department:'), 'DepartmentList', null, _('All departments'), true);
 		check_cells(_("Show resigned:"), 'show_inactive', null, true);
 		end_row();
-		end_table();
+		end_table(1);
 		
-		$sql = get_employees(false, check_value('show_inactive'));
-
         $cols = array(
           _('ID') => array('fun'=>'id_link'),
           _('Name') => array('fun'=>'get_name')
@@ -125,12 +130,14 @@ function employee_settings($cur_id) {
 		$_POST['EmpEmail'] = $employee['emp_email'];
 		$_POST['EmpBirthDate'] = sql2date($employee['emp_birthdate']);
 		$_POST['EmpNotes'] = $employee['emp_notes'];
+		$_POST['EmpHireDate'] = sql2date($employee['emp_hiredate']);
+		$_POST['DepartmentId'] = $employee['department_id'];
 	}
 	start_outer_table(TABLESTYLE2);
 
 	table_section(1);
 	
-	table_section_title(_("Basic Data"));
+	table_section_title(_("Personal Information"));
 	
 	hidden('emp_id');
 	text_row(_("First Name:"), 'EmpFirstName', get_post('EmpFirstName'), 37, 50);
@@ -139,6 +146,13 @@ function employee_settings($cur_id) {
 	text_row(_("Mobile:"), 'EmpMobile', get_post('EmpMobile'), 37, 30);
 	email_row(_("e-Mail:"), 'EmpEmail', get_post('EmpEmail'), 37, 100);
 	date_row(_("Birth Date:"), 'EmpBirthDate');
+	
+	table_section(2);
+	
+	table_section_title(_("Job Information"));
+	
+	date_row(_("Hire Date:"), 'EmpHireDate');
+	department_list_row(_('Department:'), 'DepartmentId', null, _('Select department'));
 	textarea_row(_("Notes:"), 'EmpNotes', null, 35, 5);
 	
 	end_outer_table(1);
@@ -171,7 +185,9 @@ if (isset($_POST['submit'])) {
 		$_POST['EmpMobile'],
 		$_POST['EmpEmail'],
 		$_POST['EmpBirthDate'],
-		$_POST['EmpNotes']
+		$_POST['EmpNotes'],
+		$_POST['EmpHireDate'],
+		$_POST['DepartmentId']
 	);
 	if($cur_id)
 		display_notification(_("Employee details has been updated."));
@@ -194,9 +210,13 @@ page(_($help_context = "Manage Employees"), false, false, "", $js);
 
 start_form();
 
-tabbed_content_start('tabs', array(
-			 'list' => array(_('Employees &List'), 999),
-             'add' => array(_('&Add/Edit Employee'), 999)));
+tabbed_content_start(
+	'tabs',
+	array(
+		'list' => array(_('Employees &List'), 999),
+		'add' => array(_('&Add/Edit Employee'), 999)
+	)
+);
 
 if(get_post('_tabs_sel') == 'list')
 	employees_list();
