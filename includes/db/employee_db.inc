@@ -15,42 +15,40 @@ function db_has_employee() {
 
 //--------------------------------------------------------------------------
 
-function write_employee($id=false, $first_name, $last_name, $adrs, $mobile, $mail, $birth, $notes, $hire_date, $department)
+function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mobile, $mail, $birth, $notes, $hire_date, $department, $salary, $release, $active)
 {
 	if(!$id) {
-		$sql = "INSERT INTO ".TB_PREF."employee(
-		emp_first_name,
-		emp_last_name,
-		emp_address,
-		emp_mobile,
-		emp_email,
-		emp_birthdate,
-		emp_notes,
-		emp_hiredate,
-		department_id
-		) VALUES ("
+		$sql = "INSERT INTO ".TB_PREF."employee VALUES ("
 		.db_escape($first_name).", "
 		.db_escape($last_name).", "
+		.db_escape($gender).", "
 		.db_escape($adrs).", "
 		.db_escape($mobile).", "
 		.db_escape($mail).", '"
 		.date2sql($birth)."', "
 		.db_escape($notes).", '"
 		.date2sql($hire_date)."', "
-		.db_escape($department)
+		.db_escape($department).", "
+		.db_escape($salary).", '"
+		.date2sql($release)."', "
+		.db_escape($inactive)
 		.")";
 	}
 	else {
 		$sql = "UPDATE ".TB_PREF."employee SET 
 		emp_first_name = ".db_escape($first_name).", 
 		emp_last_name = ".db_escape($last_name).", 
+		gender = ".db_escape($gender).", 
 		emp_address = ".db_escape($adrs).", 
 		emp_mobile = ".db_escape($mobile).", 
 		emp_email = ".db_escape($mail).", 
 		emp_birthdate = '".date2sql($birth)."', 
 		emp_notes = ".db_escape($notes).", 
 		emp_hiredate = '".date2sql($hire_date)."', 
-		department_id = ".db_escape($department)." 
+		department_id = ".db_escape($department).", 
+		salary_scale_id = ".db_escape($salary).", 
+		emp_releasedate = '".date2sql($release)."', 
+		inactive = ".db_escape($active)." 
 		WHERE emp_id = ".db_escape($id);
 	}
 	
