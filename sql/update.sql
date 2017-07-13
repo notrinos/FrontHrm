@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS `0_employee` (
     `emp_id` int(11) NOT NULL AUTO_INCREMENT,
     `emp_first_name` varchar(100) DEFAULT NULL,
     `emp_last_name` varchar(100) DEFAULT NULL,
+	`gender` tinyint(1) NOT NULL DEFAULT '0',
     `emp_address` tinytext,
     `emp_mobile` varchar(30) DEFAULT NULL,
     `emp_email` varchar(100) DEFAULT NULL,
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `0_employee` (
     KEY `salary_scale_id` (`salary_scale_id`),
     KEY `department_id` (`department_id`)
 ) ENGINE=InnoDB;
+
 
 CREATE TABLE IF NOT EXISTS `0_department` (
     `dept_id` int(11) NOT NULL AUTO_INCREMENT,
