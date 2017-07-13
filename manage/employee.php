@@ -28,7 +28,7 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 
 //--------------------------------------------------------------------------
 
-foreach(db_query(get_employees()) as $emp_row) {
+foreach(db_query(get_employees(false, true)) as $emp_row) {
 	if(isset($_POST[$emp_row['emp_id']])) {
 		$_SESSION['emp_id'] = $emp_row['emp_id'];
 		$_POST['_tabs_sel'] = 'add';
@@ -60,10 +60,18 @@ function can_process() {
 		set_focus('EmpEmail');
 		return false;
 	}
-	if (!is_date($_POST['EmpHireDate']) && $_POST['EmpHireDate'] != null) {
+	if (!is_date($_POST['EmpHireDate']) && $_POST['EmpHireDate'] != null && $_POST['EmpHireDate'] != '00/00/0000')
+	{
 		display_error( _("Invalid date."));
 		set_focus('EmpHireDate');
 		return false;
+	}
+	if (get_post('EmpInactive') == 1) {
+	    if (!is_date($_POST['EmpReleaseDate'])) {
+		display_error( _("Invalid release date."));
+		set_focus('EmpReleaseDate');
+		return false;
+	    }
 	}
 	return true;
 }
@@ -71,7 +79,7 @@ function can_process() {
 //--------------------------------------------------------------------------
 
 function can_delete($cur_id) {
-	$employee = get_employees($cur_id);
+	$employee = get_employees($cur_id, true);
 	if($employee['emp_hiredate'] && $employee['emp_hiredate'] != '0000-00-00')
 	{
 		display_error('Employed person cannot be deleted.');
@@ -87,6 +95,15 @@ function id_link($row) {
 }
 function get_name($row) {
 	return $row['emp_first_name'].' '.$row['emp_last_name'];
+}
+function gender_name($row) {
+	return $row['gender'] == 0 ? 'Female' : 'Male';
+}
+function emp_hired($row) {
+	return ($row['emp_hiredate'] == '0000-00-00') ? 'Not hired' : "<center>".sql2date($row['emp_hiredate'])."</center>";
+}
+function emp_department($row) {
+	return ($row['emp_hiredate'] == '0000-00-00') ? 'Not hired' : get_departments($row['department_id'])['dept_name'];
 }
 
 function employees_list() {
@@ -105,7 +122,16 @@ function employees_list() {
 		
         $cols = array(
           _('ID') => array('fun'=>'id_link'),
-          _('Name') => array('fun'=>'get_name')
+		  'first_name' => 'skip',
+          _('Name') => array('fun'=>'get_name'),
+		  _('Gender') => array('fun'=>'gender_name'),
+		  'address' => 'skip',
+		  _('Mobile') => array(),
+		  _('Email'),
+		  _('Birth') => array('type'=>'date'),
+		  'notes' => 'skip',
+		  _('Hired Date') => array('fun'=>'emp_hired'),
+		  _('Department') => array('fun'=>'emp_department')
         );
 
         $table =& new_db_pager('student_tbl', $sql, $cols);
@@ -123,9 +149,10 @@ function employees_list() {
 function employee_settings($cur_id) {
 	
 	if($cur_id) {
-		$employee = get_employees($cur_id);
+		$employee = get_employees($cur_id, true);
 		$_POST['EmpFirstName'] = $employee['emp_first_name'];
 		$_POST['EmpLastName'] = $employee['emp_last_name'];
+		$_POST['EmpGender'] = $employee['gender'];
 		$_POST['EmpAddress'] = $employee['emp_address'];
 		$_POST['EmpMobile'] = $employee['emp_mobile'];
 		$_POST['EmpEmail'] = $employee['emp_email'];
@@ -133,6 +160,8 @@ function employee_settings($cur_id) {
 		$_POST['EmpNotes'] = $employee['emp_notes'];
 		$_POST['EmpHireDate'] = sql2date($employee['emp_hiredate']);
 		$_POST['DepartmentId'] = $employee['department_id'];
+		$_POST['EmpReleaseDate'] = sql2date($employee['emp_releasedate']);
+		$_POST['EmpInactive'] = $employee['inactive'];
 	}
 	start_outer_table(TABLESTYLE2);
 
@@ -143,6 +172,7 @@ function employee_settings($cur_id) {
 	hidden('emp_id');
 	text_row(_("First Name:"), 'EmpFirstName', get_post('EmpFirstName'), 37, 50);
 	text_row(_("Last Name:"), 'EmpLastName', get_post('EmpLastName'), 37, 50);
+	gender_radio_row(_('Gender:'), 'EmpGender', get_post('EmpGender'));
 	textarea_row(_("Address:"), 'EmpAddress', get_post('EmpAddress'), 35, 5);
 	text_row(_("Mobile:"), 'EmpMobile', get_post('EmpMobile'), 37, 30);
 	email_row(_("e-Mail:"), 'EmpEmail', get_post('EmpEmail'), 37, 100);
@@ -152,9 +182,25 @@ function employee_settings($cur_id) {
 	
 	table_section_title(_("Job Information"));
 	
-	date_row(_("Hire Date:"), 'EmpHireDate', null, null, 0, 0, 1001);
-	department_list_row(_('Department:'), 'DepartmentId', null, _('Select department'));
 	textarea_row(_("Notes:"), 'EmpNotes', null, 35, 5);
+	date_row(_("Hire Date:"), 'EmpHireDate', null, null, 0, 0, 1001);
+	
+	if($cur_id) {
+		if($employee['emp_hiredate'] != '0000-00-00')
+			department_list_row(_('Department:'), 'DepartmentId', null, _('Select department'));
+		else {
+			label_row('Department:', _('Set hire date first'));
+			hidden('DepartmentId');
+		}
+	}
+	else
+		department_list_row(_('Department:'), 'DepartmentId', null, _('Select department'));
+		
+	hidden('EmpSalary'); // EDIT LATER
+	if($cur_id) {
+		check_row('Resigned:', 'EmpInactive');
+		date_row(_("Release Date:"), 'EmpReleaseDate', null, null, 0, 0, 1001);
+	}
 	
 	end_outer_table(1);
 	
@@ -182,13 +228,17 @@ if (isset($_POST['submit'])) {
 		$cur_id,
 		$_POST['EmpFirstName'],
 		$_POST['EmpLastName'],
+		$_POST['EmpGender'],
 		$_POST['EmpAddress'],
 		$_POST['EmpMobile'],
 		$_POST['EmpEmail'],
 		$_POST['EmpBirthDate'],
 		$_POST['EmpNotes'],
 		$_POST['EmpHireDate'],
-		$_POST['DepartmentId']
+		$_POST['DepartmentId'],
+		$_POST['EmpSalary'],
+		$_POST['EmpReleaseDate'],
+		$_POST['EmpInactive']
 	);
 	if($cur_id)
 		display_notification(_("Employee details has been updated."));
