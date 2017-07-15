@@ -33,3 +33,21 @@ CREATE TABLE IF NOT EXISTS `0_salaryscale` (
     `inactive` tinyint(1) NOT NULL DEFAULT '0',
     PRIMARY KEY (`scale_id`)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `0_overtime` (
+    `overtime_id` int(11) NOT NULL AUTO_INCREMENT,
+	`overtime_name` varchar(100) NOT NULL,
+    `overtime_rate` float(5) NOT NULL,
+    `inactive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`overtime_id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `0_attendance` (
+    `emp_id` int(11) NOT NULL,
+    `overtime_id` int(11) NOT NULL,
+    `hours_no` int(11) NOT NULL DEFAULT '0',
+    `att_date` date NOT NULL,
+    PRIMARY KEY (`emp_id`,`overtime_id`,`att_date`)
+) ENGINE=InnoDB;
