@@ -29,15 +29,75 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 //--------------------------------------------------------------------------
 
 foreach(db_query(get_employees(false, true)) as $emp_row) {
+	
 	if(isset($_POST[$emp_row['emp_id']])) {
-		$_SESSION['emp_id'] = $emp_row['emp_id'];
+		
+		$_SESSION['EmpId'] = $emp_row['emp_id'];
 		$_POST['_tabs_sel'] = 'add';
 		$Ajax -> activate('_page_body');
 	}
 }
 
-$_POST['emp_id'] = isset($_SESSION['emp_id']) ? $_SESSION['emp_id'] : '';
-$cur_id = $_POST['emp_id'];
+$cur_id = isset($_SESSION['EmpId']) ? $_SESSION['EmpId'] : '';
+
+$upload_file = "";
+$avatar_path = $path_to_root."/modules/FrontHrm/images/avatar/";
+if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
+	
+	$result = $_FILES['pic']['error'];
+ 	$upload_file = 'Yes';
+	$filename = $avatar_path;
+	if (!file_exists($filename))
+		mkdir($filename);
+	
+	$filename .= emp_img_name($cur_id).".jpg";
+	
+	if ($_FILES['pic']['error'] == UPLOAD_ERR_INI_SIZE) {
+		display_error(_('The file size is over the maximum allowed.'));
+		$upload_file ='No';
+	}
+	elseif ($_FILES['pic']['error'] > 0) {
+		display_error(_('Error uploading file.'));
+		$upload_file ='No';
+	}
+	if ((list($width, $height, $type, $attr) = getimagesize($_FILES['pic']['tmp_name'])) !== false)
+		$imagetype = $type;
+	else
+		$imagetype = false;
+
+	if ($imagetype != IMAGETYPE_GIF && $imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG)
+	{
+		display_warning( _('Only graphics files can be uploaded'));
+		$upload_file ='No';
+	}
+	elseif (!in_array(strtoupper(substr(trim($_FILES['pic']['name']), strlen($_FILES['pic']['name']) - 3)), array('JPG','PNG','GIF')))
+	{
+		display_warning(_('Only graphics files are supported - a file extension of .jpg, .png or .gif is expected'));
+		$upload_file ='No';
+	}
+	elseif ( $_FILES['pic']['size'] > ($SysPrefs->max_image_size * 1024)) 
+	{
+		display_warning(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . $SysPrefs->max_image_size);
+		$upload_file ='No';
+	} 
+	elseif ( $_FILES['pic']['type'] == "text/plain" ) 
+	{
+		display_warning( _('Only graphics files can be uploaded'));
+        $upload_file ='No';
+	}
+	elseif (file_exists($filename))
+	{
+		$result = unlink($filename);
+		if (!$result) {
+			display_error(_('The existing image could not be removed'));
+			$upload_file ='No';
+		}
+	}
+	if ($upload_file == 'Yes')
+		$result  =  move_uploaded_file($_FILES['pic']['tmp_name'], $filename);
+	
+	$Ajax->activate('_page_body');
+}
 
 //--------------------------------------------------------------------------
 
@@ -106,9 +166,9 @@ function emp_department($row) {
 	return ($row['emp_hiredate'] == '0000-00-00') ? 'Not hired' : get_departments($row['department_id'])['dept_name'];
 }
 
-function employees_list() {
+function employees_table() {
 	
-	$_SESSION['emp_id'] = '';
+	$_SESSION['EmpId'] = '';
 	if(db_has_employee()) {
 		
 		$sql = get_employees(false, check_value('show_inactive'), get_post('DepartmentList'));
@@ -147,6 +207,7 @@ function employees_list() {
 //--------------------------------------------------------------------------
 
 function employee_settings($cur_id) {
+	global $path_to_root, $avatar_path;
 	
 	if($cur_id) {
 		$employee = get_employees($cur_id, true);
@@ -167,9 +228,25 @@ function employee_settings($cur_id) {
 
 	table_section(1);
 	
-	table_section_title(_("Personal Information"));
-	
 	hidden('emp_id');
+	
+	file_row(_("Image File") . ":", 'pic', 'pic');
+	$emp_img_link = "";
+	$check_remove_image = false;
+	if ($cur_id && file_exists($avatar_path.emp_img_name($cur_id).".jpg")) {
+		$emp_img_link .= "<img id='emp_img' alt = '[".$cur_id.".jpg".
+			"]' src='".$avatar_path.emp_img_name($cur_id).
+			".jpg?nocache=".rand()."'"." height='100'>";
+		$check_remove_image = true;
+	} 
+	else 
+		$emp_img_link .= "<img id='emp_img' alt = '.jpg' src='$avatar_path"."no_image.svg' height='100'>";
+
+	label_row("&nbsp;", $emp_img_link);
+	if ($check_remove_image)
+		check_row(_("Delete Image:"), 'del_image');
+	
+	table_section_title(_("Personal Information"));
 	text_row(_("First Name:"), 'EmpFirstName', get_post('EmpFirstName'), 37, 50);
 	text_row(_("Last Name:"), 'EmpLastName', get_post('EmpLastName'), 37, 50);
 	gender_radio_row(_('Gender:'), 'EmpGender', get_post('EmpGender'));
@@ -196,31 +273,34 @@ function employee_settings($cur_id) {
 	else
 		department_list_row(_('Department:'), 'DepartmentId', null, _('Select department'));
 		
-	hidden('EmpSalary'); // EDIT LATER
+	salaryscale_list_row(_('Salary:'), 'EmpSalary', null, _('Select salary scale'));
 	if($cur_id) {
 		check_row('Resigned:', 'EmpInactive');
 		date_row(_("Release Date:"), 'EmpReleaseDate', null, null, 0, 0, 1001);
 	}
-	
+	else{
+		hidden('EmpInactive');
+		hidden('EmpReleaseDate');
+	}
 	end_outer_table(1);
 	
 	div_start('controls');
 	
 	if ($cur_id) {
 		
-		submit_center_first('submit', _("Update Employee"), _('Update employee details'), 'default');
+		submit_center_first('addupdate', _("Update Employee"), _('Update employee details'), 'default');
 		submit_return('select', get_post('emp_id'), _("Select this employee and return to document entry."));
 		submit_center_last('delete', _("Delete Employee"), _('Delete employee data if have been never used'), true);
 	}
 	else
-		submit_center('submit', _("Add New Employee Details"), true, '', 'default');
+		submit_center('addupdate', _("Add New Employee Details"), true, '', 'default');
 	
 	div_end();
 }
 
 //--------------------------------------------------------------------------
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['addupdate'])) {
 	
 	if(!can_process())
 		return;
@@ -240,6 +320,11 @@ if (isset($_POST['submit'])) {
 		$_POST['EmpReleaseDate'],
 		$_POST['EmpInactive']
 	);
+	if (check_value('del_image')) {
+		$filename = $avatar_path.emp_img_name($cur_id).".jpg";
+		if (file_exists($filename))
+			unlink($filename);
+	}
 	if($cur_id)
 		display_notification(_("Employee details has been updated."));
 	else 
@@ -259,7 +344,7 @@ elseif(isset($_POST['delete'])) {
 
 page(_($help_context = "Manage Employees"), false, false, "", $js);
 
-start_form();
+start_form(true);
 
 tabbed_content_start(
 	'tabs',
@@ -270,10 +355,12 @@ tabbed_content_start(
 );
 
 if(get_post('_tabs_sel') == 'list')
-	employees_list();
+	employees_table();
 elseif(get_post('_tabs_sel') == 'add')
 	employee_settings($cur_id);
+
 br();
+
 tabbed_content_end();
 
 end_form();
