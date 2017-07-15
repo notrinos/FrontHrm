@@ -163,7 +163,12 @@ function emp_hired($row) {
 	return ($row['emp_hiredate'] == '0000-00-00') ? 'Not hired' : "<center>".sql2date($row['emp_hiredate'])."</center>";
 }
 function emp_department($row) {
-	return ($row['emp_hiredate'] == '0000-00-00') ? 'Not hired' : get_departments($row['department_id'])['dept_name'];
+	
+	if($row['emp_hiredate'] == '0000-00-00' || $row['department_id'] == 0)
+		return 'Not selected';
+	else
+		return get_departments($row['department_id'])['dept_name'];
+
 }
 
 function employees_table() {
