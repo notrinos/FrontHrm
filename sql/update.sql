@@ -25,3 +25,11 @@ CREATE TABLE IF NOT EXISTS `0_department` (
     `inactive` tinyint(1) NOT NULL DEFAULT '0',
     PRIMARY KEY (`dept_id`)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `0_salaryscale` (
+    `scale_id` int(11) NOT NULL AUTO_INCREMENT,
+    `scale_name` text NOT NULL,
+    `inactive` tinyint(1) NOT NULL DEFAULT '0',
+    PRIMARY KEY (`scale_id`)
+) ENGINE=InnoDB;
