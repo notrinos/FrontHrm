@@ -19,6 +19,7 @@ function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mob
 {
 	if(!$id) {
 		$sql = "INSERT INTO ".TB_PREF."employee VALUES ("
+		.db_escape($id).", "
 		.db_escape($first_name).", "
 		.db_escape($last_name).", "
 		.db_escape($gender).", "
@@ -31,7 +32,7 @@ function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mob
 		.db_escape($department).", "
 		.db_escape($salary).", '"
 		.date2sql($release)."', "
-		.db_escape($inactive)
+		.db_escape($active)
 		.")";
 	}
 	else {
@@ -87,4 +88,12 @@ function get_employees($id = false, $all = false, $department = false) {
 function delete_employee($id) {
 	$sql = "DELETE FROM ".TB_PREF."employee WHERE emp_id = ".db_escape($id);
 	db_query($sql, 'Could not delete employee data.');
+}
+
+//--------------------------------------------------------------------------
+
+function emp_img_name($emp_id) {
+
+	$emp_id = strtr($emp_id, "><\\/:|*?", '________');
+	return clean_file_name($emp_id);
 }
