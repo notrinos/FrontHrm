@@ -18,12 +18,15 @@ class FrontHrm_app extends application {
         $this->application("FrontHrm", _($this->help_context = "Human Resource"));
         
         $this->add_module(_("Transactions"));
+		$this->add_lapp_function(0, 'TEST', $path_to_root.'/modules/FrontHrm/test.php', 'SA_EMPL', MENU_ENTRY);
    
         $this->add_module(_("Inquiries and Reports"));
         
         $this->add_module(_("Maintenance"));
 		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/employee.php', 'SA_EMPL', MENU_ENTRY);
 		$this->add_lapp_function(2, 'Departments', $path_to_root.'/modules/FrontHrm/manage/department.php', 'SA_HRSETUP', MENU_MAINTENANCE);
+		$this->add_extensions();
+		$this->add_lapp_function(2, 'Salary Scales', $path_to_root.'/modules/FrontHrm/manage/salaryscale.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_extensions();
     }
 }
