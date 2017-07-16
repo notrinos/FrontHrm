@@ -27,6 +27,31 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 
 //--------------------------------------------------------------------------
 
+function can_process() {
+	
+	foreach(db_query(get_employees()) as $emp) {
+		
+		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && !is_numeric($_POST[$emp['emp_id'].'-0']))
+		{
+			display_error(_("Overtime hours must be a number."));
+			set_focus($emp['emp_id'].'-0');
+			return false;
+		}
+		foreach(db_query(get_overtime()) as $ot) {
+			
+			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && !is_numeric($_POST[$emp['emp_id'].'-'.$ot['overtime_id']])) {
+				
+				display_error(_("Overtime hours must be a number."));
+				set_focus($emp['emp_id'].'-'.$ot['overtime_id']);
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+//--------------------------------------------------------------------------
+
 page(_($help_context = _("Employees Attendance")), false, false, "", $js);
 
 start_form();
@@ -87,6 +112,9 @@ if(!db_has_employee())
 	display_error(_("There are no employees for attendance."));
 
 if(isset($_POST['addatt'])) {
+	
+	if(!can_process())
+		return;
     
     foreach($emp_ids as $id) {
         
