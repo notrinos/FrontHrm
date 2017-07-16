@@ -176,11 +176,11 @@ function employees_table() {
 	$_SESSION['EmpId'] = '';
 	if(db_has_employee()) {
 		
-		$sql = get_employees(false, check_value('show_inactive'), get_post('DepartmentList'));
+		$sql = get_employees(false, check_value('show_inactive'), get_post('DeptId'));
 		
 		start_table(TABLESTYLE_NOBORDER);
 		start_row();
-		department_list_cells(_('Department:'), 'DepartmentList', null, _('All departments'), true);
+		department_list_cells(_('Department:'), 'DeptId', null, _('All departments'), true);
 		check_cells(_("Show resigned:"), 'show_inactive', null, true);
 		end_row();
 		end_table(1);
