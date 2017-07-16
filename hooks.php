@@ -19,14 +19,19 @@ class FrontHrm_app extends application {
         
         $this->add_module(_("Transactions"));
 		$this->add_lapp_function(0, 'TEST', $path_to_root.'/modules/FrontHrm/test.php', 'SA_EMPL', MENU_ENTRY);
+		$this->add_lapp_function(0, 'Attendance', $path_to_root.'/modules/FrontHrm/manage/attendance.php', 'SA_EMPL', MENU_TRANSACTION);
    
         $this->add_module(_("Inquiries and Reports"));
+		$this->add_lapp_function(1, 'Timesheet', $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php', 'SA_EMPL', MENU_INQUIRY);
         
         $this->add_module(_("Maintenance"));
 		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/employee.php', 'SA_EMPL', MENU_ENTRY);
 		$this->add_lapp_function(2, 'Departments', $path_to_root.'/modules/FrontHrm/manage/department.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_extensions();
 		$this->add_lapp_function(2, 'Salary Scales', $path_to_root.'/modules/FrontHrm/manage/salaryscale.php', 'SA_HRSETUP', MENU_MAINTENANCE);
+		$this->add_extensions();
+		
+		$this->add_rapp_function(2, 'Manage Overtime', $path_to_root.'/modules/FrontHrm/manage/overtime.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_extensions();
     }
 }
