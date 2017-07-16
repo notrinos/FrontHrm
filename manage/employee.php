@@ -120,6 +120,12 @@ function can_process() {
 		set_focus('EmpEmail');
 		return false;
 	}
+	if (!is_date($_POST['EmpBirthDate']))
+	{
+		display_error( _("Invalid birth date."));
+		set_focus('EmpBirthDate');
+		return false;
+	}
 	if (!is_date($_POST['EmpHireDate']) && $_POST['EmpHireDate'] != null && $_POST['EmpHireDate'] != '00/00/0000')
 	{
 		display_error( _("Invalid date."));
@@ -258,7 +264,7 @@ function employee_settings($cur_id) {
 	textarea_row(_("Address:"), 'EmpAddress', get_post('EmpAddress'), 35, 5);
 	text_row(_("Mobile:"), 'EmpMobile', get_post('EmpMobile'), 37, 30);
 	email_row(_("e-Mail:"), 'EmpEmail', get_post('EmpEmail'), 37, 100);
-	date_row(_("Birth Date:"), 'EmpBirthDate');
+	date_row(_("Birth Date:"), 'EmpBirthDate', null, null, 0, 0, -13);
 	
 	table_section(2);
 	
