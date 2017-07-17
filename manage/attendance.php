@@ -126,7 +126,7 @@ if(isset($_POST['addatt'])) {
 			exit();
 		}
 		else {
-			$att_row += $_POST[$id.'-0'];
+			$att_items += $_POST[$id.'-0'];
 			add_time_att($id, 0, $_POST[$id.'-0'], $_POST['attend_date']);
 		}
         
@@ -139,7 +139,7 @@ if(isset($_POST['addatt'])) {
 				exit();
 			}
 			else {
-				$att_row += $_POST[$id.'-'.$ot];
+				$att_items += $_POST[$id.'-'.$ot];
 				add_time_att($id, $ot, $_POST[$id.'-'.$ot], $_POST['attend_date']);
 			}
         }
