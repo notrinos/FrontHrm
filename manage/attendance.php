@@ -116,17 +116,38 @@ if(isset($_POST['addatt'])) {
 	if(!can_process())
 		return;
     
+	$att_items = 0;
     foreach($emp_ids as $id) {
         
-        add_time_att($id, 0, $_POST[$id.'-0'], $_POST['attend_date']);
+		if($_POST[$id.'-0'] != '' && check_attended($id, 0, $_POST['attend_date'])) {
+			
+			display_error('Data has already exist');
+            set_focus($id.'-0');
+			exit();
+		}
+		else {
+			$att_row += $_POST[$id.'-0'];
+			add_time_att($id, 0, $_POST[$id.'-0'], $_POST['attend_date']);
+		}
         
         foreach($overtime_id as $ot) {
-            if($_POST[$id.'-'.$ot]=='')
-                $_POST[$id.'-'.$ot] = 0;
-            add_time_att($id, $ot, $_POST[$id.'-'.$ot], $_POST['attend_date']);
+			
+			if($_POST[$id.'-'.$ot] != '' && check_attended($id, $ot, $_POST['attend_date'])) {
+			
+				display_error('Data has already exist');
+            	set_focus($id.'-'.$ot);
+				exit();
+			}
+			else {
+				$att_row += $_POST[$id.'-'.$ot];
+				add_time_att($id, $ot, $_POST[$id.'-'.$ot], $_POST['attend_date']);
+			}
         }
     }
-    display_notification(_("Attendance has been saved"));
+	if($att_items > 0)
+		display_notification('Attendance has been saved.');
+	else
+		display_notification(_('Nothing added'));
 }
 
 end_form();
