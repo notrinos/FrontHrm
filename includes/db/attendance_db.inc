@@ -9,30 +9,21 @@
 |                                                        |
 \=======================================================*/
 
-function check_approved($emp_id, $overtime_id, $att_date) {
-    $sql = "SELECT * FROM ".TB_PREF."attendance WHERE emp_id = ".$emp_id." AND overtime_id = ".$overtime_id." AND att_date = '".date2sql($att_date)."'";
+function check_attended($emp_id, $overtime_id, $att_date) {
+    $sql = "SELECT * FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id)." AND att_date = '".date2sql($att_date)."'";
     
-    $result = db_query($sql, 'Could not get attendance data');
-    return db_num_rows($result);
+    return check_empty_result($sql);
 }
 
 //--------------------------------------------------------------------------
 
-function add_time_att($emp_id, $overtime_id, $hours_no=null, $att_date) {
+function add_time_att($emp_id, $overtime_id, $hours_no = null, $att_date) {
     
     if(isset($hours_no) && $hours_no != '') {
-        $check_approved = check_approved($emp_id, $overtime_id, $att_date);
-        if($check_approved != 1) {
-        
-            $sql = "INSERT INTO ".TB_PREF."attendance(emp_id, overtime_id, hours_no, att_date) VALUES(".$emp_id.",".$overtime_id.",".$hours_no.",'".date2sql($att_date)."')";
+	
+        $sql = "INSERT INTO ".TB_PREF."attendance(emp_id, overtime_id, hours_no, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",'".date2sql($att_date)."')";
     
-            db_query($sql, 'Could not add time clock');
-        }
-        else {
-            display_error('Data has already exist');
-            set_focus($emp_id.'-'.$overtime_id);
-            exit();
-        }
+        db_query($sql, 'Could not add time clock');
     }
 }
 
