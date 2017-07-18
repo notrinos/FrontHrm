@@ -91,8 +91,8 @@ function reset_payroll($salary_scale_id) {
 
 function get_payroll_structure($id) {
 
-	$sql = "SELECT * FROM ".TB_PREF."payroll_structure WHERE salary_scale_id=".db_escape($id);
-	$result = db_query($sql, "could not get salaryscales");
+	$sql = "SELECT * FROM ".TB_PREF."payroll_structure WHERE salary_scale_id = ".db_escape($id);
+	$result = db_query($sql, "could not get payroll structure");
 	$row = db_fetch($result);
     
 	if ($row != false)
