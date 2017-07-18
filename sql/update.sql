@@ -51,3 +51,17 @@ CREATE TABLE IF NOT EXISTS `0_attendance` (
     `att_date` date NOT NULL,
     PRIMARY KEY (`emp_id`,`overtime_id`,`att_date`)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `0_payroll_account` (
+  `account_id` int(11) NOT NULL AUTO_INCREMENT,
+  `account_code` int(11) NOT NULL,
+  PRIMARY KEY (`account_id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `0_payroll_structure` (
+  `salary_scale_id` int(11) NOT NULL,
+  `payroll_rule` text NOT NULL,
+  KEY `salary_scale_id` (`salary_scale_id`)
+) ENGINE=InnoDB;
