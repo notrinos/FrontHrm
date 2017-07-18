@@ -33,6 +33,7 @@ class FrontHrm_app extends application {
 		
 		$this->add_rapp_function(2, 'Manage Overtime', $path_to_root.'/modules/FrontHrm/manage/overtime.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_rapp_function(2, 'Payroll Accounts', $path_to_root.'/modules/FrontHrm/manage/accounts.php', 'SA_HRSETUP', MENU_MAINTENANCE);
+		$this->add_rapp_function(2, 'Payroll Rules', $path_to_root.'/modules/FrontHrm/manage/payroll_rules.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_extensions();
     }
 }
