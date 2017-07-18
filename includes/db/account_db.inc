@@ -83,16 +83,8 @@ function payroll_rule_exist($salary_scale_id) {
 function reset_payroll($salary_scale_id) {
 
 	$sql = "DELETE FROM ".TB_PREF."payroll_structure WHERE salary_scale_id =".db_escape($salary_scale_id);
-    	db_query($sql, "could not reset salary structure role");
-}
-
-//--------------------------------------------------------------------------
-
-function delete_payroll($id) {
 	
-	$sql = "DELETE FROM ".TB_PREF."payroll_structure WHERE payroll_rule=".db_escape($id);;
-	db_query($sql,"cannot delete scale");
-	commit_transaction();
+    db_query($sql, "could not reset payroll rules");
 }
 
 //--------------------------------------------------------------------------
