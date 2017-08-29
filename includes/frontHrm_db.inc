@@ -15,3 +15,4 @@ include_once($path_to_root."/modules/FrontHrm/includes/db/salary_scale_db.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/db/overtime_db.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/db/attendance_db.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/db/account_db.inc");
+include_once($path_to_root."/modules/FrontHrm/includes/db/salary_structure_db.inc");
