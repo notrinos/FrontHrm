@@ -13,3 +13,6 @@ include_once($path_to_root."/modules/FrontHrm/includes/ui/employee_ui.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/ui/department_ui.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/ui/salary_scale_ui.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/ui/overtime_ui.inc");
+
+define('DEBIT', 1);
+define('CREDIT', 0);
