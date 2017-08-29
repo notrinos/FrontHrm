@@ -24,7 +24,7 @@ class FrontHrm_app extends application {
 		$this->add_lapp_function(1, 'Timesheet', $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php', 'SA_EMPL', MENU_INQUIRY);
         
         $this->add_module(_("Maintenance"));
-		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/manage_employee.php', 'SA_EMPL', MENU_ENTRY);
+		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/employee.php', 'SA_EMPL', MENU_ENTRY);
 		$this->add_lapp_function(2, 'Departments', $path_to_root.'/modules/FrontHrm/manage/department.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_lapp_function(2, 'Manage Overtime', $path_to_root.'/modules/FrontHrm/manage/manage_overtime.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		
