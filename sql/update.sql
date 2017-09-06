@@ -65,3 +65,14 @@ CREATE TABLE IF NOT EXISTS `0_payroll_structure` (
   `payroll_rule` text NOT NULL,
   KEY `salary_scale_id` (`salary_scale_id`)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `0_salary_structure` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `salary_scale_id` int(11) NOT NULL,
+  `pay_rule_id` int(11) NOT NULL,
+  `pay_amount` double NOT NULL,
+  `type` tinyint(1) NOT NULL COMMENT '0 for credit,1 for debit',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
