@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `0_employee`;
 CREATE TABLE IF NOT EXISTS `0_employee` (
     `emp_id` int(11) NOT NULL AUTO_INCREMENT,
     `emp_first_name` varchar(100) DEFAULT NULL,
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `0_employee` (
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_department`;
 CREATE TABLE IF NOT EXISTS `0_department` (
     `dept_id` int(11) NOT NULL AUTO_INCREMENT,
     `dept_name` tinytext NOT NULL,
@@ -27,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `0_department` (
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_salaryscale`;
 CREATE TABLE IF NOT EXISTS `0_salaryscale` (
     `scale_id` int(11) NOT NULL AUTO_INCREMENT,
     `scale_name` text NOT NULL,
@@ -35,15 +38,17 @@ CREATE TABLE IF NOT EXISTS `0_salaryscale` (
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_overtime`;
 CREATE TABLE IF NOT EXISTS `0_overtime` (
     `overtime_id` int(11) NOT NULL AUTO_INCREMENT,
-	`overtime_name` varchar(100) NOT NULL,
+	  `overtime_name` varchar(100) NOT NULL,
     `overtime_rate` float(5) NOT NULL,
     `inactive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`overtime_id`)
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_attendance`;
 CREATE TABLE IF NOT EXISTS `0_attendance` (
     `emp_id` int(11) NOT NULL,
     `overtime_id` int(11) NOT NULL,
@@ -53,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `0_attendance` (
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_payroll_account`;
 CREATE TABLE IF NOT EXISTS `0_payroll_account` (
   `account_id` int(11) NOT NULL AUTO_INCREMENT,
   `account_code` int(11) NOT NULL,
@@ -60,6 +66,7 @@ CREATE TABLE IF NOT EXISTS `0_payroll_account` (
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_payroll_structure`;
 CREATE TABLE IF NOT EXISTS `0_payroll_structure` (
   `salary_scale_id` int(11) NOT NULL,
   `payroll_rule` text NOT NULL,
@@ -67,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `0_payroll_structure` (
 ) ENGINE=InnoDB;
 
 
+DROP TABLE IF EXISTS `0_salary_structure`;
 CREATE TABLE IF NOT EXISTS `0_salary_structure` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
@@ -76,3 +84,6 @@ CREATE TABLE IF NOT EXISTS `0_salary_structure` (
   `type` tinyint(1) NOT NULL COMMENT '0 for credit,1 for debit',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
+
+
+ALTER TABLE `0_gl_trans` ADD `payslip_no` INT(11) NOT NULL DEFAULT '0';
