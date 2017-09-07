@@ -19,12 +19,13 @@ class FrontHrm_app extends application {
         
         $this->add_module(_("Transactions"));
 		$this->add_lapp_function(0, 'Attendance', $path_to_root.'/modules/FrontHrm/manage/manage_attendance.php', 'SA_EMPL', MENU_TRANSACTION);
+        $this->add_lapp_function(0, 'Payslip Entry', $path_to_root.'/modules/FrontHrm/manage/payslip.php?NewPayslip=Yes', 'SA_EMPL', MENU_TRANSACTION);
    
         $this->add_module(_("Inquiries and Reports"));
 		$this->add_lapp_function(1, 'Timesheet', $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php', 'SA_EMPL', MENU_INQUIRY);
         
         $this->add_module(_("Maintenance"));
-		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/employee.php', 'SA_EMPL', MENU_ENTRY);
+		$this->add_lapp_function(2, 'Employees', $path_to_root.'/modules/FrontHrm/manage/manage_employee.php', 'SA_EMPL', MENU_ENTRY);
 		$this->add_lapp_function(2, 'Departments', $path_to_root.'/modules/FrontHrm/manage/department.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_lapp_function(2, 'Manage Overtime', $path_to_root.'/modules/FrontHrm/manage/manage_overtime.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		
@@ -53,7 +54,14 @@ class hooks_FrontHrm extends hooks {
     function activate_extension($company, $check_only=true) {
         global $db_connections;
         
-        $updates = array( 'update.sql' => array(''));
+        $chk_col = db_query("SELECT * FROM ".TB_PREF."gl_trans LIMIT 1");
+        $cols = db_fetch($chk_col);
+        if(!isset($cols['payslip_no'])) {
+            $updates = array( 'update.sql' => array(''));
+        }
+        else {
+            $updates = array( 'update2.sql' => array(''));
+        }
  
         return $this->update_databases($company, $updates, $check_only);
     }
