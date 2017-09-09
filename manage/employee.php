@@ -232,6 +232,7 @@ function employee_settings($cur_id) {
 		$_POST['EmpNotes'] = $employee['emp_notes'];
 		$_POST['EmpHireDate'] = sql2date($employee['emp_hiredate']);
 		$_POST['DepartmentId'] = $employee['department_id'];
+		$_POST['EmpSalary'] = $employee['salary_scale_id'];
 		$_POST['EmpReleaseDate'] = sql2date($employee['emp_releasedate']);
 		$_POST['EmpInactive'] = $employee['inactive'];
 	}
