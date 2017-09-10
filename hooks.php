@@ -56,12 +56,11 @@ class hooks_FrontHrm extends hooks {
         
         $chk_col = db_query("SELECT * FROM ".TB_PREF."gl_trans LIMIT 1");
         $cols = db_fetch($chk_col);
-        if(!isset($cols['payslip_no'])) {
+        
+        if(!isset($cols['payslip_no']))
             $updates = array( 'update.sql' => array(''));
-        }
-        else {
+        else
             $updates = array( 'update2.sql' => array(''));
-        }
  
         return $this->update_databases($company, $updates, $check_only);
     }
