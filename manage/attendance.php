@@ -58,7 +58,7 @@ start_form();
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
-date_cells(_("Attendance date:"), 'attend_date');
+date_cells(_("Date:"), 'attend_date');
 department_list_cells(_("For department:"), "DeptId", null, _("All departments"), true);
 end_row();
 end_table(1);
