@@ -84,3 +84,17 @@ CREATE TABLE IF NOT EXISTS `0_salary_structure` (
   `type` tinyint(1) NOT NULL COMMENT '0 for credit,1 for debit',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
+
+
+DROP TABLE IF EXISTS `0_payslip_detail`;
+CREATE TABLE IF NOT EXISTS `0_payslip_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `payslip_no` int(11) NOT NULL,
+  `generated_date` date NOT NULL,
+  `to_the_order_of` varchar(255) NOT NULL,
+  `from_date` date NOT NULL,
+  `to_date` date NOT NULL,
+  `leaves` int(11) NOT NULL,
+  `deductable_leaves` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
