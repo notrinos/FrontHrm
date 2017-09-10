@@ -16,3 +16,14 @@ include_once($path_to_root."/modules/FrontHrm/includes/ui/overtime_ui.inc");
 
 define('DEBIT', 1);
 define('CREDIT', 0);
+
+define('PT_EMPLOYEE', 6);
+
+define ('WORK_DAYS', 26);
+define ('WORK_HOURS', 8);
+
+define('GL_BASIC_SALARY', 5410);
+define('GL_DEDUCT_LEAVE', 5410);
+define('GL_OVERTIME', 5420);
+
+define ('AC_PAYABLE', 2100);
