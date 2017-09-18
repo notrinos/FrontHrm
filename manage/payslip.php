@@ -167,17 +167,21 @@ function validate_payslip_generation() {
 
 if(isset($_POST['GeneratePayslip']) && validate_payslip_generation()) {
     
-    if(check_paid($_POST['from_date'],$_POST['person_id'])) {
+    if(check_paid($_POST['from_date'], $_POST['person_id'])) {
         display_error("Selected from date has already paid for this person");
         set_focus('from_date');
     }
-    else if(date_comp($_POST['from_date'],$_POST['to_date']) > 0) {
+    else if(date_comp($_POST['from_date'], $_POST['to_date']) > 0) {
         display_error("End date cannot be before the start date");
         set_focus('from_date');
     }
-    else if(!check_employee_hired($_POST['person_id'],$_POST['from_date'])) {
+    else if(!check_employee_hired($_POST['person_id'], $_POST['from_date'])) {
         display_error("Cannot pay before hired date");
         set_focus('from_date');
+    }
+    else if(!employee_has_salary_scale($_POST['person_id'])) {
+    	display_error("Selected Employee does not have a Salary Scale, please define it first.");
+    	set_focus('person_id');
     }
     else
         generate_gl_items($_SESSION['journal_items']);
