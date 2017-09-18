@@ -14,9 +14,8 @@ function get_work_days($start_date, $end_date) {
     $begin = strtotime($start_date);
     $end   = strtotime($end_date);
     
-    if ($begin > $end) {
+    if ($begin > $end)
         return 0;
-    } 
     else {
         $no_days  = 0;
         $weekends = 0;
@@ -54,37 +53,35 @@ function display_payslip_header(&$Order) {
 		date_row(_("To Date:"), 'to_date', '', $new, 0, 0, 0, null, true);
 
 	table_section(2);
-		
 		hidden('PayType', PT_EMPLOYEE);
-		employee_list_row(_("Pay To: "), 'person_id', null, _("Select Employee"), true, false);
+		employee_list_row(_("Pay To: "), 'person_id', null, _("Select employee"), true, false);
 		
-        if(isset($_POST['to_the_order_of'])){
-            text_row(_("To the Order of:"),'to_the_order_of',$_POST['to_the_order_of'],'20','30');
-        } else {
-            text_row(_("To the Order of:"),'to_the_order_of','','20','30');
-        }
+        if(isset($_POST['to_the_order_of']))
+        	text_row(_("To the Order of:"), 'to_the_order_of', $_POST['to_the_order_of'], '20', '30');
+        else
+            text_row(_("To the Order of:"), 'to_the_order_of', '', '20', '30');
 		
-		if(!isset($_POST['PaySlipNo'])){
+		if(!isset($_POST['PaySlipNo']))
 			$_POST['PaySlipNo'] = get_next_payslip_no();
-		}
-		hidden('PaySlipNo',$_POST['PaySlipNo']);
-		label_row(_("Payslip No:"),$_POST['PaySlipNo']);
+		
+		hidden('PaySlipNo', $_POST['PaySlipNo']);
+		label_row(_("Payslip No:"), $_POST['PaySlipNo']);
 	
 	table_section(4);
-    //show overtime on payslip header
     
     $from = date2sql($_POST['from_date']);
     $to = date2sql($_POST['to_date']);
     $ot = db_query(get_overtime());
+
     if($_POST['person_id'] != '') {
         $emp_id = $_POST['person_id'];
         $workdays = get_workdays_no($from, $to, $emp_id);
         $leave_hours = get_leave_hours($from, $to, $emp_id);
-        label_row("Work days:", $workdays." days");
-        label_row("Leave hours:", $leave_hours." hours");
+        label_row(_('Work days:'), $workdays.' '._('days'));
+        label_row(_('Leave hours:'), $leave_hours.' '._('hours'));
         
         while($row = db_fetch($ot)) {
-            label_row($row['overtime_name'], get_ot_from_date_range($from, $to, $emp_id, $row['overtime_id'])." hours");
+            label_row($row['overtime_name'].':', get_ot_from_date_range($from, $to, $emp_id, $row['overtime_id']).' '._('hours'));
         }
         hidden('leaves', $leave_hours);
         hidden('deductableleaves', WORK_DAYS - $workdays);
@@ -92,19 +89,16 @@ function display_payslip_header(&$Order) {
     }
     else {
         $emp_id = '';
-        label_row("Work days:", '');
-        label_row("Leave hours:", '');
+        label_row(_('Work days:'), '');
+        label_row(_('Leave hours:'), '');
         while($row = db_fetch($ot)) {
             label_row($row['overtime_name'], '');
         }
     }
     // end of section 4
 
-	if (list_updated('person_id')) {
-
-		//generate_gl_items($Order,get_post('person_id'));
+	if (list_updated('person_id'))
 		$Order->clear_items();
-	}
 	
 	end_outer_table();
 }
@@ -214,13 +208,13 @@ function display_advice_header(&$Order) {
 		
 		hidden('PayType', PT_EMPLOYEE);
 
-		$employee = get_employee($Order->person_id);
+		$employee = get_employees($Order->person_id);
 
 		$_POST['to_the_order_of'] = $Order->to_the_order_of;
 
 		if(isset($_GET['PaymentAdvice']) || isset($_POST['PaymentAdvice'])) {
-			label_row(_("Pay To: "),$employee['emp_first_name']." ".$employee['emp_last_name']);
-			hidden('person_id',$Order->person_id);
+			label_row(_("Pay To: "), $employee['emp_first_name']." ".$employee['emp_last_name']);
+			hidden('person_id', $Order->person_id);
 			label_row(_("To the Order of:"),$Order->to_the_order_of);
 
 			hidden('to_the_order_of');
@@ -233,12 +227,10 @@ function display_advice_header(&$Order) {
 			employee_list_row(_("Pay To: "), 'person_id', null, _("Select Employee"), true, false, false);
 			text_row(_("To the Order of:"), 'to_the_order_of', $_POST['to_the_order_of'], 20, 50);
 		}
-		
-	table_section(3, "35%");	
+		table_section(3, "35%");	
 		if(!isset($_POST['PaySlipNo'])) {
 			$_POST['PaySlipNo'] = $Order->payslip_no = 0;
 		}
-		
 
 		bank_accounts_list_row(_("From:"), 'bank_account', null, true);
 		bank_balance_row(get_post('bank_account'));
@@ -248,19 +240,17 @@ function display_advice_header(&$Order) {
 
 		}
         else {
-            employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('person_id'), _("Select One"), true);
+            employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('person_id'), _("Select payslip"), true);
 		}
 		
-		//on change employee
-		if (list_updated('person_id')) {//get payslip for selected employee
+		if (list_updated('person_id')) {
 			$Order->clear_items();
-			unset($_POST['totamount']); // enable default
+			unset($_POST['totamount']);
 			$Ajax->activate('totamount');
 			$Ajax->activate('for_payslip');
 			$Order->payslip_no = 0;	
 		}
 		
-		//on change payslip transaction or on change bank account
 		if (list_updated('for_payslip') || list_updated('bank_account')) {
 			$Order->clear_items();
 			$_POST['memo_'] = "";
@@ -278,7 +268,7 @@ function display_advice_header(&$Order) {
                 
 		
 			if($payslip) {
-				$_POST['memo_'] = "Payment advice gl entry For Payslip".$payslip['payslip_no'];
+				$_POST['memo_'] = "Payment advice gl entry For Payslip #".$payslip['payslip_no'];
 
 				if(list_updated('for_payslip')) {
 					$Order->payslip_trans_no = $payslip['type_no'];
@@ -470,56 +460,38 @@ function gl_options_controls() {
 
 function _format_emp_payslip($row) {
 
-	return "Trans# ".$row['type_no'] ." - ". $row['salary_scale_name'];
+	return "Trans# ".$row['type_no'] ." - ". $row['scale_name'];
 }
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list($name, $selected_id=null, $employee_id, $spec_option=false, $submit_on_change=false, $show_inactive=false, $editkey = false)
+function employee_payslip_list($name, $selected_id = null, $employee_id, $spec_option = false, $submit_on_change = false, $show_inactive = false)
 {
 	global $all_items;
 
 	if($employee_id) {
+
 	    $sql = get_sql_for_payslips($employee_id);
-        //else $sql = '';
-	    //display_notification($sql);exit;
-	    $mode = 0;//We don't have many employees, hardcoding to no search
 
-	    if ($editkey)
-		    set_editor('employee', $name, $editkey);
-
-	    $ret = combo_input($name, $selected_id, $sql, 'type_no', 'salary_scale_name',
+	    return combo_input($name, $selected_id, $sql, 'type_no', 'emp_name',
 	    array(
-	        'format' => '_format_emp_payslip',
-	    
-		    'search_box' => $mode!=0,
-		    'type' => 1,
-		    'size' => 20,
 		    'spec_option' => $spec_option === true ? _("All Payslip") : $spec_option,
-		    'spec_id' => $all_items,//what is this?
 		    'select_submit'=> $submit_on_change,
 		    'async' => false,
-		    'sel_hint' => $mode ? _('Press Space tab to filter by name fragment; F2 - entry new employee') :
-		    _('Select employee payslip'),
 		    'show_inactive' => $show_inactive,
-		    'opt_value' => 'type_no'
-	    ) );
-	    if ($editkey)
-		    $ret .= add_edit_combo('employee');
-	    return $ret;
+	    ));
     }
 }
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_cells($label, $name, $selected_id=null,$employee_id, $all_option=false, 
-	$submit_on_change=false, $show_inactive=false, $editkey = false)
+function employee_payslip_list_cells($label, $name, $selected_id = null, $employee_id, $all_option = false, $submit_on_change = false, $show_inactive = false)
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
 	echo "<td nowrap>";
-	echo employee_payslip_list($name, $selected_id,$employee_id, $all_option, $submit_on_change,
-		$show_inactive, $editkey);
+	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change,
+		$show_inactive);
 	echo "</td>\n";
 }
 
