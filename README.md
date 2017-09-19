@@ -4,7 +4,7 @@
 Requirement
 -----------
 - FrontAccounting 2.4.x
-- dejavu font
+- [dejavu font](http://frontaccounting.com/wb3/modules/download_gallery/dlc.php?file=57)
 
 Installation
 ------------
