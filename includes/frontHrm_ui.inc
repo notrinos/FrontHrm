@@ -13,6 +13,7 @@ include_once($path_to_root."/modules/FrontHrm/includes/ui/employee_ui.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/ui/department_ui.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/ui/salary_scale_ui.inc");
 include_once($path_to_root."/modules/FrontHrm/includes/ui/overtime_ui.inc");
+include_once($path_to_root."/modules/FrontHrm/includes/ui/payslip_ui.inc");
 
 define('DEBIT', 1);
 define('CREDIT', 0);
@@ -27,3 +28,5 @@ define('GL_DEDUCT_LEAVE', 5410);
 define('GL_OVERTIME', 5420);
 
 define ('AC_PAYABLE', 2100);
+
+define ('ST_PAYSLIP', 15);
