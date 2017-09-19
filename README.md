@@ -8,7 +8,7 @@ Requirement
 
 Installation
 ------------
-- Copy FrontHrm folder to the FA modules directory.
+- Rename FrontHrm-master to FrontHrm then copy folder to the FA modules directory.
 - Comment out block of codes from lines 215 to 220 of "*admin/inst_module.php*".
 - Copy rep889.php to FA reporting folder.
 - Replace "*reporting/includes/reporting.inc*" with reporting.inc in the FrontHrm.
