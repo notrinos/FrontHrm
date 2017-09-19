@@ -22,7 +22,6 @@ if (user_use_date_picker())
 	$js .= get_js_date_picker();
 
 include_once($path_to_root . "/includes/ui.inc");
-// include_once($path_to_root . "/includes/date_functions.inc");
 include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
 include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
