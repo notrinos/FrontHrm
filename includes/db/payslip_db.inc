@@ -109,7 +109,7 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 //--------------------------------------------------------------------------
 
 function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $salary_scale = '') {
-	global $payable_act;
+	global $Payable_act;
 
 	$sql = "SELECT 
         gl.type_no,
@@ -137,7 +137,7 @@ function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $sala
 		 LEFT JOIN ".TB_PREF."payslip_detail as p ON
 		    gl.payslip_no = p.payslip_no
 		WHERE gl.person_type_id = ".PT_EMPLOYEE."
-		AND gl.account = " .$payable_act ;
+		AND gl.account = " .$Payable_act ;
 
 	if($from != '' && $to != '') {
 		$sql .= " AND gl.tran_date >= '" . date2sql($from) . "' AND gl.tran_date <= '" . date2sql($to) . "'";
@@ -152,7 +152,7 @@ function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $sala
 		$sql .= " AND SUBSTRING(gl.person_id, 4) = ".db_escape($employee);
 	}
 		
-	$sql .= " AND gl.amount!=0 ";
+	$sql .= " AND gl.amount != 0 ";
 	
 	
 	$sql .= " GROUP BY gl.payslip_no";
@@ -164,9 +164,9 @@ function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $sala
 //--------------------------------------------------------------------------
 
 function get_payslip($trans_id) {
-	global $payable_act;
+	global $Payable_act;
 
-	$sql = "SELECT gl.*, pd.to_the_order_of FROM ".TB_PREF."gl_trans as gl, ".TB_PREF."payslip_detail as pd WHERE type = ".ST_JOURNAL." AND account = " .$payable_act." AND type_no = ".db_escape($trans_id)." AND gl.payslip_no = pd.payslip_no";
+	$sql = "SELECT gl.*, pd.to_the_order_of FROM ".TB_PREF."gl_trans as gl, ".TB_PREF."payslip_detail as pd WHERE type = ".ST_JOURNAL." AND account = " .$Payable_act." AND type_no = ".db_escape($trans_id)." AND gl.payslip_no = pd.payslip_no";
 		
 	$result = db_query($sql, "Cannot retreive a gl transaction");
     return db_fetch($result);
