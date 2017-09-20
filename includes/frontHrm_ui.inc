@@ -19,14 +19,10 @@ define('DEBIT', 1);
 define('CREDIT', 0);
 
 define('PT_EMPLOYEE', 6);
-
-define ('WORK_DAYS', 26);
-define ('WORK_HOURS', 8);
-
-define('GL_BASIC_SALARY', 5410);
-define('GL_DEDUCT_LEAVE', 5410);
-define('GL_OVERTIME', 5420);
-
-define ('AC_PAYABLE', 2100);
-
 define ('ST_PAYSLIP', 15);
+
+$Payable_act = get_company_pref('payroll_payable_act');
+$Deduct_act = get_company_pref('payroll_deductleave_act');
+$Overtime_act = get_company_pref('payroll_overtime_act');
+$Work_days = get_company_pref('payroll_month_work_days');
+$Work_hours = get_company_pref('payroll_work_hours');
