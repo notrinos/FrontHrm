@@ -53,7 +53,7 @@ function handle_submit(&$selected_id) {
 			add_payroll_rule($selected_id, $payrule);
 		
 		$Ajax->activate('_page_body');
-		display_notification(_("Accounts have been updated, some accounts might not have been deleted if used in Salary Structure."));
+		display_notification(_("Accounts have been updated, some accounts might not have been deleted because Salary Structure using them."));
 	} 
 	else {
 		display_warning(_("Select accounts first."));		
