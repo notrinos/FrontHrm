@@ -37,13 +37,15 @@ function handle_submit(&$selected_id) {
 		$payrule = array();
 		foreach($_POST as $p =>$val) {
             
-			if (substr($p,0,7) == 'Payroll' && $val == 1) {
+			if (substr($p, 0, 7) == 'Payroll' && $val == 1) {
 				$a = substr($p,7);
 				$payrule[] = (int)$a;
 			}
 		}
-		if(payroll_rule_exist($selected_id))
-			update_payroll_rule($selected_id, $payrule);	
+		if(payroll_rule_exist($selected_id) && count($payrule) > 0)
+			update_payroll_rule($selected_id, $payrule);
+		else if(count($payrule) == 0)
+			reset_payroll($selected_id);
 		else
 			add_payroll_rule($selected_id, $payrule);
 		
@@ -116,22 +118,17 @@ if (isset($_POST['submit']))
 
 if (isset($_POST['delete'])) {
 
-	$cancel_delete = 0;
-
-	if ($cancel_delete == 0) {
-        
-		reset_payroll($selected_id);
-
-		display_notification(_("Selected payroll rules have been deleted."));
-		$_POST['SalaryScaleId'] = '';
-		$selected_id = '';
-		$Ajax->activate('_page_body');
-	}
+	reset_payroll($selected_id);
+	display_notification(_("Selected payroll rules have been deleted."));
+	$_POST['SalaryScaleId'] = '';
+	$selected_id = '';
+	$Ajax->activate('_page_body');
 }
 
 //----------------------------------------------------------------------------
 
-page(_($help_context = "Manage Payroll Rule"), false, false, "", $js); 
+page(_($help_context = "Manage Payroll Rule"), false, false, '', $js); 
+
 start_form();
 
 if (db_has_salary_scale()) {
@@ -148,12 +145,16 @@ if (db_has_salary_scale()) {
 		$Ajax->activate('SalaryScaleId');
 		set_focus('SalaryScaleId');
 	}
-} 
-else
-	hidden('SalaryScaleId');
 
-payroll_rule_settings($selected_id); 
+	payroll_rule_settings($selected_id);
+} 
+else {
+	hidden('SalaryScaleId');
+	display_note('Define Salary Scales first.');
+}
+
 
 hidden('popup', @$_REQUEST['popup']);
+
 end_form();
 end_page();
