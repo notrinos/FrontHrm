@@ -176,7 +176,7 @@ function payroll_rules_settings($selected_id) {
 		div_end();
     }
     else
-		display_error("Payroll rules not defined for this salary scale");
+		display_error(_("Payroll rules not defined for this salary scale"));
 }
 
 //--------------------------------------------------------------------------
@@ -194,7 +194,7 @@ if (db_has_salary_scale()) {
 } 
 else {
 	hidden('salary_scale_id');
-	display_note('Before you can run this function Salary Scales must be defined and add Payroll Rules to them.');
+	display_note(_('Before you can run this function Salary Scales must be defined and add Payroll Rules to them.'));
 }
 
 if($selected_id)
