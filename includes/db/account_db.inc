@@ -80,6 +80,12 @@ function payroll_rule_exist($salary_scale_id) {
 
 //--------------------------------------------------------------------------
 
+function payroll_rule_used($salary_scale, $rule) {
+	return check_empty_result("SELECT id FROM ".TB_PREF."salary_structure WHERE salary_scale_id = ".db_escape($salary_scale)." AND pay_rule_id = ".db_escape($rule));
+}
+
+//--------------------------------------------------------------------------
+
 function reset_payroll($salary_scale_id) {
 
 	$sql = "DELETE FROM ".TB_PREF."payroll_structure WHERE salary_scale_id =".db_escape($salary_scale_id);
