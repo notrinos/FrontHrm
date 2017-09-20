@@ -258,7 +258,7 @@ if (isset($_POST['Process'])) {
 
 if (isset($_POST['CancelOrder']) || !isset($_POST['person_id'])) {
 	$_SESSION['journal_items']->clear_items();
-	$_POST['from_date'] = $_POST['to_date'] =  $_POST['leaves'] = $_POST['deductableleaves'] = $_POST['workdays'] = '';
+	$_POST['leaves'] = $_POST['deductableleaves'] = $_POST['workdays'] = '';
 	$Ajax->activate('_page_body');
 }
 
