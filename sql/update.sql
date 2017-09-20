@@ -101,3 +101,15 @@ CREATE TABLE IF NOT EXISTS `0_payslip_detail` (
 
 
 ALTER TABLE `0_gl_trans` ADD `payslip_no` INT(11) NOT NULL DEFAULT 0;
+
+DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_deductleave_act';
+DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_month_work_days';
+DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_overtime_act';
+DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_payable_act';
+DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_work_hours';
+
+INSERT INTO `0_sys_prefs` VALUES ('payroll_deductleave_act', NULL, 'int', NULL, 5410);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_month_work_days', NULL, 'float', NULL, 26);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_overtime_act', NULL, 'int', NULL, 5420);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_payable_act', NULL, 'int', NULL, 2100);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_work_hours', NULL, 'float', NULL, 8);
