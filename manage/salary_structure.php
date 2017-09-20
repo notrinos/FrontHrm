@@ -27,7 +27,7 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = "Manage Salary Structure"), false, false, "", $js); 
+page(_($help_context = "Manage Salary Structure"), false, false, '', $js); 
 
 $selected_id = get_post('salary_scale_id','');
 
@@ -42,7 +42,7 @@ function can_process($selected_id) {
 
 	foreach($_POST as $p=>$val) {
 
-		if(substr($p,0,7) == "Account") {
+		if(substr($p, 0, 7) == "Account") {
 
 			if(input_num("Debit".$val) && input_num("Credit".$val)) {
 				display_error(_("Only one amount(debit or credit) is allowed per rule"));
@@ -64,7 +64,7 @@ function handle_submit(&$selected_id) {
 
 	$payroll_rules = array();
 	foreach($_POST as $p=>$val) {
-		if(substr($p,0,7) == "Account") {
+		if(substr($p, 0, 7) == "Account") {
 
 			if(input_num("Debit".$val) > 0) {
 				$type = DEBIT;
@@ -108,8 +108,7 @@ if (isset($_POST['delete'])) {
 
 	delete_salary_structure($selected_id);
 	display_notification(_("Selected structure has been deleted."));
-	unset($_POST['salary_scale_id']);
-	$selected_id = '';
+	$_POST['salary_scale_id'] = $selected_id = '';
 	$Ajax->activate('_page_body');
 }
 
@@ -168,19 +167,16 @@ function payroll_rules_settings($selected_id) {
 
 		div_start('controls');
         
-        if($new) {
+        if($new)
             submit_center('submit', _("Save salary structure"), true, '', 'default');
-        }
         else {
             submit_center_first('submit', _('Update'), _('Update salary structure data'), 'default');
             submit_center_last('delete', _("Delete"), _('Delete salary structure if have been never used'), true);
         }
-
 		div_end();
     }
-    else {
+    else
 		display_error("Payroll rules not defined for this salary scale");
-	}
 }
 
 //--------------------------------------------------------------------------
@@ -196,8 +192,10 @@ if (db_has_salary_scale()) {
 	end_row();
 	end_table();
 } 
-else
+else {
 	hidden('salary_scale_id');
+	display_note('Before you can run this function Salary Scales must be defined and add Payroll Rules to them.');
+}
 
 if($selected_id)
 	payroll_rules_settings($selected_id); 
