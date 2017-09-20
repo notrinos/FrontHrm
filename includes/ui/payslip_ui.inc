@@ -36,7 +36,7 @@ function get_work_days($start_date, $end_date) {
 //--------------------------------------------------------------------------
 
 function display_payslip_header(&$Order) {
-	global $Ajax;
+	global $Ajax, $Payable_act, $Work_days;
 
 	$qes = has_quick_entries(QE_JOURNAL);
 	$new = $Order->order_id==0;
@@ -84,7 +84,7 @@ function display_payslip_header(&$Order) {
             label_row($row['overtime_name'].':', get_ot_from_date_range($from, $to, $emp_id, $row['overtime_id']).' '._('hours'));
         }
         hidden('leaves', $leave_hours);
-        hidden('deductableleaves', WORK_DAYS - $workdays);
+        hidden('deductableleaves', $Work_days - $workdays);
         hidden('workdays', $workdays);
     }
     else {
@@ -107,7 +107,7 @@ function display_payslip_header(&$Order) {
 
 function generate_gl_items($Order){
 
-	global $Ajax;
+	global $Ajax, $Payable_act, $Deduct_act, $Overtime_act, $Work_hours, $Work_days;
 
 	$emp_id 	= $_POST['person_id'];
 	$from_date 	= $_POST['from_date'];
@@ -143,21 +143,21 @@ function generate_gl_items($Order){
     while($overtime_row = db_fetch($overtime_rows)) {
         $ot_rate = $overtime_row['overtime_rate'];
         $ot_hours = get_ot_from_date_range($from, $to, $emp_id, $overtime_row['overtime_id']);
-        $overtime_amount += ($salary_amount/WORK_DAYS)/WORK_HOURS * $ot_rate * $ot_hours;
+        $overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
     }
     if($overtime_amount != 0) {
-        $Order->add_gl_item(GL_OVERTIME, 0, 0, $overtime_amount, '');
+        $Order->add_gl_item($Overtime_act, 0, 0, $overtime_amount, '');
     }
     $totalDebit += $overtime_amount;
 	
     //leave calculation
-    $deductableleaves = WORK_DAYS - $workdays;
+    $deductableleaves = $Work_days - $workdays;
     $leave_hours = get_leave_hours($from, $to, $emp_id);
-    $leave_hours_amount = ($salary_amount/WORK_DAYS)/WORK_HOURS * $leave_hours;
-	$leave_deduct_amount = ($salary_amount/WORK_DAYS*$deductableleaves) + $leave_hours_amount;
+    $leave_hours_amount = ($salary_amount/$Work_days)/$Work_hours * $leave_hours;
+	$leave_deduct_amount = ($salary_amount/$Work_days*$deductableleaves) + $leave_hours_amount;
     
 	if($leave_deduct_amount != 0){
-		$Order->add_gl_item(GL_DEDUCT_LEAVE, 0, 0, -$leave_deduct_amount, '');
+		$Order->add_gl_item($Deduct_act, 0, 0, -$leave_deduct_amount, '');
 		$totalCredit += $leave_deduct_amount;
 	}
     
@@ -181,7 +181,7 @@ function generate_gl_items($Order){
 	$ac_payable_amount = $totalCredit - $totalDebit;
     
 	if($ac_payable_amount != 0)
-		$Order->add_gl_item(AC_PAYABLE, 0,0, $ac_payable_amount, '');
+		$Order->add_gl_item($Payable_act, 0, 0, $ac_payable_amount, '');
         
 	//------------------------------------------------==================
 	unset($_POST['totamount']); // enable default
@@ -191,7 +191,7 @@ function generate_gl_items($Order){
 //--------------------------------------------------------------------------
 
 function display_advice_header(&$Order) {
-	global $Ajax;
+	global $Ajax, $Payable_act;
 
 	$qes = has_quick_entries(QE_JOURNAL);
 	$new = $Order->order_id==0;
@@ -227,23 +227,19 @@ function display_advice_header(&$Order) {
 			employee_list_row(_("Pay To: "), 'person_id', null, _("Select Employee"), true, false, false);
 			text_row(_("To the Order of:"), 'to_the_order_of', $_POST['to_the_order_of'], 20, 50);
 		}
-		table_section(3, "35%");	
-		if(!isset($_POST['PaySlipNo'])) {
+		table_section(3, "35%");
+
+		if(!isset($_POST['PaySlipNo']))
 			$_POST['PaySlipNo'] = $Order->payslip_no = 0;
-		}
 
 		bank_accounts_list_row(_("From:"), 'bank_account', null, true);
 		bank_balance_row(get_post('bank_account'));
 	
-		if(isset($_GET['PaymentAdvice']) || isset($_POST['PaymentAdvice'])) {
-			
-
-		}
-        else {
+        if(!isset($_GET['PaymentAdvice']) && !isset($_POST['PaymentAdvice']))
             employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('person_id'), _("Select payslip"), true);
-		}
 		
 		if (list_updated('person_id')) {
+
 			$Order->clear_items();
 			unset($_POST['totamount']);
 			$Ajax->activate('totamount');
@@ -252,6 +248,7 @@ function display_advice_header(&$Order) {
 		}
 		
 		if (list_updated('for_payslip') || list_updated('bank_account')) {
+
 			$Order->clear_items();
 			$_POST['memo_'] = "";
 
@@ -271,6 +268,7 @@ function display_advice_header(&$Order) {
 				$_POST['memo_'] = "Payment advice gl entry For Payslip #".$payslip['payslip_no'];
 
 				if(list_updated('for_payslip')) {
+
 					$Order->payslip_trans_no = $payslip['type_no'];
 					$Order->person_id = $payslip['person_id'];
 					$Order->to_the_order_of = $payslip['to_the_order_of'];
@@ -282,11 +280,9 @@ function display_advice_header(&$Order) {
 
 				$bank_ac_code = get_bank_gl_account(get_post('bank_account'));
 	
-				$Order->add_gl_item(AC_PAYABLE, 0, 0, $ac_pmt_amt, '');
+				$Order->add_gl_item($Payable_act, 0, 0, $ac_pmt_amt, '');
 				$Order->add_gl_item($bank_ac_code, 0, 0, $cash_amt, '');
-
 			}
-            
 			$Ajax->activate('items_table');
 		}
 
