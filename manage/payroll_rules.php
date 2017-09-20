@@ -150,7 +150,7 @@ if (db_has_salary_scale()) {
 } 
 else {
 	hidden('SalaryScaleId');
-	display_note('Define Salary Scales first.');
+	display_note(_('Define Salary Scales first.'));
 }
 
 
