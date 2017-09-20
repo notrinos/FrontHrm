@@ -117,3 +117,9 @@ function check_employee_hired($id, $date) {
 function employee_has_salary_scale($id) {
 	return check_empty_result("SELECT salary_scale_id FROM ".TB_PREF."employee WHERE salary_scale_id != 0 AND emp_id = ".db_escape($id));
 }
+
+//--------------------------------------------------------------------------
+
+function emp_salaryscale_has_structure($id) {
+	return check_empty_result("SELECT e.salary_scale_id, s.* FROM ".TB_PREF."employee e, ".TB_PREF."salary_structure s WHERE e.salary_scale_id = s.salary_scale_id AND e.emp_id = ".db_escape($id));
+}
