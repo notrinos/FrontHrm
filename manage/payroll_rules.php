@@ -35,11 +35,14 @@ function handle_submit(&$selected_id) {
 	if ($selected_id) {	
 
 		$payrule = array();
-		foreach($_POST as $p =>$val) {
+		foreach($_POST as $p => $val) {
             
-			if (substr($p, 0, 7) == 'Payroll' && $val == 1) {
-				$a = substr($p,7);
-				$payrule[] = (int)$a;
+			if (substr($p, 0, 7) == 'Payroll') {
+
+				$a = substr($p, 7);
+
+				if($val == 1 || payroll_rule_used($selected_id, $a))
+					$payrule[] = (int)$a;
 			}
 		}
 		if(payroll_rule_exist($selected_id) && count($payrule) > 0)
@@ -50,7 +53,7 @@ function handle_submit(&$selected_id) {
 			add_payroll_rule($selected_id, $payrule);
 		
 		$Ajax->activate('_page_body');
-		display_notification(_("Accounts have been updated."));
+		display_notification(_("Accounts have been updated, some accounts might not have been deleted if used in Salary Structure."));
 	} 
 	else {
 		display_warning(_("Select accounts first."));		
@@ -63,9 +66,9 @@ function handle_submit(&$selected_id) {
 function payroll_rule_settings($selected_id) {
 	
 	$new = true;
-	foreach($_POST as $p =>$val) {
+	foreach($_POST as $p => $val) {
         
-		if (substr($p,0,7) == 'Payroll')
+		if (substr($p, 0, 7) == 'Payroll')
 			$_POST[$p] = '';
 	}
 	
@@ -93,7 +96,7 @@ function payroll_rule_settings($selected_id) {
 	
 	while($rule = db_fetch($rules)) {
 
-		check_row($rule["account_code"].' - '.$rule["account_name"], 'Payroll'.$rule["account_code"], null);	
+		check_row($rule["account_code"].' - '.$rule["account_name"], 'Payroll'.$rule["account_code"], null);
 	}
     end_table(1);
     
