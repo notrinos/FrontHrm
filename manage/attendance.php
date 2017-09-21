@@ -116,31 +116,30 @@ if(isset($_POST['addatt'])) {
 	if(!can_process())
 		return;
     
-	$att_items = 0;
     foreach($emp_ids as $id) {
         
-		if($_POST[$id.'-0'] != '' && check_attended($id, 0, $_POST['attend_date'])) {
+		if(check_date_paid($id, $_POST['attend_date'])) {
 			
-			display_error('Data has already exist');
+			display_error("Selected date has already paid for Employee $id");
             set_focus($id.'-0');
 			exit();
 		}
 		else {
-			$att_items += $_POST[$id.'-0'];
-			add_time_att($id, 0, $_POST[$id.'-0'], $_POST['attend_date']);
+			$att_items = $_POST[$id.'-0'];
+			write_attendance($id, 0, $_POST[$id.'-0'], $_POST['attend_date']);
 		}
         
         foreach($overtime_id as $ot) {
 			
-			if($_POST[$id.'-'.$ot] != '' && check_attended($id, $ot, $_POST['attend_date'])) {
+			if(check_date_paid($id, $_POST['attend_date'])){
 			
-				display_error('Data has already exist');
+				display_error("Selected date has already paid for Employee $id");
             	set_focus($id.'-'.$ot);
 				exit();
 			}
 			else {
-				$att_items += $_POST[$id.'-'.$ot];
-				add_time_att($id, $ot, $_POST[$id.'-'.$ot], $_POST['attend_date']);
+				$att_items = $_POST[$id.'-'.$ot];
+				write_attendance($id, $ot, $_POST[$id.'-'.$ot], $_POST['attend_date']);
 			}
         }
     }
