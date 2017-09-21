@@ -150,11 +150,12 @@ function get_emp_payslip($payslip_no, $emp) {
 }
 
 function get_amount($payslip_no, $emp, $overtime = false) {
+	global $Overtime_act;
 	
 	if(!$overtime)
 		$sql = "SELECT gl.amount FROM ".TB_PREF."gl_trans AS gl, ".TB_PREF."salary_structure AS sa, ".TB_PREF."employee AS e WHERE gl.account = sa.pay_rule_id AND SUBSTRING(gl.person_id, 4) = ".db_escape($emp)." AND gl.payslip_no = $payslip_no AND e.salary_scale_id = sa.salary_scale_id AND e.emp_id = ".db_escape($emp);
 	else
-		$sql = "SELECT amount FROM ".TB_PREF."gl_trans WHERE account = ".GL_OVERTIME." AND payslip_no = $payslip_no";
+		$sql = "SELECT amount FROM ".TB_PREF."gl_trans WHERE account = ".$Overtime_act." AND payslip_no = $payslip_no";
 	
 	$result = db_query($sql, "could not get payslip details.");
 	$amount = 0;
