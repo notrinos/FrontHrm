@@ -158,8 +158,18 @@ function validate_payslip_generation() {
 		set_focus('to_date');
 		return false;
 	}
-	if(check_paid($_POST['from_date'], $_POST['person_id'])) {
-        display_error("Selected from date has already paid for this person");
+	if(payslip_generated_for_date($_POST['from_date'], $_POST['person_id'])) {
+        display_error("Selected date has already paid for this person");
+        set_focus('from_date');
+        return false;
+    }
+    if(payslip_generated_for_date($_POST['to_date'], $_POST['person_id'])) {
+        display_error("Selected date has already paid for this person");
+        set_focus('to_date');
+        return false;
+    }
+    if(payslip_generated_for_period($_POST['from_date'], $_POST['to_date'], $_POST['person_id'])) {
+    	display_error("Selected period contains a period that has already been paid for this person");
         set_focus('from_date');
         return false;
     }
