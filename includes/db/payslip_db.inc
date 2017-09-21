@@ -174,9 +174,18 @@ function get_payslip($trans_id) {
 
 //--------------------------------------------------------------------------
 
-function check_paid($from_date, $employee) {
+function payslip_generated_for_date($date, $employee) {
 
-	$sql = "SELECT pd.to_date, bt.person_id FROM ".TB_PREF."gl_trans gl, ".TB_PREF."bank_trans bt, ".TB_PREF."payslip_detail pd WHERE gl.payslip_no = pd.payslip_no AND gl.person_type_id = ".PT_EMPLOYEE." AND SUBSTRING(gl.person_id, 4) = ".db_escape($employee)." AND pd.to_date >= "."'".date2sql($from_date)."' GROUP BY to_date";
+	$sql = "SELECT pd.to_date, bt.person_id FROM ".TB_PREF."gl_trans gl, ".TB_PREF."bank_trans bt, ".TB_PREF."payslip_detail pd WHERE gl.payslip_no = pd.payslip_no AND gl.person_type_id = ".PT_EMPLOYEE." AND SUBSTRING(gl.person_id, 4) = ".db_escape($employee)." AND '".date2sql($date)."' BETWEEN pd.from_date AND pd.to_date GROUP BY to_date";
+
+	return check_empty_result($sql);
+}
+
+//--------------------------------------------------------------------------
+
+function payslip_generated_for_period($from_date, $to_date, $employee) {
+
+	$sql = "SELECT pd.to_date, bt.person_id FROM ".TB_PREF."gl_trans gl, ".TB_PREF."bank_trans bt, ".TB_PREF."payslip_detail pd WHERE gl.payslip_no = pd.payslip_no AND gl.person_type_id = ".PT_EMPLOYEE." AND SUBSTRING(gl.person_id, 4) = ".db_escape($employee)." AND '".date2sql($from_date)."' <= pd.from_date AND '".date2sql($to_date)."' >= pd.to_date GROUP BY to_date";
 
 	return check_empty_result($sql);
 }
