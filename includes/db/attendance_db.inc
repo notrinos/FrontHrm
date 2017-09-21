@@ -17,14 +17,23 @@ function check_attended($emp_id, $overtime_id, $att_date) {
 
 //--------------------------------------------------------------------------
 
-function add_time_att($emp_id, $overtime_id, $hours_no = null, $att_date) {
+function write_attendance($emp_id, $overtime_id, $hours_no = null, $att_date) {
     
     if(isset($hours_no) && $hours_no != '') {
-	
-        $sql = "INSERT INTO ".TB_PREF."attendance(emp_id, overtime_id, hours_no, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",'".date2sql($att_date)."')";
+
+    	if(check_attended($emp_id, $overtime_id, $att_date))
+    		$sql = "UPDATE ".TB_PREF."attendance SET hours_no = ".db_escape($hours_no)." WHERE att_date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id);
+    	else
+    		$sql = "INSERT INTO ".TB_PREF."attendance(emp_id, overtime_id, hours_no, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",'".date2sql($att_date)."')";
     
         db_query($sql, 'Could not add time clock');
     }
+}
+
+//--------------------------------------------------------------------------
+
+function check_date_paid($person_id, $att_date) {
+	return check_empty_result("SELECT gl.payslip_no, gl.person_id, p.payslip_no, p.from_date, p.to_date FROM ".TB_PREF."gl_trans gl, ".TB_PREF."payslip_detail p WHERE SUBSTRING(gl.person_id, 4) = ".db_escape($person_id)." AND gl.payslip_no = p.payslip_no AND '".date2sql($att_date)."' BETWEEN p.from_date AND p.to_date");
 }
 
 //--------------------------------------------------------------------------
