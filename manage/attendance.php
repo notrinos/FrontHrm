@@ -116,6 +116,7 @@ if(isset($_POST['addatt'])) {
 	if(!can_process())
 		return;
     
+    $att_items = 0;
     foreach($emp_ids as $id) {
         
 		if(check_date_paid($id, $_POST['attend_date'])) {
@@ -125,7 +126,7 @@ if(isset($_POST['addatt'])) {
 			exit();
 		}
 		else {
-			$att_items = $_POST[$id.'-0'];
+			$att_items += $_POST[$id.'-0'];
 			write_attendance($id, 0, $_POST[$id.'-0'], $_POST['attend_date']);
 		}
         
@@ -138,7 +139,7 @@ if(isset($_POST['addatt'])) {
 				exit();
 			}
 			else {
-				$att_items = $_POST[$id.'-'.$ot];
+				$att_items += $_POST[$id.'-'.$ot];
 				write_attendance($id, $ot, $_POST[$id.'-'.$ot], $_POST['attend_date']);
 			}
         }
