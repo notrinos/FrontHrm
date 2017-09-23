@@ -286,8 +286,7 @@ function display_advice_header(&$Order) {
 			$Ajax->activate('items_table');
 		}
 
-		hidden('PaySlipNo',$Order->payslip_no);
-		label_row(_("Payslip No:"),$Order->payslip_no);
+		hidden('PaySlipNo', $Order->payslip_no);
 	
 	end_outer_table(1);
 }
@@ -461,17 +460,17 @@ function _format_emp_payslip($row) {
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list($name, $selected_id = null, $employee_id, $spec_option = false, $submit_on_change = false, $show_inactive = false)
-{
+function employee_payslip_list($name, $selected_id = null, $employee_id, $spec_option = false, $submit_on_change = false, $show_inactive = false) {
 	global $all_items;
 
 	if($employee_id) {
 
-	    $sql = get_sql_for_payslips($employee_id);
+	    $sql = get_sql_for_payslips($employee_id, '', '', '', '', true);
 
 	    return combo_input($name, $selected_id, $sql, 'type_no', 'emp_name',
 	    array(
 		    'spec_option' => $spec_option === true ? _("All Payslip") : $spec_option,
+		    'format' => '_format_payslip_date',
 		    'select_submit'=> $submit_on_change,
 		    'async' => false,
 		    'show_inactive' => $show_inactive,
@@ -479,10 +478,14 @@ function employee_payslip_list($name, $selected_id = null, $employee_id, $spec_o
     }
 }
 
+function _format_payslip_date($row) {
+	return 'Payslip #'.$row[4].' ('.sql2date($row[1]).')';
+}
+
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_cells($label, $name, $selected_id = null, $employee_id, $all_option = false, $submit_on_change = false, $show_inactive = false)
-{
+function employee_payslip_list_cells($label, $name, $selected_id = null, $employee_id, $all_option = false, $submit_on_change = false, $show_inactive = false) {
+
 	if ($label != null)
 		echo "<td>$label</td>\n";
 	echo "<td nowrap>";
@@ -493,9 +496,9 @@ function employee_payslip_list_cells($label, $name, $selected_id = null, $employ
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_row($label, $name, $selected_id=null, $employee_id, $all_option = false, $submit_on_change=false, $show_inactive=false, $editkey = false)
-{
+function employee_payslip_list_row($label, $name, $selected_id = null, $employee_id, $all_option = false, $submit_on_change = false, $show_inactive = false) {
+
 	echo "<tr><td class='label'>$label</td><td>";
-	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change, $show_inactive, $editkey);
+	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change, $show_inactive);
 	echo "</td></tr>\n";
 }
