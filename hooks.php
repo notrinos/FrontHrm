@@ -24,6 +24,7 @@ class FrontHrm_app extends application {
    
         $this->add_module(_("Inquiries and Reports"));
 		$this->add_lapp_function(1, _('Timesheet'), $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php', 'SA_EMPL', MENU_INQUIRY);
+	    $this->add_lapp_function(1, _('Employee Transaction Inquiry'), $path_to_root.'/modules/FrontHrm/inquiry/emp_inquiry.php?', 'SA_EMPL', MENU_INQUIRY);
         
         $this->add_module(_("Maintenance"));
 		$this->add_lapp_function(2, _('Employees'), $path_to_root.'/modules/FrontHrm/manage/employee.php', 'SA_EMPL', MENU_ENTRY);
