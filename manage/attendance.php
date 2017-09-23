@@ -29,7 +29,7 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 
 function can_process() {
 	
-	foreach(db_query(get_employees()) as $emp) {
+	foreach(db_query(get_employees(false, false, get_post('DeptId'))) as $emp) {
 		
 		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && !is_numeric($_POST[$emp['emp_id'].'-0']))
 		{
@@ -119,7 +119,7 @@ if(isset($_POST['addatt'])) {
     $att_items = 0;
     foreach($emp_ids as $id) {
         
-		if(check_date_paid($id, $_POST['attend_date'])) {
+		if($_POST[$id.'-0'] && check_date_paid($id, $_POST['attend_date'])) {
 			
 			display_error("Selected date has already paid for Employee $id");
             set_focus($id.'-0');
@@ -132,7 +132,7 @@ if(isset($_POST['addatt'])) {
         
         foreach($overtime_id as $ot) {
 			
-			if(check_date_paid($id, $_POST['attend_date'])){
+			if($_POST[$id.'-0'] && check_date_paid($id, $_POST['attend_date'])){
 			
 				display_error("Selected date has already paid for Employee $id");
             	set_focus($id.'-'.$ot);
