@@ -108,18 +108,20 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 
 //--------------------------------------------------------------------------
 
-function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $salary_scale = '') {
+function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $salary_scale = '', $only_unpaid = false) {
 	global $Payable_act;
 
 	$sql = "SELECT 
-        gl.type_no,
-        CONCAT('Payslip #', p.payslip_no, ' (', gl.tran_date, ')'),
+        gl.type_no as trans_no,
+        gl.tran_date,
+        e.emp_id,
 		CONCAT(e.emp_first_name,' ',e.emp_last_name) as emp_name,
-		s.scale_name as scale_name,
-		d.dept_name as department,
-		p.to_the_order_of,
+		p.payslip_no,
+		p.from_date,
+		p.to_date,
 		ABS(gl.amount) as amount,
 		c.memo_,
+		gl.type as trans_type,
 		IF(ISNULL(a.gl_seq),0,a.gl_seq) as gl_seq,
 		COUNT(gl.payslip_no) as PaySlip
 		
@@ -139,24 +141,21 @@ function get_sql_for_payslips($employee, $from = '', $to = '', $dept = '', $sala
 		WHERE gl.person_type_id = ".PT_EMPLOYEE."
 		AND gl.account = " .$Payable_act ;
 
-	if($from != '' && $to != '') {
+	if($from != '' && $to != '')
 		$sql .= " AND gl.tran_date >= '" . date2sql($from) . "' AND gl.tran_date <= '" . date2sql($to) . "'";
-	}
-	if($dept != '') {
+	if($dept != '')
 		$sql .= " AND e.department_id = ".db_escape($dept);
-	}
-	elseif($salary_scale != '') {
+	elseif($salary_scale != '')
 		$sql .= " AND e.salary_scale_id = ".db_escape($salary_scale);
-	}
-	elseif($employee != -1 && $employee != '') {
+	elseif($employee != -1 && $employee != '')
 		$sql .= " AND SUBSTRING(gl.person_id, 4) = ".db_escape($employee);
-	}
 		
 	$sql .= " AND gl.amount != 0 ";
 	
-	
 	$sql .= " GROUP BY gl.payslip_no";
-	$sql .= " HAVING PaySlip = 1";
+
+	if($only_unpaid)
+		$sql .= " HAVING PaySlip = 1";
 	
 	return $sql;
 }
