@@ -178,6 +178,16 @@ function validate_payslip_generation() {
         set_focus('from_date');
         return false;
     }
+    if (date_comp($_POST['from_date'], Today()) > 0) {
+		display_error(_("Cannot pay for the date in the future."));
+		set_focus('from_date');
+		return false;
+	}
+	if (date_comp($_POST['to_date'], Today()) > 0) {
+		display_error(_("Cannot pay for the date in the future."));
+		set_focus('to_date');
+		return false;
+	}
     if(!check_employee_hired($_POST['person_id'], $_POST['from_date'])) {
         display_error("Cannot pay before hired date");
         set_focus('from_date');
@@ -218,7 +228,6 @@ if (isset($_POST['Process'])) {
 		set_focus('code_id');
 		$input_error = 1;
 	}
-
 	if (!is_date($_POST['date_'])) {
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
@@ -229,10 +238,14 @@ if (isset($_POST['Process'])) {
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	if (!check_reference($_POST['ref'], ST_JOURNAL, $_SESSION['journal_items']->order_id))
-	{
+	if (!check_reference($_POST['ref'], ST_JOURNAL, $_SESSION['journal_items']->order_id)) {
    		set_focus('ref');
    		$input_error = 1;
+	}
+	if($_SESSION['journal_items']->empty_payment) {
+		display_error(_('Employee cannot getting paid for non-working period.'));
+		set_focus('from_date');
+		$input_error = 1;
 	}
 	if ($input_error == 1)
 		unset($_POST['Process']);
@@ -281,26 +294,21 @@ if (isset($_POST['CancelOrder']) || !isset($_POST['person_id'])) {
 //--------------------------------------------------------------------------
 
 function check_item_data() {
-	if (isset($_POST['dimension_id']) && $_POST['dimension_id'] != 0 && dimension_is_closed($_POST['dimension_id'])) 
-	{
+	if (isset($_POST['dimension_id']) && $_POST['dimension_id'] != 0 && dimension_is_closed($_POST['dimension_id'])) {
 		display_error(_("Dimension is closed."));
 		set_focus('dimension_id');
 		return false;
 	}
-
-	if (isset($_POST['dimension2_id']) && $_POST['dimension2_id'] != 0 && dimension_is_closed($_POST['dimension2_id'])) 
-	{
+	if (isset($_POST['dimension2_id']) && $_POST['dimension2_id'] != 0 && dimension_is_closed($_POST['dimension2_id'])) {
 		display_error(_("Dimension is closed."));
 		set_focus('dimension2_id');
 		return false;
 	}
-
 	if (!(input_num('AmountDebit')!=0 ^ input_num('AmountCredit')!=0) ) {
 		display_error(_("You must enter either a debit amount or a credit amount."));
 		set_focus('AmountDebit');
     		return false;
   	}
-
 	if (strlen($_POST['AmountDebit']) && !check_num('AmountDebit', 0)) {
         display_error(_("The debit amount entered is not a valid number or is less than zero."));
 		set_focus('AmountDebit');
@@ -311,13 +319,11 @@ function check_item_data() {
 		set_focus('AmountCredit');
         return false;
   	}
-	
 	if (!is_tax_gl_unique(get_post('code_id'))) {
    		display_error(_("Cannot post to GL account used by more than one tax type."));
 		set_focus('code_id');
    		return false;
 	}
-
 	if (!$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL') && is_bank_account($_POST['code_id'])) {
 		display_error(_("You cannot make a journal entry for a bank account. Please use one of the banking functions for bank transactions."));
 		set_focus('code_id');
