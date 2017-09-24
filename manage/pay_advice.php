@@ -26,10 +26,8 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
 include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
 
-if(isset($_GET['PaymentAdvice'])) {
-	
+if(isset($_GET['PaymentAdvice']))
 	$_SESSION['page_title'] = _($help_context = "Make Payment Advice for Payslip #".$_GET['PaymentAdvice']);	
-}
 else {
 	$_POST['NewPaymentAdvice'] = 'Yes';
 	$_SESSION['page_title'] = _($help_context = "Make Payment Advice");
@@ -111,7 +109,7 @@ function create_cart($type = 0, $trans_no =0, $payslip=array()) {
     
     check_is_closed($type, $trans_no);
 	$cart = new items_cart($type);
-//	$cart->clear_items();
+
     $cart->payslip_no = $_POST['PaySlipNo'];
     $cart->order_id = $trans_no;
     
@@ -166,7 +164,6 @@ if (isset($_POST['Process'])) {
 		set_focus('code_id');
 		$input_error = 1;
 	}
-
 	if (!is_date($_POST['date_'])) {
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
