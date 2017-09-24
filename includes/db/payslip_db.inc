@@ -61,7 +61,8 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
     $total = $cart->gl_items_total_debit();
 
 	//add payslip details
-	add_payslip_details($cart->payslip_no, $cart->to_the_order_of, $cart->from_date, $cart->to_date, $cart->leaves, $cart->deductable_leaves);
+	if($from_date != '' && $to_date != '')
+		add_payslip_details($cart->payslip_no, $cart->to_the_order_of, $from_date, $to_date, $cart->leaves, $cart->deductable_leaves);
     add_journal($trans_type, $trans_id, $total,	$date , $cart->currency, $ref, $cart->source_ref, $cart->rate, Today(), Today());
 	
 	$Refs->save($trans_type, $trans_id, $ref);
