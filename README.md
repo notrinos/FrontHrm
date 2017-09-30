@@ -1,6 +1,8 @@
 # FrontHrm
 [FrontAccounting](http://frontaccounting.com/) Payroll & Human Resource Module
 
+[DEMO](http://notrinos.cf)
+
 Requirement
 -----------
 - FrontAccounting 2.4.x
