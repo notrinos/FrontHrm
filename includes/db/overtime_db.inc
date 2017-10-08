@@ -63,7 +63,7 @@ function delete_overtime($id) {
 //--------------------------------------------------------------------------
 
 function overtime_used($id) {
-	return false;
+	return check_empty_result("SELECT overtime_id FROM ".TB_PREF."attendance WHERE overtime_id = ".db_escape($id));
 }
 
 //--------------------------------------------------------------------------
