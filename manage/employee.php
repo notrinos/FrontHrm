@@ -53,10 +53,12 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 	$filename .= emp_img_name($cur_id).".jpg";
 	
 	if ($_FILES['pic']['error'] == UPLOAD_ERR_INI_SIZE) {
+
 		display_error(_('The file size is over the maximum allowed.'));
 		$upload_file ='No';
 	}
 	elseif ($_FILES['pic']['error'] > 0) {
+
 		display_error(_('Error uploading file.'));
 		$upload_file ='No';
 	}
@@ -65,28 +67,28 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 	else
 		$imagetype = false;
 
-	if ($imagetype != IMAGETYPE_GIF && $imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG)
-	{
+	if ($imagetype != IMAGETYPE_GIF && $imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG) {
+
 		display_warning( _('Only graphics files can be uploaded'));
 		$upload_file ='No';
 	}
-	elseif (!in_array(strtoupper(substr(trim($_FILES['pic']['name']), strlen($_FILES['pic']['name']) - 3)), array('JPG','PNG','GIF')))
-	{
+	elseif (!in_array(strtoupper(substr(trim($_FILES['pic']['name']), strlen($_FILES['pic']['name']) - 3)), array('JPG','PNG','GIF'))) {
+
 		display_warning(_('Only graphics files are supported - a file extension of .jpg, .png or .gif is expected'));
 		$upload_file ='No';
 	}
-	elseif ( $_FILES['pic']['size'] > ($SysPrefs->max_image_size * 1024)) 
-	{
+	elseif ( $_FILES['pic']['size'] > ($SysPrefs->max_image_size * 1024)) {
+
 		display_warning(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . $SysPrefs->max_image_size);
 		$upload_file ='No';
 	} 
-	elseif ( $_FILES['pic']['type'] == "text/plain" ) 
-	{
+	elseif ( $_FILES['pic']['type'] == "text/plain" ) {
+
 		display_warning( _('Only graphics files can be uploaded'));
         $upload_file ='No';
 	}
-	elseif (file_exists($filename))
-	{
+	elseif (file_exists($filename)) {
+
 		$result = unlink($filename);
 		if (!$result) {
 			display_error(_('The existing image could not be removed'));
@@ -103,36 +105,38 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 
 function can_process() {
 	
-	if(strlen($_POST['EmpFirstName']) == 0 || $_POST['EmpFirstName'] == "")
-	{
+	if(strlen($_POST['EmpFirstName']) == 0 || $_POST['EmpFirstName'] == "") {
+
 		display_error(_("The employee first name must be entered."));
 		set_focus('EmpFirstName');
 		return false;
 	}
-	if(strlen($_POST['EmpLastName']) == 0 || $_POST['EmpLastName'] == "")
-	{
+	if(strlen($_POST['EmpLastName']) == 0 || $_POST['EmpLastName'] == "") {
+
 		display_error(_("The employee last name must be entered."));
 		set_focus('EmpLastName');
 		return false;
 	}
 	if(!filter_var($_POST['EmpEmail'], FILTER_VALIDATE_EMAIL)) {
+
 		display_error(_("Invalid email."));
 		set_focus('EmpEmail');
 		return false;
 	}
-	if (!is_date($_POST['EmpBirthDate']))
-	{
+	if (!is_date($_POST['EmpBirthDate'])) {
+
 		display_error( _("Invalid birth date."));
 		set_focus('EmpBirthDate');
 		return false;
 	}
-	if (!is_date($_POST['EmpHireDate']) && $_POST['EmpHireDate'] != null && $_POST['EmpHireDate'] != '00/00/0000')
-	{
+	if (!is_date($_POST['EmpHireDate']) && $_POST['EmpHireDate'] != null && $_POST['EmpHireDate'] != '00/00/0000') {
+
 		display_error( _("Invalid date."));
 		set_focus('EmpHireDate');
 		return false;
 	}
 	if (get_post('EmpInactive') == 1) {
+
 	    if (!is_date($_POST['EmpReleaseDate'])) {
 		display_error( _("Invalid release date."));
 		set_focus('EmpReleaseDate');
@@ -145,9 +149,10 @@ function can_process() {
 //--------------------------------------------------------------------------
 
 function can_delete($cur_id) {
+
 	$employee = get_employees($cur_id, true);
-	if($employee['emp_hiredate'] && $employee['emp_hiredate'] != '0000-00-00')
-	{
+
+	if($employee['emp_hiredate'] && $employee['emp_hiredate'] != '0000-00-00') {
 		display_error('Employed person cannot be deleted.');
 		return false;
 	}
@@ -241,7 +246,7 @@ function employee_settings($cur_id) {
 	table_section(1);
 	
 	hidden('emp_id');
-	
+
 	file_row(_("Image File") . ":", 'pic', 'pic');
 	$emp_img_link = "";
 	$check_remove_image = false;
@@ -259,6 +264,10 @@ function employee_settings($cur_id) {
 		check_row(_("Delete Image:"), 'del_image');
 	
 	table_section_title(_("Personal Information"));
+
+	if($cur_id)
+		label_row(_('Employee Id:'), $cur_id);
+
 	text_row(_("First Name:"), 'EmpFirstName', get_post('EmpFirstName'), 37, 50);
 	text_row(_("Last Name:"), 'EmpLastName', get_post('EmpLastName'), 37, 50);
 	gender_radio_row(_('Gender:'), 'EmpGender', get_post('EmpGender'));
@@ -332,6 +341,8 @@ if (isset($_POST['addupdate'])) {
 		$_POST['EmpReleaseDate'],
 		$_POST['EmpInactive']
 	);
+	$_SESSION['EmpId'] = db_insert_id();
+
 	if (check_value('del_image')) {
 		$filename = $avatar_path.emp_img_name($cur_id).".jpg";
 		if (file_exists($filename))
@@ -339,12 +350,13 @@ if (isset($_POST['addupdate'])) {
 	}
 	if($cur_id)
 		display_notification(_("Employee details has been updated."));
-	else 
+	else
 		display_notification(_("A new employee has been added."));
 	
 	$Ajax->activate('_page_body');
 }
 elseif(isset($_POST['delete'])) {
+
 	if(!can_delete($cur_id))
 		return;
 	delete_employee($cur_id);
