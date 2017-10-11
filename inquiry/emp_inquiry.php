@@ -55,13 +55,14 @@ end_table(1);
 function check_overdue($row) {
 
 }
-
 function payslip_status($row) {
 	return $row['PaySlip'] == 1 ? 'unpaid' : 'paid';
 }
-
 function view_link($row) {
 	return get_trans_view_str($row["trans_type"], $row["trans_no"]);
+}
+function prt_link($row) {
+	return print_document_link($row['trans_no'], _('Print this Payslip'), true, ST_PAYSLIP, ICON_PRINT, '', '', 0);
 }
 
 $sql = get_sql_for_payslips(get_post('EmpId'), get_post('FromDate'), get_post('ToDate'), get_post('DeptId'), '', check_value('OnlyUnpaid'));
@@ -75,7 +76,8 @@ $cols = array (
 	_('Pay from') => array('type'=>'date'),
 	_('Pay to') => array('type'=>'date'),
 	_('Amount') => array('type'=>'amount'),
-	_('Status') => array('fun'=>'payslip_status', 'align'=>'center')
+	_('Status') => array('fun'=>'payslip_status', 'align'=>'center'),
+	'' => array('align'=>'center', 'fun'=>'prt_link')
 );
 
 $table =& new_db_pager('trans_tbl', $sql, $cols);
