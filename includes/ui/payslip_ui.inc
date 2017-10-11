@@ -119,6 +119,7 @@ function generate_gl_items($Order){
 	$Order->clear_items();
 	$totalCredit = $totalDebit = 0;
 	$ac_payable_amount = 0;
+	$Order->empty_payment = false;
 	$salary_rules = get_emp_salary_structure($emp_id);
     
 	if(db_num_rows($salary_rules) > 0) {
@@ -182,6 +183,8 @@ function generate_gl_items($Order){
     
 	if($ac_payable_amount != 0)
 		$Order->add_gl_item($Payable_act, 0, 0, $ac_payable_amount, '');
+	else
+		$Order->empty_payment = true;
         
 	//------------------------------------------------==================
 	unset($_POST['totamount']); // enable default
