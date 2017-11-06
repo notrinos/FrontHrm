@@ -28,7 +28,7 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = _("Timesheet Inquiry")), false, false, "", $js);
+page(_($help_context = "Timesheet Inquiry"), false, false, "", $js);
 
 start_form();
 start_table(TABLESTYLE_NOBORDER);
