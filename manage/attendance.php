@@ -64,7 +64,7 @@ function can_process() {
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = _("Employees Attendance")), false, false, "", $js);
+page(_($help_context = "Employees Attendance"), false, false, "", $js);
 
 start_form();
 
