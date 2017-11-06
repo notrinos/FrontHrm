@@ -27,7 +27,7 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
 
 if(isset($_GET['PaymentAdvice']))
-	$_SESSION['page_title'] = _($help_context = "Make Payment Advice for Payslip #".$_GET['PaymentAdvice']);	
+	$_SESSION['page_title'] = _($help_context = "Make Payment Advice for Payslip #").$_GET['PaymentAdvice'];	
 else {
 	$_POST['NewPaymentAdvice'] = 'Yes';
 	$_SESSION['page_title'] = _($help_context = "Make Payment Advice");
