@@ -29,7 +29,7 @@ if (user_use_date_picker())
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = _("Employee Transaction")), isset($_GET['EmpId']), false, '', $js);
+page(_($help_context = "Employee Transaction"), isset($_GET['EmpId']), false, '', $js);
 
 if (isset($_GET['EmpId']))
 	$_POST['EmpId'] = $_GET['EmpId'];
