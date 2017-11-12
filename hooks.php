@@ -12,10 +12,10 @@ define ('SS_HRM', 251<<8);
 
 class FrontHrm_app extends application {
 	
-    function FrontHrm_app() {
+    function __construct() {
         global $path_to_root;
         
-        $this->application("FrontHrm", _($this->help_context = "Human Resource"));
+       parent::__construct("FrontHrm", _($this->help_context = "Human Resource"));
         
         $this->add_module(_("Transactions"));
 		$this->add_lapp_function(0, _('Attendance'), $path_to_root.'/modules/FrontHrm/manage/attendance.php', 'SA_EMPL', MENU_TRANSACTION);
@@ -41,7 +41,9 @@ class FrontHrm_app extends application {
 }
 
 class hooks_FrontHrm extends hooks {
-    var $module_name = 'FrontHrm';
+    function __construct() {
+ 		$this->module_name = 'FrontHrm';
+ 	}
     
     function install_tabs($app) {
         $app->add_application(new FrontHrm_app);
