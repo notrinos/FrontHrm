@@ -51,11 +51,18 @@ function gender_radio_row($label, $name, $gender=null) {
 	
     if($gender==0){
         echo "<input type='radio' name=$name value='1'>Male&nbsp;&nbsp;&nbsp;";
-        echo "<input type='radio' name=$name value='0' checked>Female";
+        echo "<input type='radio' name=$name value='0' checked>Female&nbsp;&nbsp;&nbsp;";
+        echo "<input type='radio' name=$name value='2'>Other";
+    }
+    elseif($gender==1) {
+        echo "<input type='radio' name=$name value='1' checked>Male&nbsp;&nbsp;&nbsp;";
+        echo "<input type='radio' name=$name value='0'>Female&nbsp;&nbsp;&nbsp;";
+        echo "<input type='radio' name=$name value='2'>Other";
     }
     else {
-        echo "<input type='radio' name=$name value='1' checked>Male&nbsp;&nbsp;&nbsp;";
-        echo "<input type='radio' name=$name value='0'>Female";
+        echo "<input type='radio' name=$name value='1'>Male&nbsp;&nbsp;&nbsp;";
+        echo "<input type='radio' name=$name value='0'>Female&nbsp;&nbsp;&nbsp;";
+        echo "<input type='radio' name=$name value='2' checked>Other";
     }
     echo "</td></tr>";
 }

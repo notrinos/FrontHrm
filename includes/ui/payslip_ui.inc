@@ -41,47 +41,48 @@ function display_payslip_header(&$Order) {
 	$qes = has_quick_entries(QE_JOURNAL);
 	$new = $Order->order_id==0;
 
-	start_outer_table(TABLESTYLE2, "width='90%'");
+	start_outer_table(TABLESTYLE2, "width='60%'");
 
 	table_section(1);
-
-   		date_row(_("Date:"), 'date_', '', $new);
-		ref_row(_("Reference:"), 'ref', '');
+   		date_row(_('Date').':&nbsp;', 'date_', '', $new);
+		ref_row(_('Reference').':', 'ref', '');
 
 	table_section(3);
-		date_row(_("From Date:"), 'from_date', '', $new, 0, 0, 0, null, true);
-		date_row(_("To Date:"), 'to_date', '', $new, 0, 0, 0, null, true);
+		date_row(_('From Date').':', 'from_date', '', $new, 0, 0, 0, null, true);
+		date_row(_('To Date').':', 'to_date', '', $new, 0, 0, 0, null, true);
 
 	table_section(2);
 		hidden('PayType', PT_EMPLOYEE);
-		employee_list_row(_("Pay To: "), 'person_id', null, _("Select employee"), true, false);
-		
-        if(isset($_POST['to_the_order_of']))
-        	text_row(_("To the Order of:"), 'to_the_order_of', $_POST['to_the_order_of'], '20', '30');
-        else
-            text_row(_("To the Order of:"), 'to_the_order_of', '', '20', '30');
+		employee_list_row(_('Pay To').':&nbsp;', 'person_id', null, _("Select employee"), true, false);
 		
 		if(!isset($_POST['PaySlipNo']))
 			$_POST['PaySlipNo'] = get_next_payslip_no();
 		
 		hidden('PaySlipNo', $_POST['PaySlipNo']);
-		label_row(_("Payslip No:"), $_POST['PaySlipNo']);
+		if(isset($_POST['person_id']) && $_POST['person_id'] != 0)
+		    label_row(_('Pay Basis').':', $Order->pay_basis == 0 ? _('Monthly salary') : _('Daily wages'));
+		label_row(_('Payslip No').':', $_POST['PaySlipNo']);
 	
 	table_section(4);
     
-    $from = date2sql($_POST['from_date']);
-    $to = date2sql($_POST['to_date']);
+    $from = $_POST['from_date'];
+    $to = $_POST['to_date'];
     $ot = db_query(get_overtime());
 
     if($_POST['person_id'] != '') {
         $emp_id = $_POST['person_id'];
         $workdays = get_workdays_no($from, $to, $emp_id);
         $leave_hours = get_leave_hours($from, $to, $emp_id);
-        label_row(_('Work days:'), $workdays.' '._('days'));
-        label_row(_('Leave hours:'), $leave_hours.' '._('hours'));
+        label_row(_('Work days').':', $workdays.'&nbsp;'._('days'));
+        label_row(_('Leave hours').':', $leave_hours.'&nbsp;'._('hours'));
         
         while($row = db_fetch($ot)) {
-            label_row($row['overtime_name'].':', get_ot_from_date_range($from, $to, $emp_id, $row['overtime_id']).' '._('hours'));
+            $hours_no = 0;
+            
+            foreach(get_ot_from_date_range($from, $to, $emp_id, $row['overtime_id']) as $hours) {
+                $hours_no += $hours['hours_no'];
+            }
+            label_row($row['overtime_name'].':', $hours_no.' '._('hours'));
         }
         hidden('leaves', $leave_hours);
         hidden('deductableleaves', $Work_days - $workdays);
@@ -89,13 +90,12 @@ function display_payslip_header(&$Order) {
     }
     else {
         $emp_id = '';
-        label_row(_('Work days:'), '');
-        label_row(_('Leave hours:'), '');
+        label_row(_('Work days').':', '');
+        label_row(_('Leave hours').':', '');
         while($row = db_fetch($ot)) {
             label_row($row['overtime_name'], '');
         }
     }
-    // end of section 4
 
 	if (list_updated('person_id'))
 		$Order->clear_items();
@@ -105,36 +105,46 @@ function display_payslip_header(&$Order) {
 
 //--------------------------------------------------------------------------
 
-function generate_gl_items($Order){
+function generate_gl_items($Order) {
 
 	global $Ajax, $Payable_act, $Deduct_act, $Overtime_act, $Work_hours, $Work_days;
 
 	$emp_id 	= $_POST['person_id'];
+	$salary_scale = get_employees($emp_id)['salary_scale_id'];
 	$from_date 	= $_POST['from_date'];
 	$to_date 	= $_POST['to_date'];
-    $from = date2sql($_POST['from_date']);
-    $to = date2sql($_POST['to_date']);
-    $workdays = get_workdays_no($from, $to, $emp_id);
+    $workdays = get_workdays_no($from_date, $to_date, $emp_id);
 
 	$Order->clear_items();
 	$totalCredit = $totalDebit = 0;
-	$ac_payable_amount = 0;
+	$payable_amount = 0;
 	$Order->empty_payment = false;
+	$Order->pay_basis = get_salary_scale($salary_scale)['pay_basis'];
+	$allowance = array();
 	$salary_rules = get_emp_salary_structure($emp_id);
+	$salary_amount = get_emp_basic_salary($emp_id)['pay_amount'];
+
+	if($Order->pay_basis == DAILY_WAGE)
+        $Work_days = 1;
     
 	if(db_num_rows($salary_rules) > 0) {
 
 		while($myrow = db_fetch($salary_rules) ) {
-            $salary_amount = $myrow['pay_amount'];
 
-			$Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']:$myrow['pay_amount'], '');
+			if($Order->pay_basis == MONTHLY_SALARY)
+			    $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']:$myrow['pay_amount'], '');
+			else
+			    $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']*$workdays:$myrow['pay_amount']*$workdays, '');
 
 			if($myrow['type'] == CREDIT) 
 				$totalCredit += $myrow['pay_amount'];
             else 
 				$totalDebit += $myrow['pay_amount'];
+			if($myrow['is_basic'] != 1)
+			    $allowance[$myrow['pay_rule_id']] = $myrow['pay_amount'];
+
 		}
-		
+		$Order->allowance = $allowance;
 	}
 	
     //overtime calculation
@@ -142,9 +152,16 @@ function generate_gl_items($Order){
     $overtime_amount = 0;
     
     while($overtime_row = db_fetch($overtime_rows)) {
-        $ot_rate = $overtime_row['overtime_rate'];
-        $ot_hours = get_ot_from_date_range($from, $to, $emp_id, $overtime_row['overtime_id']);
-        $overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
+        $ot_from_date_range = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id']);
+
+        while($ot_row = db_fetch($ot_from_date_range)) {
+            $ot_rate = $ot_row['rate'];
+            $ot_hours = $ot_row['hours_no'];
+            $overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
+        }
+        //$ot_rate = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id'])['rate'];
+        //$ot_hours = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id'])['hours_no'];
+        //$overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
     }
     if($overtime_amount != 0) {
         $Order->add_gl_item($Overtime_act, 0, 0, $overtime_amount, '');
@@ -152,8 +169,8 @@ function generate_gl_items($Order){
     $totalDebit += $overtime_amount;
 	
     //leave calculation
-    $deductableleaves = $Work_days - $workdays;
-    $leave_hours = get_leave_hours($from, $to, $emp_id);
+    $deductableleaves = ($Order->pay_basis == MONTHLY_SALARY) ? ($Work_days - $workdays) : 0;
+    $leave_hours = get_leave_hours($from_date, $to_date, $emp_id);
     $leave_hours_amount = ($salary_amount/$Work_days)/$Work_hours * $leave_hours;
 	$leave_deduct_amount = ($salary_amount/$Work_days*$deductableleaves) + $leave_hours_amount;
     
@@ -162,7 +179,6 @@ function generate_gl_items($Order){
 		$totalCredit += $leave_deduct_amount;
 	}
     
-
 	//expenses and deposits
 	$expences = get_expences_n_deposits($emp_id, $from_date, $to_date);
 	if(db_num_rows($expences) > 0){
@@ -179,12 +195,15 @@ function generate_gl_items($Order){
 		}
 	}
 
-	$ac_payable_amount = $totalCredit - $totalDebit;
+	$payable_amount = $totalCredit - $totalDebit;
     
-	if($ac_payable_amount != 0)
-		$Order->add_gl_item($Payable_act, 0, 0, $ac_payable_amount, '');
+	if($payable_amount != 0)
+		$Order->add_gl_item($Payable_act, 0, 0, $payable_amount, '');
 	else
 		$Order->empty_payment = true;
+
+	$Order->payable_amt = abs($payable_amount);
+	$Order->overtime_amt = abs($overtime_amount);
         
 	//------------------------------------------------==================
 	unset($_POST['totamount']); // enable default
@@ -217,7 +236,7 @@ function display_advice_header(&$Order) {
 
 		if(isset($_GET['PaymentAdvice']) || isset($_POST['PaymentAdvice'])) {
 			label_row(_("Pay To: "), $employee['emp_first_name']." ".$employee['emp_last_name']);
-			hidden('person_id', $Order->person_id);
+			hidden('emp_id', $Order->person_id);
 			label_row(_("To the Order of:"),$Order->to_the_order_of);
 
 			hidden('to_the_order_of');
@@ -227,7 +246,7 @@ function display_advice_header(&$Order) {
 			hidden('PaymentAdvice');
 		}
         else {
-			employee_list_row(_("Pay To: "), 'person_id', null, _("Select Employee"), true, false, false);
+			employee_list_row(_("Pay To: "), 'emp_id', null, _("Select Employee"), true, false, false);
 			text_row(_("To the Order of:"), 'to_the_order_of', $_POST['to_the_order_of'], 20, 50);
 		}
 		table_section(3, "35%");
@@ -239,9 +258,9 @@ function display_advice_header(&$Order) {
 		bank_balance_row(get_post('bank_account'));
 	
         if(!isset($_GET['PaymentAdvice']) && !isset($_POST['PaymentAdvice']))
-            employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('person_id'), _("Select payslip"), true);
+            employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('emp_id'), _("Select payslip"), true);
 		
-		if (list_updated('person_id')) {
+		if (list_updated('emp_id')) {
 
 			$Order->clear_items();
 			unset($_POST['totamount']);
@@ -264,7 +283,7 @@ function display_advice_header(&$Order) {
             if(!isset($Order->payslip_trans_no))
                 $payslip = null;
             else    
-                $payslip = get_payslip($Order->payslip_trans_no);
+                $payslip = get_payslip(false, $Order->payslip_trans_no);
                 
 		
 			if($payslip) {
@@ -272,13 +291,13 @@ function display_advice_header(&$Order) {
 
 				if(list_updated('for_payslip')) {
 
-					$Order->payslip_trans_no = $payslip['type_no'];
-					$Order->person_id = $payslip['person_id'];
-					$Order->to_the_order_of = $payslip['to_the_order_of'];
+					$Order->payslip_trans_no = $payslip['trans_no'];
+					$Order->person_id = $payslip['emp_id'];
+					//$Order->to_the_order_of = $payslip['to_the_order_of'];
 					$Order->payslip_no = $_POST['PaySlipNo'] = $payslip['payslip_no'];
 				}
                 
-				$ac_pmt_amt = -($payslip['amount']);
+				$ac_pmt_amt = -($payslip['payable_amount']);
 				$cash_amt = -($ac_pmt_amt);
 
 				$bank_ac_code = get_bank_gl_account(get_post('bank_account'));
@@ -304,7 +323,7 @@ function display_gl_items($title, &$order) {
 	$dim = get_company_pref('use_dimension');
 
     div_start('items_table');
-	start_table(TABLESTYLE, "width='95%'");
+	start_table(TABLESTYLE, "width='80%'");
 	if ($dim == 2)
 		$th = array(_("Account Code"), _("Account Description"), _("Dimension")." 1",
 			_("Dimension")." 2", _("Debit"), _("Credit"), _("Memo"), "");
@@ -338,7 +357,7 @@ function display_gl_items($title, &$order) {
 	        }	
 	        else {
 	            label_cell("");
-	           amount_cell(abs($item->amount));
+	            amount_cell(abs($item->amount));
 	        }	
             label_cell($item->reference);
 
@@ -463,14 +482,14 @@ function _format_emp_payslip($row) {
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list($name, $selected_id = null, $employee_id, $spec_option = false, $submit_on_change = false, $show_inactive = false) {
+function employee_payslip_list($name, $selected_id = null, $emp_id, $spec_option = false, $submit_on_change = false, $show_inactive = false) {
 	global $all_items;
 
-	if($employee_id) {
+	if($emp_id) {
 
-	    $sql = get_sql_for_payslips($employee_id, '', '', '', '', true);
+	    $sql = "SELECT p.payslip_no, p.generated_date FROM ".TB_PREF."payslip p LEFT JOIN ".TB_PREF."employee_trans t ON p.payslip_no = t.payslip_no WHERE t.payslip_no IS NULL AND p.emp_id = ".db_escape($emp_id);
 
-	    return combo_input($name, $selected_id, $sql, 'type_no', 'emp_name',
+	    return combo_input($name, $selected_id, $sql, 'payslip_no', 'payslip_no',
 	    array(
 		    'spec_option' => $spec_option === true ? _("All Payslip") : $spec_option,
 		    'format' => '_format_payslip_date',
@@ -482,7 +501,7 @@ function employee_payslip_list($name, $selected_id = null, $employee_id, $spec_o
 }
 
 function _format_payslip_date($row) {
-	return 'Payslip #'.$row[4].' ('.sql2date($row[1]).')';
+	return 'Payslip #'.$row[0].' ('.sql2date($row[1]).')';
 }
 
 //--------------------------------------------------------------------------
