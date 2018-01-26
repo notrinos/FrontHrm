@@ -33,8 +33,8 @@ $x = $pdf->getPageWidth();
 $y = $pdf->getPageHeight();
 $img_width = 80;
 
-$payslip = get_payslip($_POST['PARAM_0']);
-$emp = get_employees(substr($payslip['person_id'], 3));
+$payslip = get_payslip(false, $_POST['PARAM_0']);
+$emp = get_employees($payslip['emp_id']);
 $emp_name = $emp['emp_first_name'].' '.$emp['emp_last_name'];
 $emp_id = $emp['emp_id'];
 if($emp['department_id'] != 0)
@@ -76,12 +76,9 @@ $title = "<table border='0.5' cellpadding='3'>
 $contents = "<table border='0.5' cellpadding='3'>";
 
 $overtimes = get_overtime();
-$emp_payslip = get_emp_payslip($payslip_no, $emp_id);
+$emp_payslip = get_emp_att($payslip_no, $emp_id);
 $work_days = 0;
 $leave_hours = 0;
-$regular_amount = get_amount($payslip_no, $emp_id);
-$overtime_amount = get_amount($payslip_no, $emp_id, true);
-$total_earn = $regular_amount + $overtime_amount;
 
 $contents .= "<tr>
 				<td>Regular time</td>";
@@ -95,22 +92,31 @@ while($row = db_fetch($emp_payslip)){
 	}
 }
 
+$day_amount = get_day_amount($payslip_no);
+$basic_amount = ($day_amount* $work_days) - (($day_amount/8)*$leave_hours);
+$total_earn = $basic_amount;
+
 $contents .= "<td>$work_days days</td>
 			 <td>$leave_hours hours</td>
-			 <td style='text-align:right'>$regular_amount</td>
+			 <td style='text-align:right'>$basic_amount</td>
 			 </tr>";
 
 foreach(db_query($overtimes) as $overtime) {
 	
-	$emp_payslip = get_emp_payslip($payslip_no, $emp_id);
+	$emp_payslip = get_emp_att($payslip_no, $emp_id);
 	$overtime_hours = 0;
+	$overtime_amount = 0;
 	$time_name = $overtime['overtime_name'];
 	
 	while($row = db_fetch($emp_payslip)) {
 		
-		if($row['overtime_id'] == $overtime['overtime_id'])
+		if($row['overtime_id'] == $overtime['overtime_id']) {
 			$overtime_hours += $row['hours_no'];
+			$overtime_amount += (($day_amount/8)*$row['rate'])*$row['hours_no'];
+		}
 	}
+	
+	$total_earn += $overtime_amount;
 	$contents .= "<tr>
 				 <td>$time_name</td>
 				 <td>$overtime_hours hours</td>
@@ -122,15 +128,25 @@ foreach(db_query($overtimes) as $overtime) {
 	
 	$contents .= "</tr>";
 }
+foreach (get_payslip_allowance($payslip_no) as $row) {
+	$account_name = get_gl_account($row['detail'])['account_name'];
+	$allowance_amount = $row['amount'];
+	$total_earn += $allowance_amount;
+	$contents .= "<tr><td colspan='3'>$account_name</td><td style='text-align:right'>$allowance_amount</td></tr>";
+}
 
 $contents .= "<tr>
-				<td colspan='3' style='font-weight:bold'>Total</td><td style='text-align:right'>$total_earn</td>
+				<td colspan='3' align='right'><b>Total salary</b></td><td style='text-align:right'>$total_earn</td>
 			 </tr>
 		 </table>";
 
+function get_payslip_allowance($payslip_no) {
+    $sql = "SELECT * FROM ".TB_PREF."payslip_details WHERE payslip_no = ".db_escape($payslip_no);
+    return db_query($sql, _('Could not get payslip details'));
+}
 function get_pay_period($payslip_no) {
 	
-	$sql = "SELECT from_date, to_date FROM ".TB_PREF."payslip_detail WHERE payslip_no = $payslip_no";
+	$sql = "SELECT from_date, to_date FROM ".TB_PREF."payslip WHERE payslip_no = $payslip_no";
 	$result = db_fetch(db_query($sql, 'Could not get payslip details.'));
 	$from = $result['from_date'];
 	$to = $result['to_date'];
@@ -138,10 +154,8 @@ function get_pay_period($payslip_no) {
 	return array($from, $to);
 }
 
-function get_emp_payslip($payslip_no, $emp) {
-	
-	$from = get_pay_period($payslip_no)[0];
-	$to = get_pay_period($payslip_no)[1];
+function get_emp_att($payslip_no, $emp) {
+	global $from, $to;
 	
 	$sql = "SELECT * FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp)." AND att_date BETWEEN '$from' AND '$to'";
 	$result = db_query($sql, 'Could not get employee attendance data.');
@@ -149,20 +163,16 @@ function get_emp_payslip($payslip_no, $emp) {
 	return $result;
 }
 
-function get_amount($payslip_no, $emp, $overtime = false) {
-	global $Overtime_act;
-	
-	if(!$overtime)
-		$sql = "SELECT gl.amount FROM ".TB_PREF."gl_trans AS gl, ".TB_PREF."salary_structure AS sa, ".TB_PREF."employee AS e WHERE gl.account = sa.pay_rule_id AND SUBSTRING(gl.person_id, 4) = ".db_escape($emp)." AND gl.payslip_no = $payslip_no AND e.salary_scale_id = sa.salary_scale_id AND e.emp_id = ".db_escape($emp);
-	else
-		$sql = "SELECT amount FROM ".TB_PREF."gl_trans WHERE account = ".$Overtime_act." AND payslip_no = $payslip_no";
+function get_day_amount($payslip_no) {
+	global $work_days;
+	$sql = "SELECT salary_amount, deductable_leaves FROM ".TB_PREF."payslip WHERE payslip_no = ".db_escape($payslip_no);
 	
 	$result = db_query($sql, "could not get payslip details.");
-	$amount = 0;
-	while($row = db_fetch($result)) {
-		$amount += $row['amount'];
-	}
-	return $amount;
+	$row = db_fetch($result);
+
+    $amount = ($row['salary_amount'] / ($work_days + $row['deductable_leaves']));
+
+    return $amount;
 }
 
 //--------------------------------------------------------------------------
