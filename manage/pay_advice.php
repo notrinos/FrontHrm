@@ -26,8 +26,8 @@ include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
 include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
 
-if(isset($_GET['PaymentAdvice']))
-	$_SESSION['page_title'] = _($help_context = "Make Payment Advice for Payslip #").$_GET['PaymentAdvice'];	
+if(isset($_GET['PayslipNo']))
+	$_SESSION['page_title'] = _($help_context = "Make Payment Advice for Payslip #").$_GET['PayslipNo'];	
 else {
 	$_POST['NewPaymentAdvice'] = 'Yes';
 	$_SESSION['page_title'] = _($help_context = "Make Payment Advice");
@@ -49,12 +49,13 @@ function line_start_focus() {
 if (isset($_GET['AddedID'])) {
 	$trans_no = $_GET['AddedID'];
 	$trans_type = ST_JOURNAL;
-
+    $payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
    	display_notification_centered( _("Employee Payment Advice has been entered") . " #$trans_no");
-   	display_note(print_document_link($trans_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));
+   	display_note(print_document_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));
     display_note(get_gl_view_str($trans_type, $trans_no, _("&View this Payment Advice")));
 
 	reset_focus();
+	hyperlink_params($_SERVER['PHP_SELF'], _("Enter &New Payment Advice"), "NewPaymentAdvice=Yes");
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
 
 	display_footer_exit();
@@ -74,23 +75,24 @@ elseif (isset($_GET['UpdatedID'])) {
 
 //--------------------------------------------------------------------------
 
-if (isset($_GET['PaymentAdvice'])) {
+if (isset($_GET['PayslipNo'])) {
 
-	if(has_payment_advice($_GET['PaymentAdvice'])) {
+	if(has_payment_advice($_GET['PayslipNo'])) {
 
 		display_error(_("Payment advice exist"));
 		hyperlink_params("$path_to_root/modules/FrontHrm/inquiry/payment_advices.php",_("Payment Advices"));
 		display_footer_exit();
 	}
-    else {
-		$payslip = get_payslip($_GET['PaymentAdvice']);
-
-		$_POST['person_id'] = $payslip['person_id'];
-		$_POST['to_the_order_of'] = $payslip['to_the_order_of'];
-		$_POST['PaySlipNo'] = $payslip['payslip_no'];
-		$_POST['memo_'] = "Payment advice gl entry For Payslip".$payslip['payslip_no'];
+	elseif(get_payslip(false, $_GET['PayslipNo'])['payslip_no'] == null) {
+		display_error(_("Payslip number does not exist"));
+		hyperlink_params("$path_to_root/modules/FrontHrm/inquiry/payment_advices.php",_("Payment Advices"));
+		display_footer_exit();
 	}
-	$_POST['PaySlipNo'] = $_GET['PaymentAdvice'];
+    else {
+		$payslip = get_payslip(false, $_GET['PayslipNo']);
+		$_POST['PaySlipNo'] = $payslip['payslip_no'];
+	}
+	// $_POST['PaySlipNo'] = $_GET['PayslipNo'];
 
 	create_cart(0, 0, $payslip);
 } 
@@ -102,7 +104,7 @@ elseif (isset($_GET['NewPaymentAdvice'])) {
 //--------------------------------------------------------------------------
 
 function create_cart($type = 0, $trans_no =0, $payslip=array()) {
-	global $Refs;
+	global $Refs, $Payable_act;
 
 	if (isset($_SESSION['journal_items']))
 		unset ($_SESSION['journal_items']);
@@ -112,7 +114,7 @@ function create_cart($type = 0, $trans_no =0, $payslip=array()) {
 
     $cart->payslip_no = $_POST['PaySlipNo'];
     $cart->order_id = $trans_no;
-    
+    $cart->person_id = 0;
 	$cart->paytype = PT_EMPLOYEE;
 
 	$cart->reference = $Refs->get_next(ST_JOURNAL, null, $cart->tran_date);
@@ -123,26 +125,25 @@ function create_cart($type = 0, $trans_no =0, $payslip=array()) {
 
 	$_POST['ref'] = $cart->reference;
 	$_POST['date_'] = $cart->tran_date;
-    $cart->to_the_order_of = $cart->person_id = '';
-    $_POST['to_the_order_of'] = $cart->to_the_order_of;
-    $_POST['person_id'] = $cart->person_id;
-    $_POST['memo_'] = $cart->memo_;
+    $cart->to_the_order_of = '';
 
-	if($payslip) {
+	if($payslip && count($payslip) > 0) {
 
-		$cart->payslip_trans_no = $payslip['type_no'];
-		$cart->person_id = $payslip['person_id'];
-		$cart->to_the_order_of = $payslip['to_the_order_of'];
+		$cart->payslip_trans_no = $payslip['trans_no'];
+		$cart->person_id = $payslip['emp_id'];
 		$cart->payslip_no = $payslip['payslip_no'];
+        $_POST['emp_id'] = $cart->person_id;
+        $_POST['for_payslip'] = $cart->payslip_no;
+        $_POST['memo_'] = "Payment advice gl entry For Payslip #".$cart->payslip_no;
 
-		$ac_pmt_amt = -($payslip['amount']);
+		$ac_pmt_amt = -($payslip['payable_amount']);
 		$cash_amt = -($ac_pmt_amt);
 
 		$bank = get_default_bank_account();
 
 		$_POST['bank_account'] = $bank['id'];
 	
-		$cart->add_gl_item(AC_PAYABLE, 0, 0, $ac_pmt_amt, '');
+		$cart->add_gl_item($Payable_act, 0, 0, $ac_pmt_amt, '');
 		$cart->add_gl_item($bank['account_code'], 0, 0, $cash_amt, '');
 	}
 
@@ -191,7 +192,7 @@ if (isset($_POST['Process'])) {
     $cart->leaves = 
     $cart->deductable_leaves = '';
 //  -----------------------------------
-	$cart->person_id = $_POST['person_id'];
+	$cart->person_id = $_POST['emp_id'];
 	$cart->paytype = $_POST['PayType'];
 
 	$cart->to_the_order_of = $_POST['to_the_order_of'];
@@ -303,7 +304,7 @@ if (isset($_POST['CancelItemChanges']))
 	line_start_focus();
 
 if (isset($_POST['go'])) {
-	display_quick_entries($_SESSION['journal_items'], $_POST['person_id'], input_num('totamount'), QE_JOURNAL);
+	display_quick_entries($_SESSION['journal_items'], $_POST['emp_id'], input_num('totamount'), QE_JOURNAL);
 	$_POST['totamount'] = price_format(0); $Ajax->activate('totamount');
 	line_start_focus();
 }

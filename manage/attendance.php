@@ -44,16 +44,16 @@ function can_process() {
 	
 	foreach(db_query(get_employees(false, false, get_post('DeptId'))) as $emp) {
 		
-		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && !is_numeric($_POST[$emp['emp_id'].'-0'])) {
-			display_error(_("Overtime hours must be a number."));
+		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && !preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-0'])) {
+			display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b>, example - 02:25 , 2:25, 8:00, 23:59 ..."));
 			set_focus($emp['emp_id'].'-0');
 			return false;
 		}
 		foreach(db_query(get_overtime()) as $ot) {
 			
-			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && !is_numeric($_POST[$emp['emp_id'].'-'.$ot['overtime_id']])) {
+			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && !preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-'.$ot['overtime_id']])) {
 				
-				display_error(_("Overtime hours must be a number."));
+				display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b>, example - 02:25 , 2:25, 8:00, 23:59 ..."));
 				set_focus($emp['emp_id'].'-'.$ot['overtime_id']);
 				return false;
 			}
@@ -133,33 +133,38 @@ if(isset($_POST['addatt'])) {
         
 		if($_POST[$id.'-0'] && check_date_paid($id, $_POST['AttDate'])) {
 			
-			display_error("Selected date has already paid for Employee $id");
+			display_error(_('Attendance registration for this date has been approved, cannot be updated.'));
             set_focus($id.'-0');
 			exit();
 		}
 		else {
-			$att_items += $_POST[$id.'-0'];
-			write_attendance($id, 0, $_POST[$id.'-0'], $_POST['AttDate']);
+			if(strlen($_POST[$id.'-0']) > 0)
+                $att_items += time_to_float($_POST[$id.'-0']);
+			
+			write_attendance($id, 0, time_to_float($_POST[$id.'-0']), 1, $_POST['AttDate']);
 		}
         
         foreach($overtime_id as $ot) {
 			
 			if($_POST[$id.'-0'] && check_date_paid($id, $_POST['AttDate'])){
 			
-				display_error("Selected date has already paid for Employee $id");
+				display_error(_('Selected date has already paid for Employee $id'));
             	set_focus($id.'-'.$ot);
 				exit();
 			}
 			else {
-				$att_items += $_POST[$id.'-'.$ot];
-				write_attendance($id, $ot, $_POST[$id.'-'.$ot], $_POST['AttDate']);
+				$rate = get_overtime($ot)['overtime_rate'];
+				if(strlen($_POST[$id.'-'.$ot]) > 0)
+				    $att_items += time_to_float($_POST[$id.'-'.$ot]);
+				write_attendance($id, $ot, time_to_float($_POST[$id.'-'.$ot]), $rate, $_POST['AttDate']);
 			}
         }
     }
 	if($att_items > 0)
-		display_notification('Attendance has been saved.');
+		display_notification(_('Attendance has been saved.'));
 	else
 		display_notification(_('Nothing added'));
+	$Ajax->activate('_page_body');
 }
 
 end_form();

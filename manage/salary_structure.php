@@ -119,9 +119,13 @@ function payroll_rules_settings($selected_id) {
 	$new = true;
 
 	$rules = array();
-
+    $basic_salary = '';
 	$payroll_structure = get_payroll_structure($selected_id);
-    
+	foreach(get_salary_structure($selected_id) as $row) {
+		if($row['is_basic'] == 1)
+            $basic_salary = $row;
+	}
+
 	if($payroll_structure) {
 
 		foreach($payroll_structure['payroll_rule'] as $code) {
@@ -152,9 +156,13 @@ function payroll_rules_settings($selected_id) {
 
 		br();
 		start_table(TABLESTYLE2);
-		$th = array(_("Payroll Rules"),_("Debit"),_("Credit"));
+		$th = array(_("Payroll Rules"),_("Earnings"),_("Deductions"));
 		table_header($th);
-        
+        start_row("class='inquirybg'");
+        label_cell($basic_salary["account_name"]);
+        amount_cell($basic_salary["pay_amount"]);
+        amount_cell('0');
+        end_row();
 		foreach($rules as $rule) {			
 			start_row();
 				hidden($rule['account_input'],$rule['account_code']);

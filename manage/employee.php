@@ -117,7 +117,7 @@ function can_process() {
 		set_focus('EmpLastName');
 		return false;
 	}
-	if(!filter_var($_POST['EmpEmail'], FILTER_VALIDATE_EMAIL)) {
+	if(strlen($_POST['EmpEmail']) > 0 && !filter_var($_POST['EmpEmail'], FILTER_VALIDATE_EMAIL)) {
 
 		display_error(_("Invalid email."));
 		set_focus('EmpEmail');
@@ -165,10 +165,15 @@ function id_link($row) {
 	return button($row['emp_id'], $row['emp_id']);
 }
 function get_name($row) {
-	return $row['emp_first_name'].' '.$row['emp_last_name'];
+	return "<b>".button($row['emp_id'], $row['emp_first_name'].' '.$row['emp_last_name'])."</b>";
 }
 function gender_name($row) {
-	return $row['gender'] == 0 ? 'Female' : 'Male';
+	if($row['gender'] == 0)
+		return  'Female';
+	elseif($row['gender'] == 1)
+	    return 'Male';
+	else
+	    return 'Other';
 }
 function emp_hired($row) {
 	return ($row['emp_hiredate'] == '0000-00-00') ? 'Not hired' : "<center>".sql2date($row['emp_hiredate'])."</center>";
@@ -197,7 +202,7 @@ function employees_table() {
 		end_table(1);
 		
         $cols = array(
-          _('ID') => array('fun'=>'id_link'),
+          _('ID'),
 		  'first_name' => 'skip',
           _('Name') => array('fun'=>'get_name'),
 		  _('Gender') => array('fun'=>'gender_name'),
@@ -213,7 +218,7 @@ function employees_table() {
         $table =& new_db_pager('student_tbl', $sql, $cols);
         $table->width = "80%";
 	
-	    display_note(_('Press Id to edit employee details.'));
+	    // display_note(_('Press name to edit employee details.'));
         display_db_pager($table);
 	}
 	else
@@ -341,17 +346,21 @@ if (isset($_POST['addupdate'])) {
 		$_POST['EmpReleaseDate'],
 		$_POST['EmpInactive']
 	);
-	$_SESSION['EmpId'] = db_insert_id();
 
 	if (check_value('del_image')) {
 		$filename = $avatar_path.emp_img_name($cur_id).".jpg";
 		if (file_exists($filename))
 			unlink($filename);
 	}
-	if($cur_id)
+	if($cur_id) {
+		$_SESSION['EmpId'] = $cur_id;
 		display_notification(_("Employee details has been updated."));
-	else
+	}
+	else {
+		$_SESSION['EmpId'] = db_insert_id();
+		$cur_id = $_SESSION['EmpId'];
 		display_notification(_("A new employee has been added."));
+	}
 	
 	$Ajax->activate('_page_body');
 }

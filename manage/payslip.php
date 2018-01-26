@@ -50,15 +50,21 @@ if (isset($_GET['AddedID'])) {
     
 	$trans_no = $_GET['AddedID'];
 	$trans_type = ST_JOURNAL;
+    $payslip_no = get_payslip($trans_no)['payslip_no'];
 
-   	display_notification_centered( _("Payslip #$trans_no has been entered"));
-    display_note(get_gl_view_str($trans_type, $trans_no, _("&View this Employee Payslip")));
+    if($payslip_no) {
+    	display_notification_centered( _("Payslip #$payslip_no has been entered"));
+        display_note(get_gl_view_str($trans_type, $trans_no, _("&View this Transaction")));
 
-	reset_focus();
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter &New Payslip"), "NewPayslip=Yes");
+	    reset_focus();
+	    hyperlink_params($path_to_root."/modules/FrontHrm/manage/pay_advice.php", _("Make Payment &Advice for this Payslip"), "PayslipNo=$payslip_no");
+	    hyperlink_params($_SERVER['PHP_SELF'], _("Enter &New Payslip"), "NewPayslip=Yes");
 
-	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
-
+	    hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
+    }
+   	else
+   		display_error(_("Payslip number does not exist"));
+   	
 	display_footer_exit();
 } 
 elseif (isset($_GET['UpdatedID'])) {
@@ -101,7 +107,7 @@ function create_cart($type=0, $trans_no=0) {
     check_is_closed($type, $trans_no);
 	$cart = new items_cart($type);
     $cart->order_id = $trans_no;
-
+    $cart->pay_basis = '';
 	$cart->paytype = PT_EMPLOYEE;
 
 	if ($trans_no) {
@@ -204,7 +210,6 @@ function validate_payslip_generation() {
     	set_focus('person_id');
     	return false;
     }
-    
 	return true;
 }
 
@@ -262,9 +267,9 @@ if (isset($_POST['Process'])) {
 		$cart->memo_ = $_POST['memo_'];
     
     
-	$cart->to_the_order_of = $_POST['to_the_order_of'];
+	$cart->salary_amt = get_emp_basic_salary($_POST['person_id'])['pay_amount'];
 	$cart->payslip_no = $_POST['PaySlipNo'];
-
+	$cart->to_the_order_of = '';
 
 	$cart->from_date = $_POST['from_date'];
 	$cart->to_date = $_POST['to_date'];
