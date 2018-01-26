@@ -35,19 +35,24 @@ if (isset($_GET['EmpId']))
 	$_POST['EmpId'] = $_GET['EmpId'];
 
 start_form();
+
 start_table(TABLESTYLE_NOBORDER);
 start_row();
-
-department_list_cells(_("Department:"), 'DeptId', null, _("All departments"), true);
-employee_list_cells(_("Employee:"), "EmpId", null, _("All employees"), true, false, get_post('DeptId'));
-
+ref_cells(_("Reference:"), 'Ref', '',null, _('Enter reference fragment or leave empty'));
+ref_cells(_("Memo:"), 'Memo', '',null, _('Enter memo fragment or leave empty'));
 date_cells(_("From:"), 'FromDate', '', null, 0, -1, 0, null, true);
 date_cells(_("To:"), 'ToDate', '', null, 0, 0, 0, null, true);
-check_cells(_("Only unpaid:"), 'OnlyUnpaid', null, true);
-
-submit_cells('Search', _("Search"), '', '', 'default');
-
 end_row();
+end_table();
+
+start_table(TABLESTYLE_NOBORDER);
+start_row();
+department_list_cells(_("Department:"), 'DeptId', null, _("All departments"), true);
+employee_list_cells(_("Employee:"), "EmpId", null, _("All employees"), true, false, get_post('DeptId'));
+check_cells(_("Only unpaid:"), 'OnlyUnpaid', null, true);
+submit_cells('Search', _("Search"), '', '', 'default');
+end_row();
+
 end_table(1);
     
 //--------------------------------------------------------------------------
@@ -55,35 +60,36 @@ end_table(1);
 function check_overdue($row) {
 
 }
-function payslip_status($row) {
-	return $row['PaySlip'] == 1 ? 'unpaid' : 'paid';
+function trans_type($row) {
+	return $row['Type'] == 0 ? 'Payslip' : 'Payment advice';
 }
 function view_link($row) {
-	return get_trans_view_str($row["trans_type"], $row["trans_no"]);
+	return get_trans_view_str(ST_JOURNAL, $row["trans_no"]);
 }
 function prt_link($row) {
-	return print_document_link($row['trans_no'], _('Print this Payslip'), true, ST_PAYSLIP, ICON_PRINT, '', '', 0);
+	if($row['Type'] == 1)
+	    return print_document_link($row['payslip_no'], _('Print this Payslip'), true, ST_PAYSLIP, ICON_PRINT, '', '', 0);
 }
 
-$sql = get_sql_for_payslips(get_post('EmpId'), get_post('FromDate'), get_post('ToDate'), get_post('DeptId'), '', check_value('OnlyUnpaid'));
+$sql = get_sql_for_payslips(get_post('Ref'), get_post('Memo'), get_post('FromDate'), get_post('ToDate'), get_post('DeptId'), get_post('EmpId'), check_value('OnlyUnpaid'));
 
 $cols = array (
-	_('Trans #') => array('fun'=>'view_link'), 
-	'type' => 'skip',
+	_('Date') => array('type'=>'date'),
+	_('Trans #') => array('fun'=>'view_link'),
+	_('Type') => array('fun'=>'trans_type'),
 	_('Employee ID'),
 	_('Employee Name'),
 	_('Payslip No') => '',
 	_('Pay from') => array('type'=>'date'),
 	_('Pay to') => array('type'=>'date'),
 	_('Amount') => array('type'=>'amount'),
-	_('Status') => array('fun'=>'payslip_status', 'align'=>'center'),
 	'' => array('align'=>'center', 'fun'=>'prt_link')
 );
 
-$table =& new_db_pager('trans_tbl', $sql, $cols);
+$table =& new_db_pager('trans_tbl', $sql, $cols, null, null, 15);
 $table->set_marker('check_overdue', _("Marked items are overdue."));
 
-$table->width = "85%";
+$table->width = "80%";
 
 display_db_pager($table);
 
