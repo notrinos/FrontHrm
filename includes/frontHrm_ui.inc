@@ -19,7 +19,9 @@ define('DEBIT', 1);
 define('CREDIT', 0);
 
 define('PT_EMPLOYEE', 6);
-define ('ST_PAYSLIP', 15);
+define('ST_PAYSLIP', 15);
+define('MONTHLY_SALARY', 0);
+define('DAILY_WAGE', 1);
 
 $Payable_act = get_company_pref('payroll_payable_act');
 $Deduct_act = get_company_pref('payroll_deductleave_act');
