@@ -121,6 +121,7 @@ function payroll_rules_settings($selected_id) {
 	$rules = array();
     $basic_salary = '';
 	$payroll_structure = get_payroll_structure($selected_id);
+	$pay_basis = get_salary_scale($selected_id)['pay_basis'];
 	foreach(get_salary_structure($selected_id) as $row) {
 		if($row['is_basic'] == 1)
             $basic_salary = $row;
@@ -156,7 +157,10 @@ function payroll_rules_settings($selected_id) {
 
 		br();
 		start_table(TABLESTYLE2);
-		$th = array(_("Payroll Rules"),_("Earnings"),_("Deductions"));
+		if($pay_basis == MONTHLY_SALARY)
+		    $th = array(_("Payroll Rules"),_("Monthly Earnings"),_("Monthly Deductions"));
+		if($pay_basis == DAILY_WAGE)
+			$th = array(_("Payroll Rules"),_("Daily Earnings"),_("Daily Deductions"));
 		table_header($th);
         start_row("class='inquirybg'");
         label_cell($basic_salary["account_name"]);
