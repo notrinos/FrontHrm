@@ -40,7 +40,7 @@ function insert_structure($salary_scale_id, $pay_rule_id,$pay_amount, $type) {
 
 function exists_salary_structure($id) {
 
-	return check_empty_result("SELECT id FROM ".TB_PREF."salary_structure WHERE salary_scale_id = ".db_escape($id));
+	return check_empty_result("SELECT id FROM ".TB_PREF."salary_structure WHERE salary_scale_id = ".db_escape($id)." AND !is_basic");
 }
 
 //--------------------------------------------------------------------------
@@ -64,7 +64,7 @@ function get_salary_structure($salary_scale_id) {
 
 function get_emp_salary_structure($emp_id) {
 
-	$sql = "SELECT s.* FROM ".TB_PREF."salary_structure s, ".TB_PREF."employee emp WHERE s.salary_scale_id = emp.salary_scale_id AND emp.emp_id =".db_escape($emp_id);
+	$sql = "SELECT s.* FROM ".TB_PREF."salary_structure s, ".TB_PREF."employee e WHERE s.salary_scale_id = e.salary_scale_id AND e.emp_id =".db_escape($emp_id);
 
 	return db_query($sql, "Could not get employee salary structure");
 }

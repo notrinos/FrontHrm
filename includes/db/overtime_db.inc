@@ -69,7 +69,7 @@ function overtime_used($id) {
 //--------------------------------------------------------------------------
 
 function get_workdays_no($from, $to, $emp_id) {
-	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND att_date BETWEEN '".$from."' AND '".$to."'";
+	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
 	$result = db_query($sql, 'Could not get attendance');
 
@@ -79,7 +79,7 @@ function get_workdays_no($from, $to, $emp_id) {
 //--------------------------------------------------------------------------
 
 function get_leave_hours($from, $to, $emp_id) {
-	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND hours_no < 8 AND att_date BETWEEN '".$from."' AND '".$to."'";
+	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND hours_no < 8 AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
 	$result = db_query($sql, 'Could not get attendance');
 
@@ -93,13 +93,14 @@ function get_leave_hours($from, $to, $emp_id) {
 //--------------------------------------------------------------------------
 
 function get_ot_from_date_range($from, $to, $emp_id, $ot_id) {
-	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".$emp_id." AND overtime_id = ".db_escape($ot_id)." AND att_date BETWEEN '".$from."' AND '".$to."'";
+	$sql = "SELECT hours_no, rate FROM ".TB_PREF."attendance WHERE emp_id = ".$emp_id." AND overtime_id = ".db_escape($ot_id)." AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
-	$hours = db_query($sql, 'Could not get data from attendance');
+	return db_query($sql, 'Could not get data from attendance');
 
-    $result = 0;
-	while($row = db_fetch($hours)) {
-	    $result += $row['hours_no'];
-	}
-	return $result;
+    //$result = 0;
+	//while($row = db_fetch($hours)) {
+	//    $result += $row['hours_no'];
+	//    $rate = $row['rate'];
+	//}
+	//return array('hours_no'=>$result, 'rate'=>$rate);
 }
