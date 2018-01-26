@@ -33,8 +33,8 @@ class FrontHrm_app extends application {
         $this->add_lapp_function(2, _('Default Settings'), $path_to_root.'/modules/FrontHrm/manage/default_setup.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		
         $this->add_rapp_function(2, _('Salary Scales'), $path_to_root.'/modules/FrontHrm/manage/salaryscale.php', 'SA_HRSETUP', MENU_MAINTENANCE);
-		$this->add_rapp_function(2, _('Payroll Accounts'), $path_to_root.'/modules/FrontHrm/manage/accounts.php', 'SA_HRSETUP', MENU_MAINTENANCE);
-		$this->add_rapp_function(2, _('Payroll Rules'), $path_to_root.'/modules/FrontHrm/manage/payroll_rules.php', 'SA_HRSETUP', MENU_MAINTENANCE);
+		$this->add_rapp_function(2, _('Allowance and Deduction Account'), $path_to_root.'/modules/FrontHrm/manage/accounts.php', 'SA_HRSETUP', MENU_MAINTENANCE);
+		$this->add_rapp_function(2, _('Allowance and Deduction Rules'), $path_to_root.'/modules/FrontHrm/manage/payroll_rules.php', 'SA_HRSETUP', MENU_MAINTENANCE);
         $this->add_rapp_function(2, _('Salary Structure'), $path_to_root.'/modules/FrontHrm/manage/salary_structure.php', 'SA_HRSETUP', MENU_MAINTENANCE);
 		$this->add_extensions();
     }
@@ -51,7 +51,7 @@ class hooks_FrontHrm extends hooks {
     
     function install_access() {
         $security_sections[SS_HRM] =  _("Human Resource");
-        $security_areas['SA_EMPL'] = array(SS_HRM|1, _("Employee entry"));
+        $security_areas['SA_EMPL'] = array(SS_HRM|1, _("Hrm entry"));
         $security_areas['SA_HRSETUP'] = array(SS_HRM|1, _("Hrm setup"));
         return array($security_areas, $security_sections);
     }
@@ -59,13 +59,7 @@ class hooks_FrontHrm extends hooks {
     function activate_extension($company, $check_only=true) {
         global $db_connections;
         
-        $chk_col = db_query("SELECT * FROM ".TB_PREF."gl_trans LIMIT 1");
-        $cols = db_fetch($chk_col);
-        
-        if(!isset($cols['payslip_no']))
-            $updates = array( 'update.sql' => array(''));
-        else
-            $updates = array( 'update2.sql' => array(''));
+        $updates = array( 'update.sql' => array(''));
  
         return $this->update_databases($company, $updates, $check_only);
     }
