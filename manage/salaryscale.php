@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -108,7 +108,7 @@ if($selected_id != -1) {
 		$myrow = get_salary_scale($selected_id);
 		$_POST['name']  = $myrow["scale_name"];
 		$_POST['AccountId']  = $myrow["pay_rule_id"];
-		$_POST['amount']  = $myrow["pay_amount"];
+		$_POST['amount']  = price_format($myrow["pay_amount"]);
 		$_POST['payBasis']  = $myrow["pay_basis"];
 		hidden('selected_id', $selected_id);
  	}
@@ -116,7 +116,7 @@ if($selected_id != -1) {
 
 text_row_ex(_('Salary Scale Name').':', 'name', 37, 50);
 gl_all_accounts_list_row(_('Salary Basic Account'), 'AccountId');
-text_row_ex(_('Salary Amount').':', 'amount', 37, 60);
+amount_row(_("Salary Amount").':', 'amount');
 label_row(_('Pay Basis').':', radio(_('Monthly salary'), 'payBasis', 0, 1).'&nbsp;&nbsp;'.radio(_('Daily wage'), 'payBasis', 1));
 
 end_table(1);
