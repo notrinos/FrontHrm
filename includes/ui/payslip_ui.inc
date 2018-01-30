@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -41,7 +41,7 @@ function display_payslip_header(&$Order) {
 	$qes = has_quick_entries(QE_JOURNAL);
 	$new = $Order->order_id==0;
 
-	start_outer_table(TABLESTYLE2, "width='60%'");
+	start_outer_table(TABLESTYLE2, "width='80%'");
 
 	table_section(1);
    		date_row(_('Date').':&nbsp;', 'date_', '', $new);
@@ -68,6 +68,7 @@ function display_payslip_header(&$Order) {
     $from = $_POST['from_date'];
     $to = $_POST['to_date'];
     $ot = db_query(get_overtime());
+    $total_ot = 0;
 
     if($_POST['person_id'] != '') {
         $emp_id = $_POST['person_id'];
@@ -81,6 +82,7 @@ function display_payslip_header(&$Order) {
             
             foreach(get_ot_from_date_range($from, $to, $emp_id, $row['overtime_id']) as $hours) {
                 $hours_no += $hours['hours_no'];
+                $total_ot += $hours['hours_no'];
             }
             label_row($row['overtime_name'].':', $hours_no.' '._('hours'));
         }
@@ -101,6 +103,9 @@ function display_payslip_header(&$Order) {
 		$Order->clear_items();
 	
 	end_outer_table();
+
+	if($workdays == 0 && $total_ot == 0)
+	    $Order->non_working = true;
 }
 
 //--------------------------------------------------------------------------
