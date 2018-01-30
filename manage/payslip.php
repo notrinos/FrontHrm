@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -247,7 +247,7 @@ if (isset($_POST['Process'])) {
    		set_focus('ref');
    		$input_error = 1;
 	}
-	if($_SESSION['journal_items']->empty_payment) {
+	if($_SESSION['journal_items']->empty_payment || $_SESSION['journal_items']->non_working) {
 		display_error(_('Employee cannot getting paid for non-working period.'));
 		set_focus('from_date');
 		$input_error = 1;
