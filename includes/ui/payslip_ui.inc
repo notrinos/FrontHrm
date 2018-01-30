@@ -104,7 +104,7 @@ function display_payslip_header(&$Order) {
 	
 	end_outer_table();
 
-	if($workdays == 0 && $total_ot == 0)
+	if(isset($workdays) && $workdays == 0 && $total_ot == 0)
 	    $Order->non_working = true;
 }
 
@@ -131,88 +131,97 @@ function generate_gl_items($Order) {
 
 	if($Order->pay_basis == DAILY_WAGE)
         $Work_days = 1;
-    
-	if(db_num_rows($salary_rules) > 0) {
 
-		while($myrow = db_fetch($salary_rules) ) {
+    if($Order->non_working) {
+        display_warning(_('non-working period'));
+        set_focus('from_date');
+    }
+    else {
+        if(db_num_rows($salary_rules) > 0) {
 
-			if($Order->pay_basis == MONTHLY_SALARY)
-			    $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']:$myrow['pay_amount'], '');
-			else
-			    $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']*$workdays:$myrow['pay_amount']*$workdays, '');
+		    while($myrow = db_fetch($salary_rules) ) {
 
-			if($myrow['type'] == CREDIT) 
-				$totalCredit += $myrow['pay_amount'];
-            else 
-				$totalDebit += $myrow['pay_amount'];
-			if($myrow['is_basic'] != 1)
-			    $allowance[$myrow['pay_rule_id']] = $myrow['pay_amount'];
+			    if($Order->pay_basis == MONTHLY_SALARY)
+			        $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']:$myrow['pay_amount'], '');
+			    else {
+			        if($workdays != 0)
+			            $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']*$workdays:$myrow['pay_amount']*$workdays, '');
+			    }
+                
+                if($workdays != 0) {
+                    if($myrow['type'] == CREDIT) 
+				        $totalCredit += $myrow['pay_amount'];
+                    else 
+				        $totalDebit += $myrow['pay_amount'];
+                }
+			    
+			    if($myrow['is_basic'] != 1)
+			        $allowance[$myrow['pay_rule_id']] = $myrow['pay_amount'];
 
-		}
-		$Order->allowance = $allowance;
-	}
+		    }
+		    $Order->allowance = $allowance;
+	    }
 	
-    //overtime calculation
-    $overtime_rows = db_query(get_overtime());
-    $overtime_amount = 0;
+        //overtime calculation
+        $overtime_rows = db_query(get_overtime());
+        $overtime_amount = 0;
     
-    while($overtime_row = db_fetch($overtime_rows)) {
-        $ot_from_date_range = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id']);
+        while($overtime_row = db_fetch($overtime_rows)) {
+            $ot_from_date_range = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id']);
 
-        while($ot_row = db_fetch($ot_from_date_range)) {
-            $ot_rate = $ot_row['rate'];
-            $ot_hours = $ot_row['hours_no'];
-            $overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
+            while($ot_row = db_fetch($ot_from_date_range)) {
+                $ot_rate = $ot_row['rate'];
+                $ot_hours = $ot_row['hours_no'];
+                $overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
+            }
+            //$ot_rate = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id'])['rate'];
+            //$ot_hours = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id'])['hours_no'];
+            //$overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
         }
-        //$ot_rate = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id'])['rate'];
-        //$ot_hours = get_ot_from_date_range($from_date, $to_date, $emp_id, $overtime_row['overtime_id'])['hours_no'];
-        //$overtime_amount += ($salary_amount/$Work_days)/$Work_hours * $ot_rate * $ot_hours;
-    }
-    if($overtime_amount != 0) {
-        $Order->add_gl_item($Overtime_act, 0, 0, $overtime_amount, '');
-    }
-    $totalDebit += $overtime_amount;
+        if($overtime_amount != 0) 
+            $Order->add_gl_item($Overtime_act, 0, 0, $overtime_amount, '');
+        $totalDebit += $overtime_amount;
 	
-    //leave calculation
-    $deductableleaves = ($Order->pay_basis == MONTHLY_SALARY) ? ($Work_days - $workdays) : 0;
-    $leave_hours = get_leave_hours($from_date, $to_date, $emp_id);
-    $leave_hours_amount = ($salary_amount/$Work_days)/$Work_hours * $leave_hours;
-	$leave_deduct_amount = ($salary_amount/$Work_days*$deductableleaves) + $leave_hours_amount;
+        //leave calculation
+        $deductableleaves = ($Order->pay_basis == MONTHLY_SALARY) ? ($Work_days - $workdays) : 0;
+        $leave_hours = get_leave_hours($from_date, $to_date, $emp_id);
+        $leave_hours_amount = ($salary_amount/$Work_days)/$Work_hours * $leave_hours;
+	    $leave_deduct_amount = ($salary_amount/$Work_days*$deductableleaves) + $leave_hours_amount;
     
-	if($leave_deduct_amount != 0){
-		$Order->add_gl_item($Deduct_act, 0, 0, -$leave_deduct_amount, '');
-		$totalCredit += $leave_deduct_amount;
-	}
+	    if($leave_deduct_amount != 0){
+		    $Order->add_gl_item($Deduct_act, 0, 0, -$leave_deduct_amount, '');
+		    $totalCredit += $leave_deduct_amount;
+	    }
     
-	//expenses and deposits
-	$expences = get_expences_n_deposits($emp_id, $from_date, $to_date);
-	if(db_num_rows($expences) > 0){
+	    //expenses and deposits
+	    $expences = get_expences_n_deposits($emp_id, $from_date, $to_date);
+	    if(db_num_rows($expences) > 0){
 	
-		while($myrow1 = db_fetch($expences)){
+		    while($myrow1 = db_fetch($expences)){
 			
-			$Order->add_gl_item($myrow1['account'], 0,0,-$myrow1['amount'], '');
-			$amount=abs($myrow1['amount']);
-			if($myrow1['type'] == ST_BANKDEPOSIT){
-				$totalDebit += $amount;
-			}else{
+			    $Order->add_gl_item($myrow1['account'], 0,0,-$myrow1['amount'], '');
+			    $amount=abs($myrow1['amount']);
+			    if($myrow1['type'] == ST_BANKDEPOSIT)
+				    $totalDebit += $amount;
+			    else
 				$totalCredit +=$amount;
-			}
-		}
-	}
+		    }
+	    }
 
-	$payable_amount = $totalCredit - $totalDebit;
+	    $payable_amount = $totalCredit - $totalDebit;
     
-	if($payable_amount != 0)
-		$Order->add_gl_item($Payable_act, 0, 0, $payable_amount, '');
-	else
-		$Order->empty_payment = true;
+	    if($payable_amount != 0)
+		    $Order->add_gl_item($Payable_act, 0, 0, $payable_amount, '');
+	    else
+		    $Order->empty_payment = true;
 
-	$Order->payable_amt = abs($payable_amount);
-	$Order->overtime_amt = abs($overtime_amount);
+	    $Order->payable_amt = abs($payable_amount);
+	    $Order->overtime_amt = abs($overtime_amount);
         
-	//------------------------------------------------==================
-	unset($_POST['totamount']); // enable default
-	$Ajax->activate('totamount');
+	    //------------------------------------------------==================
+	    unset($_POST['totamount']); // enable default
+	    $Ajax->activate('totamount');
+    }
 }
 
 //--------------------------------------------------------------------------
