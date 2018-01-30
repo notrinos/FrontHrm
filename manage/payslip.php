@@ -109,7 +109,8 @@ function create_cart($type=0, $trans_no=0) {
     $cart->order_id = $trans_no;
     $cart->pay_basis = '';
 	$cart->paytype = PT_EMPLOYEE;
-
+    $cart->non_working = false;
+    
 	if ($trans_no) {
         $header = get_journal($type, $trans_no);
         $cart->tran_date = sql2date($header['tran_date']);
@@ -247,7 +248,7 @@ if (isset($_POST['Process'])) {
    		set_focus('ref');
    		$input_error = 1;
 	}
-	if($_SESSION['journal_items']->empty_payment || $_SESSION['journal_items']->non_working) {
+	if($_SESSION['journal_items']->empty_payment) {
 		display_error(_('Employee cannot getting paid for non-working period.'));
 		set_focus('from_date');
 		$input_error = 1;
