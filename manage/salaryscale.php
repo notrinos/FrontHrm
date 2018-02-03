@@ -79,7 +79,7 @@ if($Mode == 'RESET') {
 start_form();
 
 start_table(TABLESTYLE);
-$th = array(_("Id"), _("Name"), _('Salary amount'), "", "");
+$th = array(_("Id"), _("Name"), _('Salary amount'), _('Pay basis'), "", "");
 inactive_control_column($th);
 table_header($th);
 
@@ -87,10 +87,12 @@ $result = db_query(get_salary_scale(false, check_value('show_inactive')));
 $k = 0;
 while ($myrow = db_fetch($result)) {
 	alt_table_row_color($k);
+	$pay_basis = $myrow['pay_basis'] == 0 ? _('Monthly') : _('Daily');
 
 	label_cell($myrow["scale_id"]);
 	label_cell($myrow['scale_name']);
 	amount_cell($myrow['pay_amount']);
+	label_cell($pay_basis);
 	inactive_control_cell($myrow["scale_id"], $myrow["inactive"], 'salaryscale', 'scale_id');
 	edit_button_cell("Edit".$myrow["scale_id"], _("Edit"));
 	delete_button_cell("Delete".$myrow["scale_id"], _("Delete"));
