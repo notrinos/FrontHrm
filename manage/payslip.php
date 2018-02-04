@@ -109,7 +109,6 @@ function create_cart($type=0, $trans_no=0) {
     $cart->order_id = $trans_no;
     $cart->pay_basis = '';
 	$cart->paytype = PT_EMPLOYEE;
-    $cart->non_working = false;
     
 	if ($trans_no) {
         $header = get_journal($type, $trans_no);
