@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -37,7 +37,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
     	else
     		$sql = "INSERT INTO ".TB_PREF."attendance(emp_id, overtime_id, hours_no, rate, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",".db_escape($rate).",'".date2sql($att_date)."')";
     
-        db_query($sql, 'Could not add time clock');
+        db_query($sql, _('Could not add time clock'));
     }
 }
 

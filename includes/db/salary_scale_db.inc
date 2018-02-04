@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -24,7 +24,7 @@ function set_basic_salary($account, $amount, $id, $new=false) {
 	else
 		$sql = "UPDATE ".TB_PREF."salary_structure SET pay_rule_id = ".db_escape($account).", pay_amount = ".db_escape($amount)." WHERE salary_scale_id = ".db_escape($id);
 	
-	    db_query($sql, 'Could not write salary structure data');
+	    db_query($sql, _('Could not write salary structure data'));
 }
 
 function write_scale($id = false, $name, $pay_basis) {
@@ -34,7 +34,7 @@ function write_scale($id = false, $name, $pay_basis) {
 	else
 		$sql = "UPDATE ".TB_PREF."salaryscale SET scale_name = ".db_escape($name).", pay_basis = ".db_escape($pay_basis)." WHERE scale_id = ".db_escape($id);
 	
-	db_query($sql, 'Could not write salary scale data');
+	db_query($sql, _('Could not write salary scale data'));
 }
 
 //--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ function write_scale($id = false, $name, $pay_basis) {
 function delete_salary_scale($id) {
 	
 	$sql = "DELETE FROM ".TB_PREF."salaryscale WHERE scale_id = ".db_escape($id);;
-	db_query($sql, "could not delete salary scale");
+	db_query($sql, _('could not delete salary scale'));
 }
 
 //--------------------------------------------------------------------------
@@ -62,7 +62,7 @@ function get_salary_scale($id = false, $all = false) {
 	else
 		$sql .= ' WHERE 1';
 
-	$result = db_query($sql, "Could not get salary scale data.");
+	$result = db_query($sql, _('Could not get salary scale data.'));
 	
 	if($id)
 		return db_fetch($result);

@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -163,13 +163,13 @@ function get_payslip($trans_no=false, $payslip_no=false) {
 	elseif($payslip_no)
         $sql .= " WHERE payslip_no = ".db_escape($payslip_no);
 		
-	$result = db_query($sql, "Could retreive payslip data");
+	$result = db_query($sql, _('Could retreive payslip data'));
     return db_fetch($result);
 }
 function get_payslip_from_advice($trans_no) {
 	$sql = "SELECT p.* FROM ".TB_PREF."employee_trans t, ".TB_PREF."payslip p WHERE p.payslip_no = t.payslip_no AND t.trans_no = ".db_escape($trans_no);
 
-	$result = db_query($sql, "Could retreive payslip data");
+	$result = db_query($sql, _('Could retreive payslip data'));
     return db_fetch($result);
 }
 
@@ -203,7 +203,7 @@ function get_expences_n_deposits($emp_id, $from_date = null, $to_date = null) {
 		$to = date2sql($to_date);
 		$sql .= " AND tran_date BETWEEN '$from' AND '$to'";
 	}
-	return db_query($sql, 'could not get gl data');
+	return db_query($sql, _('could not get gl data'));
 }
 
 //--------------------------------------------------------------------------
@@ -262,7 +262,7 @@ function add_payslip($trans_no, $emp_id, $from, $to, $leaves, $deductable_leaves
 
 	$sql = "INSERT INTO ".TB_PREF."payslip (trans_no, emp_id, generated_date, from_date, to_date, leaves, deductable_leaves, payable_amount, salary_amount) VALUES (".db_escape($trans_no).", ".db_escape($emp_id).", '$today', '$from', '$to', ".db_escape($leaves).", ".db_escape($deductable_leaves).", ".db_escape($payable_amt).", ".db_escape($salary_amt).")";
 	
-	db_query($sql, "payslip details could not be added");
+	db_query($sql, _('payslip details could not be added'));
 }
 function add_payslip_details($payslip, $allowances) {
 
