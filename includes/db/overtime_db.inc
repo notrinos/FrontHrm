@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -25,7 +25,7 @@ function write_overtime($id = false, $name, $rate) {
 		overtime_name = ".db_escape($name).", overtime_rate = ".db_escape($rate)." WHERE overtime_id = ".db_escape($id);
 	}
 	
-	db_query($sql, 'Could not write overtime data');
+	db_query($sql, _('Could not write overtime data'));
 }
 
 //--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ function get_overtime($id = false, $all = false) {
 	else
 		$sql .= ' WHERE 1';
 
-	$result = db_query($sql, "Could not get overtime data.");
+	$result = db_query($sql, _('Could not get overtime data.'));
 	
 	if($id)
 		return db_fetch($result);
@@ -57,7 +57,7 @@ function get_overtime($id = false, $all = false) {
 
 function delete_overtime($id) {
 	$sql = "DELETE FROM ".TB_PREF."overtime WHERE overtime_id = ".db_escape($id);
-	db_query($sql, 'Could not delete overtime.');
+	db_query($sql, _('Could not delete overtime.'));
 }
 
 //--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ function overtime_used($id) {
 function get_workdays_no($from, $to, $emp_id) {
 	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
-	$result = db_query($sql, 'Could not get attendance');
+	$result = db_query($sql, _('Could not get attendance data'));
 
     return db_num_rows($result);
 }
@@ -81,7 +81,7 @@ function get_workdays_no($from, $to, $emp_id) {
 function get_leave_hours($from, $to, $emp_id) {
 	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND hours_no < 8 AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
-	$result = db_query($sql, 'Could not get attendance');
+	$result = db_query($sql, _('Could not get attendance data'));
 
     $leave = 0;
 	while($row = db_fetch($result)) {
@@ -95,7 +95,7 @@ function get_leave_hours($from, $to, $emp_id) {
 function get_ot_from_date_range($from, $to, $emp_id, $ot_id) {
 	$sql = "SELECT hours_no, rate FROM ".TB_PREF."attendance WHERE emp_id = ".$emp_id." AND overtime_id = ".db_escape($ot_id)." AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
-	return db_query($sql, 'Could not get data from attendance');
+	return db_query($sql, _('Could not get attendance data'));
 
     //$result = 0;
 	//while($row = db_fetch($hours)) {
