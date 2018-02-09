@@ -3,6 +3,9 @@
 
 [DEMO](http://notrinos.webstarterz.com/act)
 
+[Forum Discussion](http://frontaccounting.com/punbb/viewtopic.php?id=6860)
+
+
 Requirement
 -----------
 - FrontAccounting 2.4.x
