@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -136,15 +136,14 @@ function create_cart($type = 0, $trans_no =0, $payslip=array()) {
         $_POST['for_payslip'] = $cart->payslip_no;
         $_POST['memo_'] = "Payment advice gl entry For Payslip #".$cart->payslip_no;
 
-		$ac_pmt_amt = -($payslip['payable_amount']);
-		$cash_amt = -($ac_pmt_amt);
+		$pay_amt = $payslip['payable_amount'];
 
 		$bank = get_default_bank_account();
 
 		$_POST['bank_account'] = $bank['id'];
 	
-		$cart->add_gl_item($Payable_act, 0, 0, $ac_pmt_amt, '');
-		$cart->add_gl_item($bank['account_code'], 0, 0, $cash_amt, '');
+		$cart->add_gl_item($Payable_act, 0, 0, $pay_amt, '');
+		$cart->add_gl_item($bank['account_code'], 0, 0, -$pay_amt, '');
 	}
 
 	$_SESSION['journal_items'] = &$cart;
