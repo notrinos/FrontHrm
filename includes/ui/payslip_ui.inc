@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-Jul-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -310,13 +310,12 @@ function display_advice_header(&$Order) {
 					$Order->payslip_no = $_POST['PaySlipNo'] = $payslip['payslip_no'];
 				}
                 
-				$ac_pmt_amt = -($payslip['payable_amount']);
-				$cash_amt = -($ac_pmt_amt);
+				$pay_amt = $payslip['payable_amount'];
 
 				$bank_ac_code = get_bank_gl_account(get_post('bank_account'));
 	
-				$Order->add_gl_item($Payable_act, 0, 0, $ac_pmt_amt, '');
-				$Order->add_gl_item($bank_ac_code, 0, 0, $cash_amt, '');
+				$Order->add_gl_item($Payable_act, 0, 0, $pay_amt, '');
+				$Order->add_gl_item($bank_ac_code, 0, 0, -$pay_amt, '');
 			}
 			$Ajax->activate('items_table');
 		}
