@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                  |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -44,16 +44,16 @@ function can_process() {
 	
 	foreach(db_query(get_employees(false, false, get_post('DeptId'))) as $emp) {
 		
-		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && !preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-0'])) {
-			display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b>, example - 02:25 , 2:25, 8:00, 23:59 ..."));
+		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-0']) && !is_numeric($_POST[$emp['emp_id'].'-0']))) {
+			display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
 			set_focus($emp['emp_id'].'-0');
 			return false;
 		}
 		foreach(db_query(get_overtime()) as $ot) {
 			
-			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && !preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-'.$ot['overtime_id']])) {
+			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) && !is_numeric($_POST[$emp['emp_id'].'-0']))) {
 				
-				display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b>, example - 02:25 , 2:25, 8:00, 23:59 ..."));
+				display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
 				set_focus($emp['emp_id'].'-'.$ot['overtime_id']);
 				return false;
 			}
@@ -139,7 +139,7 @@ if(isset($_POST['addatt'])) {
 		}
 		else {
 			if(strlen($_POST[$id.'-0']) > 0)
-                $att_items += time_to_float($_POST[$id.'-0']);
+                $att_items ++;
 			
 			write_attendance($id, 0, time_to_float($_POST[$id.'-0']), 1, $_POST['AttDate']);
 		}
@@ -155,7 +155,7 @@ if(isset($_POST['addatt'])) {
 			else {
 				$rate = get_overtime($ot)['overtime_rate'];
 				if(strlen($_POST[$id.'-'.$ot]) > 0)
-				    $att_items += time_to_float($_POST[$id.'-'.$ot]);
+				    $att_items ++;
 				write_attendance($id, $ot, time_to_float($_POST[$id.'-'.$ot]), $rate, $_POST['AttDate']);
 			}
         }
