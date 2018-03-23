@@ -3,17 +3,19 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-Jul-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
 \=======================================================*/
 
 function time_to_float($time) {
-
-    sscanf($time, "%d:%d", $hours, $minutes);
-
-	$time_in_float = $hours + $minutes/60;
+    if(strpos($time,':') != false) {
+        sscanf($time, "%d:%d", $hours, $minutes);
+        $time_in_float = $hours + $minutes/60;
+    }
+    else
+        $time_in_float = $time;
 	
 	return $time_in_float;
 }
