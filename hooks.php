@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------| 
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -59,7 +59,7 @@ class hooks_FrontHrm extends hooks {
     function activate_extension($company, $check_only=true) {
         global $db_connections;
         
-        $updates = array( 'update.sql' => array(''));
+        $updates = array( 'update.sql' => array('fronthrm'));
  
         return $this->update_databases($company, $updates, $check_only);
     }
@@ -67,7 +67,7 @@ class hooks_FrontHrm extends hooks {
     function deactivate_extension($company, $check_only=true) {
         global $db_connections;
 
-        $updates = array('remove.sql' => array(''));
+        $updates = array('remove.sql' => array('fronthrm'));
 
         return $this->update_databases($company, $updates, $check_only);
     }
