@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -179,7 +179,10 @@ function get_day_amount($payslip_no) {
 
 $pdf->AddPage('P', 'A4');
 
-$pdf->Image(company_path().'/images/'.$comp_logo, $x/2 - $img_width/2, 20, $img_width);
+if($comp_logo)
+	$logo_path = company_path().'/images/'.$comp_logo;
+else
+	$logo_path = "../themes/default/images/logo_frontaccounting.jpg";
 
 $pdf->writeHTMLCell(2*$x/3-30, 0, 15, 40, _("Company: ").$comp_name, 0, 0, 0, true);
 $pdf->writeHTMLCell($x/3-30, 0, 2*$x/3+20, 45, _("Date: ").Today(), 0, 0, 0, true);
