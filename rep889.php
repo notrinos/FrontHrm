@@ -184,6 +184,8 @@ if($comp_logo)
 else
 	$logo_path = "../themes/default/images/logo_frontaccounting.jpg";
 
+$pdf->Image($logo_path, $x/2 - $img_width/2, 20, $img_width);
+
 $pdf->writeHTMLCell(2*$x/3-30, 0, 15, 40, _("Company: ").$comp_name, 0, 0, 0, true);
 $pdf->writeHTMLCell($x/3-30, 0, 2*$x/3+20, 45, _("Date: ").Today(), 0, 0, 0, true);
 $pdf->writeHTMLCell($x, 0, 15, 45, _("Address: ").$comp_adrs, 0, 0, 0, true);
