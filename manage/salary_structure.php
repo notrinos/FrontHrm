@@ -86,7 +86,7 @@ function handle_submit(&$selected_id) {
 	}
 
 	if(empty($payroll_rules))
-		display_error(_("No data entered"));
+		display_notification(_("No data entered"));
     else {
 	
 		if(exists_salary_structure($selected_id))
@@ -149,9 +149,9 @@ function payroll_rules_settings($selected_id) {
 			while($rowStr = db_fetch($rsStr)) {
                 
 				if($rowStr['type'] == DEBIT)
-					$_POST["Debit".$rowStr['pay_rule_id']] = $rowStr['pay_amount'];
+					$_POST["Debit".$rowStr['pay_rule_id']] = price_format($rowStr['pay_amount']);
                 else 
-					$_POST["Credit".$rowStr['pay_rule_id']] = $rowStr['pay_amount'];
+					$_POST["Credit".$rowStr['pay_rule_id']] = price_format($rowStr['pay_amount']);
 			}
 		}
 
