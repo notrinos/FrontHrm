@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -94,7 +94,7 @@ function handle_submit(&$selected_id) {
         
 		add_salary_structure($payroll_rules);
 			
-		display_notification(_("Salary structure updated."));		
+		display_notification(_("Salary structure has been updated."));		
 	}
 	$Ajax->activate('_page_body');
 }
