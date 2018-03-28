@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `0_salary_structure` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `salary_scale_id` int(11) NOT NULL,
-  `pay_rule_id` int(11) NOT NULL,
+  `pay_rule_id` varchar(15) NOT NULL,
   `pay_amount` double NOT NULL,
   `type` tinyint(1) NOT NULL COMMENT '0 for credit, 1 for debit',
   `is_basic` tinyint(1) NOT NULL DEFAULT 0,
