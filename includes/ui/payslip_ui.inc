@@ -41,7 +41,7 @@ function display_payslip_header(&$Order) {
 	$qes = has_quick_entries(QE_JOURNAL);
 	$new = $Order->order_id==0;
 
-	start_outer_table(TABLESTYLE2, "width='80%'");
+	start_outer_table(TABLESTYLE2, "cellpadding='10'");
 
 	table_section(1);
    		date_row(_('Date').':&nbsp;', 'date_', '', $new);
@@ -535,4 +535,27 @@ function employee_payslip_list_row($label, $name, $selected_id = null, $employee
 	echo "<tr><td class='label'>$label</td><td>";
 	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change, $show_inactive);
 	echo "</td></tr>\n";
+}
+
+//--------------------------------------------------------------------------
+
+function hrm_print_link($doc_no, $link_text, $link=true, $type_no, $icon=false, $class='', $id='', $email=0, $extra=0) {
+    global $path_to_root;
+
+	$def_orientation = (user_def_print_orientation() == 1 ? 1 : 0);
+	$dir = $path_to_root . "/modules/FrontHrm/reporting/redirect.php?";
+
+	switch ($type_no) {
+
+		case ST_PAYSLIP :
+			$rep = ST_PAYSLIP;
+			$ar = array(
+				'PARAM_0' => $doc_no,  
+				'PARAM_1' => $def_orientation);
+			break;
+		default:
+			return null;
+	}
+
+	return print_link($link_text, $rep, $ar, $dir, $icon, $class, $id);
 }
