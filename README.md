@@ -11,13 +11,13 @@ Requirement
 - FrontAccounting 2.4.x
 - [dejavu font](http://frontaccounting.com/wb3/modules/download_gallery/dlc.php?file=57)
 
-Installation
+Installation (From 01/Apr/2018 FrontHrm can be installed without any changes in FA core )
 ------------
-1. Rename FrontHrm-master to `FrontHrm` then copy folder to the FA `modules` directory.
+~~1. Rename FrontHrm-master to `FrontHrm` then copy folder to the FA `modules` directory.
 2. Copy `rep889.php` to FA `reporting` folder.
 3. Copy `dejavu font files` to FA `reporting/font` folder.
-4. Replace `reporting/includes/reporting.inc` with `reporting.inc` in the FrontHrm.
-5. For FrontAccounting versions released from 15/Dec/2017 up to now: just install and active normally. For the earlier versions, do the following:
+4. Replace `reporting/includes/reporting.inc` with `reporting.inc` in the FrontHrm.~~
+5. For FrontAccounting 2.4.4 up to now: just install and active normally. For the earlier versions, do the following:
 
 - Comment out block of codes from lines 215 to 220 of `admin/inst_module.php`.
 - Install and active the module.
