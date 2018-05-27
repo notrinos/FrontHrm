@@ -34,6 +34,8 @@ page(_($help_context = 'Employee Transaction'), isset($_GET['EmpId']), false, ''
 if (isset($_GET['EmpId']))
 	$_POST['EmpId'] = $_GET['EmpId'];
 
+$days_no = date_diff2(begin_fiscalyear(), Today(), 'd');
+
 start_form();
 
 start_table(TABLESTYLE_NOBORDER);
@@ -41,7 +43,7 @@ start_row();
 
 ref_cells(_('Reference').':', 'Ref', '',null, _('Enter reference fragment or leave empty'));
 ref_cells(_('Memo').':', 'Memo', '',null, _('Enter memo fragment or leave empty'));
-date_cells(_('From').':', 'FromDate', '', null, 0, -1, 0, null, true);
+date_cells(_('From').':', 'FromDate', '', null, $days_no, 0, 0, null, true);
 date_cells(_('To').':', 'ToDate', '', null, 0, 0, 0, null, true);
 
 end_row();
