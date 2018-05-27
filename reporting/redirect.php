@@ -9,10 +9,10 @@
 |                                                        |
 \=======================================================*/
 
-$path_to_root = "../../..";
+$path_to_root = '../../..';
 global $page_security;
 $page_security = 'SA_OPEN';
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/session.inc');
 
 if (!isset($_POST['REP_ID'])) {
 	$def_pars = array(0, 0, '', '', 0, '', '', 0);
