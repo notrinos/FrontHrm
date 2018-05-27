@@ -50,7 +50,7 @@ if (isset($_GET['AddedID'])) {
 	$trans_no = $_GET['AddedID'];
 	$trans_type = ST_JOURNAL;
     $payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
-   	display_notification_centered( sprintf(_("Employee Payment Advice #%d has been entered"), $trans_no));
+   	display_notification_centered( sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
    	display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
     display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Payment Advice')));
 
@@ -65,7 +65,7 @@ elseif (isset($_GET['UpdatedID'])) {
 	$trans_no = $_GET['UpdatedID'];
 	$trans_type = ST_JOURNAL;
 
-   	display_notification_centered(sprintf(_("Employee Payment Advice #%d has been updated"), $trans_no));
+   	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been updated'), $trans_no));
     display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Journal Entry')));
 
    	hyperlink_no_params($path_to_root.'/gl/inquiry/journal_inquiry.php', _('Return to Journal &Inquiry'));
@@ -184,12 +184,12 @@ if (isset($_POST['Process'])) {
 if (isset($_POST['Process'])) {
 	$cart = &$_SESSION['journal_items'];
 	$new = $cart->order_id == 0;
-//  ------------- Giấu thông báo lỗi---
+
     $cart->to_date = 
     $cart->from_date = 
     $cart->leaves = 
     $cart->deductable_leaves = '';
-//  -----------------------------------
+
 	$cart->person_id = $_POST['emp_id'];
 	$cart->paytype = $_POST['PayType'];
 

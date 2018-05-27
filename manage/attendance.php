@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-Jul-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -15,15 +15,15 @@ $path_to_root  = '../../..';
 include_once($path_to_root . "/includes/session.inc");
 add_access_extensions();
 
-$js = "";
+$js = '';
 if ($SysPrefs->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
+include_once($path_to_root . '/includes/ui.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 //--------------------------------------------------------------------------
 
@@ -31,13 +31,13 @@ function can_process() {
 
 	if (!is_date($_POST['AttDate'])) {
 
-		display_error(_("The entered date is invalid."));
+		display_error(_('The entered date is invalid.'));
 		set_focus('AttDate');
 		return false;
 	}
 	if (date_comp($_POST['AttDate'], Today()) > 0) {
 
-		display_error(_("Cannot make attendance for the date in the future."));
+		display_error(_('Cannot make attendance for the date in the future.'));
 		set_focus('AttDate');
 		return false;
 	} 
@@ -45,7 +45,7 @@ function can_process() {
 	foreach(db_query(get_employees(false, false, get_post('DeptId'))) as $emp) {
 		
 		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-0']) && (!is_numeric($_POST[$emp['emp_id'].'-0']) || $_POST[$emp['emp_id'].'-0'] >= 24))) {
-			display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
+			display_error(_('Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ...'));
 			set_focus($emp['emp_id'].'-0');
 			return false;
 		}
@@ -53,7 +53,7 @@ function can_process() {
 			
 			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) && (!is_numeric($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) || $_POST[$emp['emp_id'].'-'.$ot['overtime_id']] >= 24))) {
 				
-				display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
+				display_error(_('Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ...'));
 				set_focus($emp['emp_id'].'-'.$ot['overtime_id']);
 				return false;
 			}
@@ -64,19 +64,19 @@ function can_process() {
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = "Employees Attendance"), false, false, "", $js);
+page(_($help_context = 'Employees Attendance'), false, false, '', $js);
 
 start_form();
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
-date_cells(_("Date:"), 'AttDate');
-department_list_cells(_("For department:"), "DeptId", null, _("All departments"), true);
+date_cells(_('Date').':', 'AttDate');
+department_list_cells(_('For department').':', 'DeptId', null, _('All departments'), true);
 end_row();
 end_table(1);
 
 start_table(TABLESTYLE2);
-$initial_cols = array("ID", _("Employee"), _("Regular time"));
+$initial_cols = array('ID', _('Employee'), _('Regular time'));
 $overtimes = db_query(get_overtime());
 $remaining_cols = array();
 $overtime_id    = array();
@@ -116,12 +116,12 @@ while($employee = db_fetch($employees)) {
 
 end_table(1);
     
-submit_center('addatt', _("Save attendance"), true, '', 'default');
+submit_center('addatt', _('Save attendance'), true, '', 'default');
 
 //--------------------------------------------------------------------------
 
 if(!db_has_employee())
-	display_error(_("There are no employees for attendance."));
+	display_error(_('There are no employees for attendance.'));
 
 if(isset($_POST['addatt'])) {
 	

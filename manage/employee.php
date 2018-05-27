@@ -41,7 +41,7 @@ foreach(db_query(get_employees(false, true)) as $emp_row) {
 $cur_id = isset($_SESSION['EmpId']) ? $_SESSION['EmpId'] : '';
 
 $upload_file = "";
-$avatar_path = company_path()."/FrontHrm/images/";
+$avatar_path = company_path().'/FrontHrm/images/';
 if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 	
 	$result = $_FILES['pic']['error'];
@@ -114,7 +114,7 @@ function can_process() {
 	
 	if(strlen($_POST['EmpFirstName']) == 0 || $_POST['EmpFirstName'] == '') {
 
-		display_error(_("The employee first name must be entered."));
+		display_error(_('The employee first name must be entered.'));
 		set_focus('EmpFirstName');
 		return false;
 	}
@@ -183,7 +183,7 @@ function gender_name($row) {
 	    return 'Other';
 }
 function emp_hired($row) {
-	return ($row['emp_hiredate'] == '0000-00-00') ? _('Not hired') : "<center>".sql2date($row['emp_hiredate'])."</center>";
+	return ($row['emp_hiredate'] == '0000-00-00') ? _('Not hired') : '<center>'.sql2date($row['emp_hiredate']).'</center>';
 }
 function emp_department($row) {
 	

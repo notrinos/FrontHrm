@@ -10,10 +10,10 @@
 \=======================================================*/
 
 $page_security = 'SA_EMPL';
-$path_to_root = "../../..";
+$path_to_root = '../../..';
 
-include_once($path_to_root . "/includes/ui/items_cart.inc");
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/ui/items_cart.inc');
+include_once($path_to_root . '/includes/session.inc');
 add_access_extensions();
 
 $js = '';
@@ -22,19 +22,19 @@ if ($SysPrefs->use_popup_windows)
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
+include_once($path_to_root . '/includes/ui.inc');
+include_once($path_to_root . '/includes/date_functions.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 if (isset($_GET['ModifyPaySlip'])) {
-	$_SESSION['page_title'] = sprintf(_("Modifying Employee Payslip # %d."), $_GET['trans_no']);
-	$help_context = "Modifying Employee Payslip";
+	$_SESSION['page_title'] = sprintf(_('Modifying Employee Payslip #%d.'), $_GET['trans_no']);
+	$help_context = 'Modifying Employee Payslip';
 }
 else
-	$_SESSION['page_title'] = _($help_context = "Employee Payslip Entry");
+	$_SESSION['page_title'] = _($help_context = 'Employee Payslip Entry');
 
-page($_SESSION['page_title'], false, false, "", $js);
+page($_SESSION['page_title'], false, false, '', $js);
 
 //--------------------------------------------------------------------------
 
@@ -53,8 +53,8 @@ if (isset($_GET['AddedID'])) {
     $payslip_no = get_payslip($trans_no)['payslip_no'];
 
     if($payslip_no) {
-    	display_notification_centered( sprintf(_("Payslip #%d has been entered"), $payslip_no));
-        display_note(get_gl_view_str($trans_type, $trans_no, _("&View this Transaction")));
+    	display_notification_centered( sprintf(_('Payslip #%d has been entered'), $payslip_no));
+        display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Transaction')));
 
 	    reset_focus();
 	    hyperlink_params($path_to_root.'/modules/FrontHrm/manage/pay_advice.php', _('Make Payment &Advice for this Payslip'), 'PayslipNo='.$payslip_no);
@@ -418,8 +418,6 @@ if (count($_SESSION['journal_items']->gl_items)) {
 	submit_center_last('CancelOrder', _('Cancel'), _('Cancels document entry or removes Gl items'), true);
 }
 div_end();
-
-// highlight_string("<?php\n" . var_export($_SESSION['journal_items'], true));
 
 end_form();
 end_page();

@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -12,16 +12,16 @@
 $page_security = 'SA_HRSETUP';
 $path_to_root  = '../../..';
 
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/session.inc');
 add_access_extensions();
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
+include_once($path_to_root . '/includes/ui.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = "Manage Overtime"));
+page(_($help_context = 'Manage Overtime'));
 simple_page_mode(false);
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
@@ -30,17 +30,17 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
 	if (strlen($_POST['rate']) == 0 || $_POST['rate'] == '') {
 		$input_error = 1;
-		display_error(_("The overtime rate cannot be empty."));
+		display_error(_('The overtime rate cannot be empty.'));
 		set_focus('rate');
 	}
     if (!is_numeric($_POST['rate'])) {
 		$input_error = 1;
-		display_error(_("Overtime rate must be a number."));
+		display_error(_('Overtime rate must be a number.'));
 		set_focus('rate');
 	}
 	if (strlen($_POST['name']) == 0 || $_POST['name'] == '') {
 		$input_error = 1;
-		display_error(_("The overtime name cannot be empty."));
+		display_error(_('The overtime name cannot be empty.'));
 		set_focus('name');
 	}
 	if ($input_error !=1) {
@@ -58,7 +58,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 if ($Mode == 'Delete') {
 
 	if (overtime_used($selected_id))
-		display_error(_("This overtime cannot be deleted."));
+		display_error(_('This overtime cannot be deleted.'));
 	else {
         
 		delete_overtime($selected_id);
@@ -87,12 +87,12 @@ $k = 0;
 while ($myrow = db_fetch($result)) {
 
 	alt_table_row_color($k);
-	label_cell($myrow["overtime_id"]);
-	label_cell($myrow["overtime_name"]);
-	amount_cell($myrow["overtime_rate"]);
-	inactive_control_cell($myrow["overtime_id"], $myrow["inactive"], 'overtime', 'overtime_id');
- 	edit_button_cell("Edit".$myrow["overtime_id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["overtime_id"], _("Delete"));
+	label_cell($myrow['overtime_id']);
+	label_cell($myrow['overtime_name']);
+	amount_cell($myrow['overtime_rate']);
+	inactive_control_cell($myrow['overtime_id'], $myrow['inactive'], 'overtime', 'overtime_id');
+ 	edit_button_cell('Edit'.$myrow['overtime_id'], _('Edit'));
+ 	delete_button_cell('Delete'.$myrow['overtime_id'], _('Delete'));
     
 	end_row();
 }
@@ -107,18 +107,18 @@ if ($selected_id != '') {
  	if ($Mode == 'Edit') {
 		
 		$myrow = get_overtime($selected_id);
-		$_POST['rate'] = $myrow["overtime_rate"];
-		$_POST['name']  = $myrow["overtime_name"];
-		hidden('selected_id', $myrow["overtime_id"]);
+		$_POST['rate'] = $myrow['overtime_rate'];
+		$_POST['name']  = $myrow['overtime_name'];
+		hidden('selected_id', $myrow['overtime_id']);
 	}
 }
 // if ($selected_id != '' && overtime_used($selected_id)) {
 //     label_row(_("Overtime rate:"), $_POST['rate']);
 //     hidden('rate', $_POST['rate']);
 // } else
-    text_row(_("Overtime rate:"), 'rate', null, 20, 20);
+    text_row(_('Overtime rate').':', 'rate', null, 20, 20);
 
-text_row(_("Overtime Name:"), 'name', null, 40, 50);
+text_row(_('Overtime Name').':', 'name', null, 40, 50);
 
 end_table(1);
 
