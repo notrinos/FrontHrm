@@ -12,28 +12,32 @@
 $page_security = 'SA_HRSETUP';
 $path_to_root  = '../../..';
 
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/session.inc');
 add_access_extensions();
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_db.inc");
-include_once($path_to_root . "/modules/FrontHrm/includes/frontHrm_ui.inc");
+include_once($path_to_root . '/includes/ui.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = "Manage Department"));
+page(_($help_context = 'Manage Department'));
 simple_page_mode(false);
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
 	if(strlen($_POST['name']) == 0 || $_POST['name'] == '') {
-		display_error( _("The Department name cannot be empty."));
+		display_error( _('The Department name cannot be empty.'));
 		set_focus('name');
+	}
+	if(empty($_POST['basic_acc']) || $_POST['basic_acc'] == -1) {
+		display_error( _('Please select basic account'));
+		set_focus('basic_acc');
 	}
 	else {
 		write_department($selected_id, $_POST['name'], $_POST['basic_acc']);
 
-    	if ($selected_id != "")
+    	if ($selected_id != '')
 			display_notification(_('Selected department has been updated'));
     	else
 			display_notification(_('New department has been added'));
@@ -45,7 +49,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 if ($Mode == 'Delete') {
 
 	if(department_has_employees($selected_id))
-		display_error( _("The Department cannot be deleted."));
+		display_error( _('The Department cannot be deleted.'));
 	else {
 		delete_department($selected_id);
 		display_notification(_('Selected department has been deleted'));
@@ -54,7 +58,7 @@ if ($Mode == 'Delete') {
 }
 
 if($Mode == 'RESET')
-	$selected_id = $_POST['selected_id'] = $_POST['name'] = '';
+	$selected_id = $_POST['selected_id'] = $_POST['name'] = $_POST['basic_acc'] = '';
 
 //--------------------------------------------------------------------------
 
@@ -62,9 +66,9 @@ start_form();
 
 start_table(TABLESTYLE);
 if(!empty($USE_DEPT_ACC))
-    $th = array(_("Id"), _("Department Name"), _('Salary Basic Account'), "", "");
+    $th = array(_('Id'), _('Department Name'), _('Salary Basic Account'), '', '');
 else
-	$th = array(_("Id"), _("Department Name"), "", "");
+	$th = array(_('Id'), _('Department Name'), '', '');
 inactive_control_column($th);
 table_header($th);
 
@@ -74,13 +78,13 @@ $k = 0;
 while ($myrow = db_fetch($result)) {
 	alt_table_row_color($k);
 
-	label_cell($myrow["dept_id"]);
+	label_cell($myrow['dept_id']);
 	label_cell($myrow['dept_name']);
 	if(!empty($USE_DEPT_ACC))
 		label_cell($myrow['basic_account']);
-	inactive_control_cell($myrow["dept_id"], $myrow["inactive"], 'department', 'dept_id');
-	edit_button_cell("Edit".$myrow["dept_id"], _("Edit"));
-	delete_button_cell("Delete".$myrow["dept_id"], _("Delete"));
+	inactive_control_cell($myrow['dept_id'], $myrow['inactive'], 'department', 'dept_id');
+	edit_button_cell('Edit'.$myrow['dept_id'], _('Edit'));
+	delete_button_cell('Delete'.$myrow['dept_id'], _('Delete'));
 	end_row();
 }
 inactive_control_row($th);
@@ -93,13 +97,13 @@ if($selected_id != '') {
  	if ($Mode == 'Edit') {
 		
 		$myrow = get_departments($selected_id);
-		$_POST['name']  = $myrow["dept_name"];
+		$_POST['name']  = $myrow['dept_name'];
 		$_POST['basic_acc'] = $myrow['basic_account'];
 		hidden('selected_id', $myrow['dept_id']);
  	}
 }
 
-text_row_ex(_("Department Name:"), 'name', 50, 60);
+text_row_ex(_('Department Name').':', 'name', 50, 60);
 
 if(!empty($USE_DEPT_ACC))
     gl_all_accounts_list_row(_('Salary Basic Account'), 'basic_acc', null, false, false, _('Select basic account'));
