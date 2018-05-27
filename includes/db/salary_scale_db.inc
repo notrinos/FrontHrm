@@ -27,6 +27,8 @@ function set_basic_salary($account, $amount, $id, $new=false) {
 	    db_query($sql, _('Could not write salary structure data'));
 }
 
+//--------------------------------------------------------------------------
+
 function write_scale($id = false, $name, $pay_basis) {
 	
 	if(!$id)

@@ -166,6 +166,9 @@ function get_payslip($trans_no=false, $payslip_no=false) {
 	$result = db_query($sql, _('Could retreive payslip data'));
     return db_fetch($result);
 }
+
+//--------------------------------------------------------------------------
+
 function get_payslip_from_advice($trans_no) {
 	$sql = "SELECT p.* FROM ".TB_PREF."employee_trans t, ".TB_PREF."payslip p WHERE p.payslip_no = t.payslip_no AND t.trans_no = ".db_escape($trans_no);
 
@@ -264,6 +267,9 @@ function add_payslip($trans_no, $emp_id, $from, $to, $leaves, $deductable_leaves
 	
 	db_query($sql, _('payslip details could not be added'));
 }
+
+//--------------------------------------------------------------------------
+
 function add_payslip_details($payslip, $allowances) {
 
     foreach($allowances as $code => $amount) {
@@ -282,6 +288,9 @@ function add_payment_advice($trans_id, $payslip_no, $date, $source_ref, $pay_amo
 
 	db_query($sql, _('employee trans could not be inserted'));
 }
+
+//--------------------------------------------------------------------------
+
 function has_payment_advice($payslip_no) {
 	return check_empty_result("SELECT id FROM ".TB_PREF."employee_trans WHERE payslip_no = ".db_escape($payslip_no));
 }
