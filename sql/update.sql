@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS `0_department`;
 CREATE TABLE IF NOT EXISTS `0_department` (
     `dept_id` int(11) NOT NULL AUTO_INCREMENT,
     `dept_name` tinytext NOT NULL,
+    `basic_account` varchar(15) NULL,
     `inactive` tinyint(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (`dept_id`)
 ) ENGINE=InnoDB;
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `0_attendance` (
 DROP TABLE IF EXISTS `0_payroll_account`;
 CREATE TABLE IF NOT EXISTS `0_payroll_account` (
   `account_id` int(11) NOT NULL AUTO_INCREMENT,
-  `account_code` int(11) NOT NULL,
+  `account_code` varchar(15) NOT NULL,
   PRIMARY KEY (`account_id`)
 ) ENGINE=InnoDB;
 
@@ -128,9 +129,11 @@ DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_month_work_days'
 DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_overtime_act';
 DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_payable_act';
 DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_work_hours';
+DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_dept_based';
 
-INSERT INTO `0_sys_prefs` VALUES ('payroll_deductleave_act', NULL, 'int', NULL, 5410);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_deductleave_act', NULL, 'varchar', 15, '');
 INSERT INTO `0_sys_prefs` VALUES ('payroll_month_work_days', NULL, 'float', NULL, 26);
-INSERT INTO `0_sys_prefs` VALUES ('payroll_overtime_act', NULL, 'int', NULL, 5420);
-INSERT INTO `0_sys_prefs` VALUES ('payroll_payable_act', NULL, 'int', NULL, 2100);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_overtime_act', NULL, 'varchar', 15, 5420);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_payable_act', NULL, 'varchar', 15, 2100);
 INSERT INTO `0_sys_prefs` VALUES ('payroll_work_hours', NULL, 'float', NULL, 8);
+INSERT INTO `0_sys_prefs` VALUES ('payroll_dept_based', NULL, 'tinyint', 1, 0);
