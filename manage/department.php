@@ -30,7 +30,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		display_error( _('The Department name cannot be empty.'));
 		set_focus('name');
 	}
-	if(empty($_POST['basic_acc']) && !empty($USE_DEPT_ACC)) {
+	elseif(empty($_POST['basic_acc']) && !empty($USE_DEPT_ACC)) {
 		display_error( _('Please select basic account'));
 		set_focus('basic_acc');
 	}
@@ -58,7 +58,7 @@ if ($Mode == 'Delete') {
 }
 
 if($Mode == 'RESET')
-	$selected_id = $_POST['selected_id'] = $_POST['name'] = @$_POST['basic_acc'] = '';
+	$selected_id = $_POST['selected_id'] = $_POST['name'] = $_POST['basic_acc'] = '';
 
 //--------------------------------------------------------------------------
 
