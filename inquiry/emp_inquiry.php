@@ -29,7 +29,7 @@ if (user_use_date_picker())
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = "Employee Transaction"), isset($_GET['EmpId']), false, '', $js);
+page(_($help_context = 'Employee Transaction'), isset($_GET['EmpId']), false, '', $js);
 
 if (isset($_GET['EmpId']))
 	$_POST['EmpId'] = $_GET['EmpId'];
@@ -39,19 +39,19 @@ start_form();
 start_table(TABLESTYLE_NOBORDER);
 start_row();
 
-ref_cells(_('Reference:'), 'Ref', '',null, _('Enter reference fragment or leave empty'));
-ref_cells(_('Memo:'), 'Memo', '',null, _('Enter memo fragment or leave empty'));
-date_cells(_('From:'), 'FromDate', '', null, 0, -1, 0, null, true);
-date_cells(_('To:'), 'ToDate', '', null, 0, 0, 0, null, true);
+ref_cells(_('Reference').':', 'Ref', '',null, _('Enter reference fragment or leave empty'));
+ref_cells(_('Memo').':', 'Memo', '',null, _('Enter memo fragment or leave empty'));
+date_cells(_('From').':', 'FromDate', '', null, 0, -1, 0, null, true);
+date_cells(_('To').':', 'ToDate', '', null, 0, 0, 0, null, true);
 
 end_row();
-end_table();
+// end_table();
 
-start_table(TABLESTYLE_NOBORDER);
+// start_table(TABLESTYLE_NOBORDER);
 start_row();
 
-department_list_cells(_('Department:'), 'DeptId', null, _('All departments'), true);
-employee_list_cells(_('Employee:'), "EmpId", null, _('All employees'), true, false, get_post('DeptId'));
+department_list_cells(null, 'DeptId', null, _('All departments'), true);
+employee_list_cells(null, "EmpId", null, _('All employees'), true, false, get_post('DeptId'));
 check_cells(_('Only unpaid:'), 'OnlyUnpaid', null, true);
 submit_cells('Search', _('Search'), '', '', 'default');
 
@@ -67,7 +67,7 @@ function trans_type($row) {
 	return $row['Type'] == 0 ? 'Payslip' : 'Payment advice';
 }
 function view_link($row) {
-	return get_trans_view_str(ST_JOURNAL, $row["trans_no"]);
+	return get_trans_view_str(ST_JOURNAL, $row['trans_no']);
 }
 function prt_link($row) {
 	if($row['Type'] == 1)
@@ -92,7 +92,7 @@ $cols = array (
 $table =& new_db_pager('trans_tbl', $sql, $cols, null, null, 15);
 $table->set_marker('check_overdue', _('Marked items are overdue.'));
 
-$table->width = "80%";
+$table->width = '80%';
 
 display_db_pager($table);
 
