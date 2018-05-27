@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-Jul-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -15,15 +15,12 @@ function db_has_department() {
 
 //--------------------------------------------------------------------------
 
-function write_department($id = false, $name) {
+function write_department($id = false, $name, $basic_acc) {
 
-	if(!$id) {
-		$sql = "INSERT INTO ".TB_PREF."department(dept_name) VALUES (".db_escape($name).")";
-	}
-	else {
-		$sql = "UPDATE ".TB_PREF."department SET 
-		dept_name = ".db_escape($name)." WHERE dept_id = ".db_escape($id);
-	}
+	if(empty($id))
+		$sql = "INSERT INTO ".TB_PREF."department(dept_name, basic_account) VALUES (".db_escape($name).",".db_escape($basic_acc).")";
+	else
+		$sql = "UPDATE ".TB_PREF."department SET dept_name = ".db_escape($name).", basic_account = ".db_escape($basic_acc)." WHERE dept_id = ".db_escape($id);
 	
 	db_query($sql, _('Could not write department data'));
 }
