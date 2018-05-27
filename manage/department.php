@@ -3,7 +3,7 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
@@ -31,8 +31,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		set_focus('name');
 	}
 	else {
-		write_department($selected_id, $_POST['name']);
-		
+		write_department($selected_id, $_POST['name'], $_POST['basic_acc']);
+
     	if ($selected_id != "")
 			display_notification(_('Selected department has been updated'));
     	else
@@ -54,24 +54,30 @@ if ($Mode == 'Delete') {
 }
 
 if($Mode == 'RESET')
-	$selected_id = $_POST['selected_id']  = $_POST['name'] = '';
+	$selected_id = $_POST['selected_id'] = $_POST['name'] = '';
 
 //--------------------------------------------------------------------------
 
 start_form();
 
 start_table(TABLESTYLE);
-$th = array(_("Deparment Id"), _("Department Name"), "", "");
+if(!empty($USE_DEPT_ACC))
+    $th = array(_("Id"), _("Department Name"), _('Salary Basic Account'), "", "");
+else
+	$th = array(_("Id"), _("Department Name"), "", "");
 inactive_control_column($th);
 table_header($th);
 
 $result = db_query(get_departments(false, check_value('show_inactive')));
+
 $k = 0;
 while ($myrow = db_fetch($result)) {
 	alt_table_row_color($k);
 
 	label_cell($myrow["dept_id"]);
 	label_cell($myrow['dept_name']);
+	if(!empty($USE_DEPT_ACC))
+		label_cell($myrow['basic_account']);
 	inactive_control_cell($myrow["dept_id"], $myrow["inactive"], 'department', 'dept_id');
 	edit_button_cell("Edit".$myrow["dept_id"], _("Edit"));
 	delete_button_cell("Delete".$myrow["dept_id"], _("Delete"));
@@ -88,11 +94,17 @@ if($selected_id != '') {
 		
 		$myrow = get_departments($selected_id);
 		$_POST['name']  = $myrow["dept_name"];
+		$_POST['basic_acc'] = $myrow['basic_account'];
 		hidden('selected_id', $myrow['dept_id']);
  	}
 }
 
 text_row_ex(_("Department Name:"), 'name', 50, 60);
+
+if(!empty($USE_DEPT_ACC))
+    gl_all_accounts_list_row(_('Salary Basic Account'), 'basic_acc', null, false, false, _('Select basic account'));
+else
+	hidden('basic_acc');
 
 end_table(1);
 
