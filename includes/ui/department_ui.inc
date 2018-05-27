@@ -3,14 +3,13 @@
 |                        FrontHrm                        |
 |--------------------------------------------------------|
 |   Creator: Phương                                      |
-|   Date :   09-07-2017                                  |
+|   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
 |                                                        |
 \=======================================================*/
 
-function department_list($name, $id = null, $spec_option = false, $submit_on_change = false, $show_inactive = false)
-{
+function department_list($name, $id = null, $spec_option = false, $submit_on_change = false, $show_inactive = false) {
 	$sql = "SELECT dept_id, dept_name, inactive FROM ".TB_PREF."department ";
 
 	return combo_input($name, $id, $sql, 'dept_id', 'dept_name',
@@ -24,8 +23,7 @@ function department_list($name, $id = null, $spec_option = false, $submit_on_cha
 
 //--------------------------------------------------------------------------
 
-function department_list_cells($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false)
-{
+function department_list_cells($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
 	if ($label != null)
 		echo "<td>$label</td>\n";
 	echo "<td>";
@@ -35,8 +33,7 @@ function department_list_cells($label, $name, $id = null, $all_option = false, $
 
 //--------------------------------------------------------------------------
 
-function department_list_row($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false)
-{
+function department_list_row($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
 	echo "<tr><td class='label'>$label</td>";
 	department_list_cells(null, $name, $id, $all_option, 
 	$submit_on_change, $show_inactive);
