@@ -45,7 +45,7 @@ function can_process($selected_id) {
 		if(substr($p, 0, 7) == 'Account') {
 
 			if(input_num('Debit'.$val) && input_num('Credit'.$val)) {
-				display_error(_('Only one amount(debit or credit) is allowed per rule'));
+				display_error(_('Only one amount(Earning or Deduction) is allowed per rule'));
 				set_focus('Debit'.$val);
 				return false;
 			}
@@ -84,18 +84,11 @@ function handle_submit(&$selected_id) {
 				);
 		}
 	}
-
-	if(empty($payroll_rules))
-		display_notification(_('No data entered'));
-    else {
 	
-		if(exists_salary_structure($selected_id))
-			delete_salary_structure($selected_id);
-        
-		add_salary_structure($payroll_rules);
-			
-		display_notification(_('Salary structure has been updated.'));		
-	}
+	delete_salary_structure($selected_id);
+	add_salary_structure($payroll_rules);	
+	
+	display_notification(_('Salary structure has been updated.'));
 	$Ajax->activate('_page_body');
 }
 
@@ -172,10 +165,10 @@ function payroll_rules_settings($selected_id) {
         end_row();
 		foreach($rules as $rule) {			
 			start_row();
-				hidden($rule['account_input'],$rule['account_code']);
-				label_cell($rule['account_name']);
-				amount_cells(null, $rule['debit_input']);
-				amount_cells(null, $rule['credit_input']);
+			hidden($rule['account_input'],$rule['account_code']);
+			label_cell($rule['account_name']);
+			amount_cells(null, $rule['debit_input']);
+			amount_cells(null, $rule['credit_input']);
 			end_row();
 		}
 		end_table(1);
@@ -186,7 +179,7 @@ function payroll_rules_settings($selected_id) {
             submit_center('submit', _('Save salary structure'), true, '', 'default');
         else {
             submit_center_first('submit', _('Update'), _('Update salary structure data'), 'default');
-            submit_center_last('delete', _("Delete"), _('Delete salary structure if have been never used'), true);
+            submit_center_last('delete', _("Delete"), _('Delete salary structure if have been never used'), false, ICON_DELETE);
         }
 		div_end();
     }
