@@ -44,24 +44,24 @@ function display_payslip_header(&$Order) {
 	start_outer_table(TABLESTYLE2, "cellpadding='10'");
 
 	table_section(1);
-   		date_row(_('Date').':&nbsp;', 'date_', '', $new);
-		ref_row(_('Reference').':', 'ref', '');
+   	date_row(_('Date').':&nbsp;', 'date_', '', $new);
+	ref_row(_('Reference').':', 'ref', '');
 
 	table_section(3);
-		date_row(_('From Date').':', 'from_date', '', $new, 0, 0, 0, null, true);
-		date_row(_('To Date').':', 'to_date', '', $new, 0, 0, 0, null, true);
+	date_row(_('From Date').':', 'from_date', '', $new, 0, 0, 0, null, true);
+	date_row(_('To Date').':', 'to_date', '', $new, 0, 0, 0, null, true);
 
 	table_section(2);
-		hidden('PayType', PT_EMPLOYEE);
-		employee_list_row(_('Pay To').':&nbsp;', 'person_id', null, _("Select employee"), true, false);
+	hidden('PayType', PT_EMPLOYEE);
+	employee_list_row(_('Pay To').':&nbsp;', 'person_id', null, _("Select employee"), true, false);
 		
-		if(!isset($_POST['PaySlipNo']))
-			$_POST['PaySlipNo'] = get_next_payslip_no();
+	if(!isset($_POST['PaySlipNo']))
+		$_POST['PaySlipNo'] = get_next_payslip_no();
 		
-		hidden('PaySlipNo', $_POST['PaySlipNo']);
-		if(isset($_POST['person_id']) && $_POST['person_id'] != 0)
-		    label_row(_('Pay Basis').':', $Order->pay_basis == 0 ? _('Monthly salary') : _('Daily wages'));
-		label_row(_('Payslip No').':', $_POST['PaySlipNo']);
+	hidden('PaySlipNo', $_POST['PaySlipNo']);
+	if(isset($_POST['person_id']) && $_POST['person_id'] != 0)
+		label_row(_('Pay Basis').':', $Order->pay_basis == 0 ? _('Monthly salary') : _('Daily wages'));
+	label_row(_('Payslip No').':', $_POST['PaySlipNo']);
 	
 	table_section(4);
     
@@ -129,14 +129,23 @@ function generate_gl_items($Order) {
 
 	$emp_row = get_employees($emp_id);
 	$emp_dept = $emp_row['department_id'];
-	$dept_basic_acc = get_departments($emp_dept)['basic_account'];
+	$dept_name = !empty($emp_dept) ? get_departments($emp_dept)['dept_name'] : '';
+	$dept_basic_acc = !empty($emp_dept) ? get_departments($emp_dept)['basic_account'] : '';
 
 	if($Order->pay_basis == DAILY_WAGE)
         $Work_days = 1;
 
     if(db_num_rows($salary_rules) > 0) {
         
-        if(!empty($USE_DEPT_ACC))
+        if(!empty($USE_DEPT_ACC) && empty($emp_dept)) {
+        	display_error(_('This employee does not belong to any department'));
+        	display_footer_exit();
+        }
+        if(!empty($USE_DEPT_ACC) && empty($dept_basic_acc)) {
+        	display_error(_('Basic account has not been set for department').':&nbsp'.'<b>'.$dept_name.'</b>');
+        	display_footer_exit();
+        }
+        if(!empty($USE_DEPT_ACC) && !empty($dept_basic_acc))
 			$Order->add_gl_item($dept_basic_acc, 0, 0, $salary_amount, '');
 
 		while($myrow = db_fetch($salary_rules) ) {
