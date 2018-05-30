@@ -165,22 +165,22 @@ function validate_payslip_generation() {
 		return false;
 	}
 	if(payslip_generated_for_date($_POST['from_date'], $_POST['person_id'])) {
-        display_error('Selected date has already paid for this person');
+        display_error(_('Selected date has already paid for this person'));
         set_focus('from_date');
         return false;
     }
     if(payslip_generated_for_date($_POST['to_date'], $_POST['person_id'])) {
-        display_error('Selected date has already paid for this person');
+        display_error(_('Selected date has already paid for this person'));
         set_focus('to_date');
         return false;
     }
     if(payslip_generated_for_period($_POST['from_date'], $_POST['to_date'], $_POST['person_id'])) {
-    	display_error('Selected period contains a period that has already been paid for this person');
+    	display_error(_('Selected period contains a period that has already been paid for this person'));
         set_focus('from_date');
         return false;
     }
     if(date_comp($_POST['from_date'], $_POST['to_date']) > 0) {
-        display_error('End date cannot be before the start date');
+        display_error(_('End date cannot be before the start date'));
         set_focus('from_date');
         return false;
     }
@@ -195,18 +195,18 @@ function validate_payslip_generation() {
 		return false;
 	}
     if(!check_employee_hired($_POST['person_id'], $_POST['from_date'])) {
-        display_error('Cannot pay for the date before hired date');
+        display_error(_('Cannot pay for the date before hired date'));
         set_focus('from_date');
         return false;
     }
     // The following two cases need to be set in correct order
     if(!employee_has_salary_scale($_POST['person_id'])) {
-    	display_error('Selected Employee does not have a Salary Scale, please define it first.');
+    	display_error(_('Selected Employee does not have a Salary Scale, please define it first.'));
     	set_focus('person_id');
     	return false;
     }
     else if(!emp_salaryscale_has_structure($_POST['person_id'])) {
-    	display_error("the Employee's Salary Scale does not have a structure, please define Salary Structure");
+    	display_error(_("the Employee's Salary Scale does not have a structure, please define Salary Structure"));
     	set_focus('person_id');
     	return false;
     }
@@ -399,7 +399,7 @@ display_payslip_header($_SESSION['journal_items']);
 
 if (!count($_SESSION['journal_items']->gl_items)) {
 	br();
-	submit_center('GeneratePayslip', _("Generate Payslip"), _('Generate Payslip For Process'), false);
+	submit_center('GeneratePayslip', _('Generate Payslip'), _('Generate Payslip For Process'), false);
 	br();
 }
 
