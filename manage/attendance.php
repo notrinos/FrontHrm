@@ -12,7 +12,7 @@
 $page_security = 'SA_EMPL';
 $path_to_root  = '../../..';
 
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/session.inc');
 add_access_extensions();
 
 $js = '';
@@ -70,8 +70,9 @@ start_form();
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
-date_cells(_('Date').':', 'AttDate');
+date_cells(_('Date').':', 'AttDate', _('Date of attendance'));
 department_list_cells(_('For department').':', 'DeptId', null, _('All departments'), true);
+submit_cells('bulk', _('Bulk'), '', _('Record all as regular work'), true);
 end_row();
 end_table(1);
 
@@ -89,20 +90,33 @@ while($overtime = db_fetch($overtimes)) {
 
 $th = array_merge($initial_cols, $remaining_cols);
 $employees = db_query(get_employees(false, false, get_post('DeptId')));
-
 $emp_ids = array();
+
+$k = 0;
+foreach ($employees as $emp) {
+	$emp_ids[$k] = $emp['emp_id'];
+	$k++;
+}
+
+if(isset($_POST['bulk'])) {
+	foreach($emp_ids as $id) {
+		if(get_post($id) == 1)
+		    $_POST[$id.'-0'] = $Work_hours;
+		else
+			$_POST[$id.'-0'] = '';
+	}
+	$Ajax->activate('_page_body');
+}
 
 table_header($th);
 
-$k=0;
-while($employee = db_fetch($employees)) {
+foreach($employees as $employee) {
     
     start_row();
-    label_cell($employee['emp_id']);
+    label_cell($employee['emp_id'].checkbox(null, $employee['emp_id'], isset($_POST[$employee['emp_id']]) ? $_POST[$employee['emp_id']] : 1));
     label_cell($employee['name']);
     $name1 = $employee['emp_id'].'-0';
     text_cells(null, $name1, null, 10, 10);
-    $emp_ids[$k] = $employee['emp_id'];
     
     $i=0;
     while($i < count($remaining_cols)) {
@@ -110,7 +124,6 @@ while($employee = db_fetch($employees)) {
         text_cells(null, $name2, null, 10, 10);
         $i++;
     }
-    $k++;
     end_row();
 }
 
