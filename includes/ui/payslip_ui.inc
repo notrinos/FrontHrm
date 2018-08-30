@@ -258,108 +258,6 @@ function generate_gl_items($Order) {
 
 //--------------------------------------------------------------------------
 
-function display_advice_header(&$Order) {
-	global $Ajax, $Payable_act;
-
-	$qes = has_quick_entries(QE_JOURNAL);
-	$new = $Order->order_id==0;
-
-	hidden('ref_original');
-	start_outer_table(TABLESTYLE2, "cellpadding='10'");
-
-	table_section(1);
-
-   		date_row(_("Date:"), 'date_', '', $new);
-		ref_row(_("Reference:"), 'ref', '');
-
-	table_section(2);
-		
-		hidden('PayType', PT_EMPLOYEE);
-
-		$employee = get_employees($Order->person_id);
-
-		$_POST['to_the_order_of'] = $Order->to_the_order_of;
-
-		if(isset($_GET['PaymentAdvice']) || isset($_POST['PaymentAdvice'])) {
-			label_row(_("Pay To: "), $employee['emp_first_name']." ".$employee['emp_last_name']);
-			hidden('emp_id', $Order->person_id);
-			label_row(_("To the Order of:"),$Order->to_the_order_of);
-
-			hidden('to_the_order_of');
-
-			if(!isset($_POST['PaymentAdvice']))
-				$_POST['PaymentAdvice'] = $_GET['PaymentAdvice'];
-			hidden('PaymentAdvice');
-		}
-        else {
-			employee_list_row(_("Pay To: "), 'emp_id', null, _("Select Employee"), true, false, false);
-			text_row(_("To the Order of:"), 'to_the_order_of', $_POST['to_the_order_of'], 20, 50);
-		}
-		table_section(3);
-
-		if(!isset($_POST['PaySlipNo']))
-			$_POST['PaySlipNo'] = $Order->payslip_no = 0;
-
-		bank_accounts_list_row(_("From:"), 'bank_account', null, true);
-		bank_balance_row(get_post('bank_account'));
-	
-        if(!isset($_GET['PaymentAdvice']) && !isset($_POST['PaymentAdvice']))
-            employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('emp_id'), _("Select payslip"), true);
-		
-		if (list_updated('emp_id')) {
-
-			$Order->clear_items();
-			unset($_POST['totamount']);
-			$Ajax->activate('totamount');
-			$Ajax->activate('for_payslip');
-			$Order->payslip_no = 0;	
-		}
-		
-		if (list_updated('for_payslip') || list_updated('bank_account')) {
-
-			$Order->clear_items();
-			$_POST['memo_'] = "";
-
-			if(list_updated('for_payslip')) {
-				unset($_POST['PaySlipNo']);
-				$Order->payslip_no = 0;	
-				$Order->payslip_trans_no = get_post('for_payslip');
-			}
-            
-            if(!isset($Order->payslip_trans_no))
-                $payslip = null;
-            else    
-                $payslip = get_payslip(false, $Order->payslip_trans_no);
-                
-		
-			if($payslip) {
-				$_POST['memo_'] = "Payment advice gl entry For Payslip #".$payslip['payslip_no'];
-
-				if(list_updated('for_payslip')) {
-
-					$Order->payslip_trans_no = $payslip['trans_no'];
-					$Order->person_id = $payslip['emp_id'];
-					//$Order->to_the_order_of = $payslip['to_the_order_of'];
-					$Order->payslip_no = $_POST['PaySlipNo'] = $payslip['payslip_no'];
-				}
-                
-				$pay_amt = $payslip['payable_amount'];
-
-				$bank_ac_code = get_bank_gl_account(get_post('bank_account'));
-	
-				$Order->add_gl_item($Payable_act, 0, 0, $pay_amt, '');
-				$Order->add_gl_item($bank_ac_code, 0, 0, -$pay_amt, '');
-			}
-			$Ajax->activate('items_table');
-		}
-
-		hidden('PaySlipNo', $Order->payslip_no);
-	
-	end_outer_table(1);
-}
-
-//--------------------------------------------------------------------------
-
 function display_gl_items($title, &$order) {
 	global $path_to_root;
 
@@ -370,14 +268,11 @@ function display_gl_items($title, &$order) {
     div_start('items_table');
 	start_table(TABLESTYLE, "width='80%'");
 	if ($dim == 2)
-		$th = array(_("Account Code"), _("Account Description"), _("Dimension")." 1",
-			_("Dimension")." 2", _("Debit"), _("Credit"), _("Memo"), "");
+		$th = array(_("Account Code"), _("Account Description"), _("Dimension")." 1", _("Dimension")." 2", _("Debit"), _("Credit"), _("Memo"), "");
 	else if ($dim == 1)
-		$th = array(_("Account Code"), _("Account Description"), _("Dimension"),
-			_("Debit"), _("Credit"), _("Memo"), "");
+		$th = array(_("Account Code"), _("Account Description"), _("Dimension"), _("Debit"), _("Credit"), _("Memo"), "");
 	else
-		$th = array(_("Account Code"), _("Account Description"),
-			_("Debit"), _("Credit"), _("Memo"), "");
+		$th = array(_("Account Code"), _("Account Description"), _("Debit"), _("Credit"), _("Memo"), "");
 
 	if (count($order->gl_items)) $th[] = '';
 
