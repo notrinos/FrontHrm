@@ -21,6 +21,7 @@ include_once($path_to_root . "/includes/data_checks.inc");
 
 include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
 include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
+include_once($path_to_root . '/reporting/includes/reporting.inc');
 include_once($path_to_root . "/admin/db/attachments_db.inc");
 
 $js = '';
@@ -98,8 +99,11 @@ function line_start_focus() {
 if (isset($_GET['AddedID'])) {
 	$trans_no = $_GET['AddedID'];
 	$trans_type = ST_BANKPAYMENT;
+	$payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
 
-   	display_notification_centered(sprintf(_("Payment %d has been entered"), $trans_no));
+   	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
+
+   	display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
 
