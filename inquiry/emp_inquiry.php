@@ -69,7 +69,7 @@ function trans_type($row) {
 	return $row['Type'] == 0 ? 'Payslip' : 'Payment advice';
 }
 function view_link($row) {
-	return get_trans_view_str(ST_JOURNAL, $row['trans_no']);
+	return get_trans_view_str($row['Type'], $row['trans_no']);
 }
 function prt_link($row) {
 	if($row['Type'] == 1)
