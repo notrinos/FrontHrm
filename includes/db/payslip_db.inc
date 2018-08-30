@@ -149,7 +149,7 @@ function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp
 		if($unpaid_only)
 		    $sql .= " GROUP BY P.payslip_no HAVING Paid = 1";
 		else
-		    $sql .= " GROUP BY P.trans_no, p.type";
+		    $sql .= " GROUP BY P.trans_no, P.type";
 	return $sql;
 }
 
