@@ -20,7 +20,7 @@ class FrontHrm_app extends application {
         $this->add_module(_('Transactions'));
 		$this->add_lapp_function(0, _('Attendance'), $path_to_root.'/modules/FrontHrm/manage/attendance.php?', 'SA_EMPL', MENU_TRANSACTION);
         $this->add_lapp_function(0, _('Payslip Entry'), $path_to_root.'/modules/FrontHrm/manage/payslip.php?NewPayslip=Yes', 'SA_EMPL', MENU_TRANSACTION);
-        $this->add_rapp_function(0, _('Payment Advice'), $path_to_root.'/modules/FrontHrm/manage/pay_advice.php?NewPaymentAdvice=Yes', 'SA_EMPL', MENU_TRANSACTION);
+        $this->add_rapp_function(0, _('Payment Advice'), $path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php?NewPayment=Yes', 'SA_EMPL', MENU_TRANSACTION);
    
         $this->add_module(_('Inquiries and Reports'));
 		$this->add_lapp_function(1, _('Timesheet'), $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php?', 'SA_EMPL', MENU_INQUIRY);
