@@ -3,7 +3,7 @@ Name: FrontHrm
 Description: FrontHrm Module for FrontAccounting.
 Author: Phuong <trananhphuong83@gmail.com>
 Maintenance: Phuong <trananhphuong83@gmail.com>
-Homepage: https://github.com/notrinos/Front-Hrm
+Homepage: https://github.com/notrinos/FrontHrm
 Type: extension
 InstallPath: modules/FrontHrm
 Filename: fronthrm
