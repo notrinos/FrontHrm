@@ -90,18 +90,18 @@ while($row = db_fetch($emp_payslip)){
 	
 	if($row['overtime_id'] == 0) {
 		$work_days += 1;
-		if($row['hours_no'] != 8)
-			$leave_hours += (8 - $row['hours_no']);
+		if($row['hours_no'] != $Work_hours)
+			$leave_hours += ($Work_hours - $row['hours_no']);
 	}
 }
 
 $day_amount = get_day_amount($payslip_no);
-$basic_amount = ($day_amount* $work_days) - (($day_amount/8)*$leave_hours);
+$basic_amount = ($day_amount* $work_days) - (($day_amount/$Work_hours)*$leave_hours);
 $total_earn = $basic_amount;
 
 $contents .= "<td>$work_days days</td>
 			 <td>$leave_hours hours</td>
-			 <td style='text-align:right'>$basic_amount</td>
+			 <td style='text-align:right'>".price_format($basic_amount)."</td>
 			 </tr>";
 
 foreach(db_query($overtimes) as $overtime) {
@@ -115,7 +115,7 @@ foreach(db_query($overtimes) as $overtime) {
 		
 		if($row['overtime_id'] == $overtime['overtime_id']) {
 			$overtime_hours += $row['hours_no'];
-			$overtime_amount += (($day_amount/8)*$row['rate'])*$row['hours_no'];
+			$overtime_amount += (($day_amount/$Work_hours)*$row['rate'])*$row['hours_no'];
 		}
 	}
 	
@@ -125,7 +125,7 @@ foreach(db_query($overtimes) as $overtime) {
 				 <td>$overtime_hours hours</td>
 				 <td></td>";
 	if($overtime_hours > 0)
-		$contents .= "<td style='text-align:right'>$overtime_amount</td>";
+		$contents .= "<td style='text-align:right'>".price_format($overtime_amount)."</td>";
 	else
 		$contents .= "<td></td>";
 	
@@ -135,11 +135,11 @@ foreach (get_payslip_allowance($payslip_no) as $row) {
 	$account_name = get_gl_account($row['detail'])['account_name'];
 	$allowance_amount = $row['amount'];
 	$total_earn += $allowance_amount;
-	$contents .= "<tr><td colspan='3'>$account_name</td><td style='text-align:right'>$allowance_amount</td></tr>";
+	$contents .= "<tr><td colspan='3'>$account_name</td><td style='text-align:right'>".price_format($allowance_amount)."</td></tr>";
 }
 
 $contents .= "<tr>
-				<td colspan='3' align='right'><b>Total salary</b></td><td style='text-align:right'>$total_earn</td>
+				<td colspan='3' align='right'><b>Total salary</b></td><td style='text-align:right'>".price_format($total_earn)."</td>
 			 </tr>
 		 </table>";
 
