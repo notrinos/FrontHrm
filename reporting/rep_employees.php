@@ -14,8 +14,6 @@ print_employees_list();
 function get_employees_list($gender, $dep, $from, $to) {
     $dep = empty($dep) ? false : $dep;
 	$sql = get_employees(false, false, $dep);
-    
-    $where = array();
 
     if($gender != -1)
     	$sql .= " AND gender = ".db_escape($gender);
@@ -25,11 +23,6 @@ function get_employees_list($gender, $dep, $from, $to) {
     	$sql .= " AND emp_id <= ".db_escape($to);
 
     return db_query($sql, _('could not get employee'));
-}
-
-function display_department($id, $name, $rep) {
-
-    
 }
 
 function display_department_employees($dep_id, $dep_name, $gender, $from, $to, $rep) {

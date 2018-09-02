@@ -138,6 +138,10 @@ foreach (get_payslip_allowance($payslip_no) as $row) {
 	$contents .= "<tr><td colspan='3'>$account_name</td><td style='text-align:right'>".price_format($allowance_amount)."</td></tr>";
 }
 
+$allocated = get_payslip_allocated_advances($payslip_no);
+$total_earn -= $allocated;
+$contents .= "<tr><td colspan='3'>"._('Advance Deduction')."</td><td style='text-align:right'>".price_format(0-$allocated)."</td></tr>";
+
 $contents .= "<tr>
 				<td colspan='3' align='right'><b>Total salary</b></td><td style='text-align:right'>".price_format($total_earn)."</td>
 			 </tr>
@@ -174,6 +178,13 @@ function get_day_amount($payslip_no) {
     $amount = ($row['salary_amount'] / ($work_days + $row['deductable_leaves']));
 
     return $amount;
+}
+function get_payslip_allocated_advances($payslip_no) {
+	$sql = "SELECT SUM(a.amount) FROM ".TB_PREF."employee_advance_allocation a, ".TB_PREF."employee_trans t WHERE t.id = a.trans_no_from AND t.payslip_no = ".db_escape($payslip_no);
+	$result = db_query($sql, _('could not get employee allocations amount'));
+	$row = db_fetch($result);
+
+	return $row[0];
 }
 
 //--------------------------------------------------------------------------
