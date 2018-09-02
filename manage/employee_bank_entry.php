@@ -29,9 +29,16 @@ if ($SysPrefs->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
+add_js_file('payalloc.js');
+add_js_ufile($path_to_root.'/modules/FrontHrm/js/emp_payalloc.js');
 
 if (isset($_GET['NewPayment'])) {
 	$_SESSION['page_title'] = _($help_context = "Employee Payment Entry");
+	create_cart(ST_BANKPAYMENT, 0);
+}
+if(isset($_GET['NewAdvance'])) {
+	$_POST['NewAdvance'] = $_GET['NewAdvance'];
+	$_SESSION['page_title'] = _($help_context = "Employee Advance Entry");
 	create_cart(ST_BANKPAYMENT, 0);
 }
 elseif(isset($_GET['NewDeposit'])) {
@@ -102,8 +109,9 @@ if (isset($_GET['AddedID'])) {
 	$payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
 
    	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
-
-   	display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
+    
+    if($payslip_no)
+   	    display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
 
@@ -211,7 +219,7 @@ function create_cart($type, $trans_no, $payslip=array()) {
 		$cart->payslip_no = $payslip['payslip_no'];
         $_POST['emp_id'] = $cart->person_id;
         $_POST['for_payslip'] = $cart->payslip_no;
-        $_POST['memo_'] = _('Payment advice gl entry For Payslip #').$cart->payslip_no;
+        $cart->memo_ = _('Payment advice gl entry For Payslip #').$cart->payslip_no;
 
 		$pay_amt = $payslip['payable_amount'];
 
@@ -277,7 +285,7 @@ function check_trans() {
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	if (!get_post('for_payslip')) {
+	if (!get_post('for_payslip') && !get_post('NewAdvance')) {
 		display_error(_("You have to select a payslip."));
 		set_focus('for_payslip');
 		$input_error = 1;
@@ -295,7 +303,28 @@ function check_trans() {
 		set_focus('person_id');
 		$input_error = 1;
 	}
+	if(isset($_POST['amount']) && $_POST['amount'] > $_SESSION['pay_items']->gl_items_total()) {
+		display_error(_('Payment cannot be processed because the amount allocated is more than the total payslip amount'));
+		set_focus('amount');
+		$input_error = 1;
+	}
 	return $input_error;
+}
+
+if(isset($_POST['update_advances'])) {
+	if(input_num('advance_amount') <= 0) {
+		display_error(_('Pay amount have to be positive number.'));
+		set_focus('advance_amount');
+	}
+	elseif (!get_post('emp_id')) {
+		display_error(_("You have to select an employee."));
+		set_focus('emp_id');
+	}
+	else {
+		$_SESSION['pay_items']->clear_items();
+		$_SESSION['pay_items']->add_gl_item($Payable_act, 0, 0, input_num('advance_amount'), '');
+		$Ajax->activate('_page_body');
+	}
 }
 
 if (isset($_POST['Process']) && !check_trans()) {
@@ -306,21 +335,51 @@ if (isset($_POST['Process']) && !check_trans()) {
 
 	add_new_exchange_rate(get_bank_account_currency(get_post('bank_account')), get_post('date_'), input_num('_ex_rate'));
 
-	$trans = write_employee_bank_transaction($_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id, $_POST['bank_account'], $_SESSION['pay_items'], $_POST['date_'], $_POST['PayType'], $_POST['person_id'], get_post('PersonDetailID'), $_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null), $_POST['for_payslip']);
+	$allocs = array();
+	foreach ($_POST as $k => $v) {
+		if(strlen($k) > 6 && substr($k, 0, 6) == 'amount' && $v > 0)
+			$allocs[substr($k,6)] = $v;
+	}
 
-	$trans_type = $trans[0];
-   	$trans_no = $trans[1];
-	new_doc_date($_POST['date_']);
+	if(@$_POST['amount'] >= $_SESSION['pay_items']->gl_items_total()) {
+		add_employee_trans(0, ST_BANKPAYMENT, $_POST['for_payslip'], $_POST['date_'], $_POST['person_id'], 0);
+		$id_counter = db_insert_id();
+		add_employee_allocations($id_counter, $allocs);
+		
+		commit_transaction();
+		display_notification(_('Employee advances have been allocated, no bank payment has been made.'));
+		$Ajax->activate('_page_body');
+	}
+    else {
+        
+        if(input_num('amount') > 0) {
+        	$old_amt = $_SESSION['pay_items']->gl_items_total();
+        	$this_alloc = input_num('amount');
+            $_SESSION['pay_items']->clear_items();
+    	    $_SESSION['pay_items']->add_gl_item($Payable_act, 0, 0, $old_amt - $this_alloc, '');
+        }
 
-	$_SESSION['pay_items']->clear_items();
-	unset($_SESSION['pay_items']);
+        $trans = write_employee_bank_transaction($_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id, $_POST['bank_account'], $_SESSION['pay_items'], $_POST['date_'], $_POST['PayType'], $_POST['person_id'], get_post('PersonDetailID'), $_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null), $_POST['for_payslip'], $_POST['emp_id']);
 
-	commit_transaction();
+	    $trans_type = $trans[0];
+   	    $trans_no = $trans[1];
+   	    if(!empty($trans[2]) && count($allocs)) {
+   	    	$trans_counter = $trans[2];
+   	        add_employee_allocations($trans_counter, $allocs);
+   	    }
+   	    
+	    new_doc_date($_POST['date_']);
 
-	if ($new)
-		meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "AddedID=$trans_no" : "AddedDep=$trans_no");
-	else
-		meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "UpdatedID=$trans_no" : "UpdatedDep=$trans_no");
+	    $_SESSION['pay_items']->clear_items();
+	    unset($_SESSION['pay_items']);
+
+	    commit_transaction();
+
+	    if ($new)
+		    meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "AddedID=$trans_no" : "AddedDep=$trans_no");
+	    else
+		    meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "UpdatedID=$trans_no" : "UpdatedDep=$trans_no");
+    }
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -390,17 +449,27 @@ start_form();
 
 employee_bank_header($_SESSION['pay_items']);
 
+if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance'])) {
+    submit_center('update_advances', _('Generate Payment Items'), true, _('Generate Payment GL Items'), true, 'default');
+    br();
+}
+
+if(!empty($_POST['emp_id']) && empty($_POST['NewAdvance']))
+    show_employee_advances($_POST['emp_id']);
+
 start_table(TABLESTYLE2, "width='90%'", 10);
 start_row();
 echo "<td>";
-display_bank_gl_items($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Payment Items"):_("Deposit Items"), $_SESSION['pay_items']);
+if($_SESSION['pay_items']->count_gl_items() > 0)
+    display_bank_gl_items($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Payment Items"):_("Deposit Items"), $_SESSION['pay_items']);
 gl_options_controls($_SESSION['pay_items']);
 echo "</td>";
 end_row();
 end_table(1);
 
 submit_center_first('Update', _("Update"), '', null);
-submit_center_last('Process', $_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Process Payment"):_("Process Deposit"), '', 'default');
+if($_SESSION['pay_items']->count_gl_items() > 0)
+    submit_center_last('Process', $_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Process Payment"):_("Process Deposit"), '', 'default');
 
 end_form();
 
