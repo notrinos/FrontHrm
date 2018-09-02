@@ -69,7 +69,7 @@ function add_document($emp_id, $type_id, $description, $issue_date, $expiry_date
 
 	$sql = "INSERT INTO ".TB_PREF."employee_docs (emp_id, type_id, description, issue_date, expiry_date, alert, filename, unique_name, filesize, filetype) VALUES (".db_escape($emp_id).", ".db_escape($type_id).",".db_escape($description).", '".date2sql($issue_date)."', '".date2sql($expiry_date)."', ".db_escape($alert).", ".db_escape($filename).", ".db_escape($unique_name).", ".db_escape($filesize).", ".db_escape($filetype).")";
 
-	db_query($sql, "Attachment could not be inserted");		
+	db_query($sql, _('Attachment could not be inserted'));		
 }
 
 //--------------------------------------------------------------------------
@@ -102,8 +102,31 @@ function get_document($id) {
 
 //--------------------------------------------------------------------------
 
-function get_sql_for_employee_documents($emp_id) {
-	return "SELECT id, description, issue_date, expiry_date, alert, filename, filesize, filetype, type_id FROM ".TB_PREF."employee_docs WHERE emp_id = ".db_escape($emp_id)." ORDER BY id DESC";
+function get_sql_for_employee_documents($emp_id = 0, $type_id = 0, $alert = 0, $no_alert = 0, $expired_from = null, $expired_to = null, $issued_from = null, $issued_to = null, $string = false) {
+
+	$sql = "SELECT id, type_id, description, issue_date, expiry_date, alert, filename, filesize, filetype, emp_id FROM ".TB_PREF."employee_docs ";
+
+	if(empty($expired_from) && empty($expired_from) && empty($expired_from) && empty($expired_from))
+	    $sql .= " WHERE emp_id = ".db_escape($emp_id);
+	else
+	    $sql .= " WHERE issue_date BETWEEN '".date2sql($issued_from)."' AND '" . date2sql($issued_to) . "' AND expiry_date BETWEEN '".date2sql($expired_from)."' AND '".date2sql($expired_to)."' ";
+
+	if(!empty($emp_id))
+	    $sql .= " AND emp_id = ".db_escape($emp_id);
+	if(!empty($type_id))
+	    $sql .= " AND type_id = ".db_escape($type_id);
+	if((!empty($alert) && !empty($no_alert)) || (empty($alert) && empty($no_alert)))
+	    $sql .= " AND alert >= 0 ";
+	elseif(!empty($no_alert))
+	    $sql .= " AND alert = 0 ";
+	elseif(!empty($alert))
+	    $sql .= " AND alert = 1 ";
+	if(!empty($string))
+        $sql .= " AND (description LIKE ".db_escape("%$string%")." OR filename LIKE ".db_escape("%$string%")." OR id LIKE ".db_escape("%$string%").")";
+
+	$sql .= " ORDER BY id";
+
+	return $sql;
 }
 
 //--------------------------------------------------------------------------
