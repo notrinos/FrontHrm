@@ -62,13 +62,10 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 
     add_journal($trans_type, $trans_id, $total,	$date , $cart->currency, $ref, $cart->source_ref, $cart->rate, Today(), Today());
 
-	//add payslip details or payment advice
-	if($from_date != '' && $to_date != '') {
-		add_payslip($trans_id, $cart->person_id, $from_date, $to_date, $cart->leaves, $cart->deductable_leaves, $cart->payable_amt, $cart->salary_amt);
-		add_payslip_details($payslip_no, $cart->allowance);
-	}
-	else
-	    add_payment_advice($trans_id, $payslip_no, $date, $source_ref, $cart->gl_items_total_debit());
+	//add payslip details
+	add_payslip($trans_id, $cart->person_id, $from_date, $to_date, $cart->leaves, $cart->deductable_leaves, $cart->payable_amt, $cart->salary_amt);
+	add_payslip_details($payslip_no, $cart->allowance);
+
 	
 	$Refs->save($trans_type, $trans_id, $ref);
     
@@ -128,11 +125,11 @@ function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp
 		
 		COUNT(P.payslip_no) AS Paid 
 		
-		FROM (SELECT generated_date, emp_id, trans_no, payslip_no, from_date, to_date, payable_amount, 0 AS type FROM ".TB_PREF."payslip UNION SELECT pay_date, NULL, trans_no, payslip_no, NULL, NULL, pay_amount, 1 FROM ".TB_PREF."employee_trans) P 
+		FROM (SELECT p.generated_date, p.emp_id, p.trans_no, p.payslip_no, p.from_date, p.to_date, p.payable_amount, 0 AS type FROM ".TB_PREF."payslip p UNION SELECT t.pay_date, (SELECT emp_id FROM ".TB_PREF."payslip WHERE payslip_no = t.payslip_no), t.trans_no, t.payslip_no, (SELECT from_date FROM ".TB_PREF."payslip WHERE payslip_no = t.payslip_no), (SELECT to_date FROM ".TB_PREF."payslip WHERE payslip_no = t.payslip_no), t.pay_amount, 1 FROM ".TB_PREF."employee_trans t) P 
 		
 		LEFT JOIN ".TB_PREF."employee e ON P.emp_id = e.emp_id 
 		LEFT JOIN ".TB_PREF."journal j ON j.trans_no = P.trans_no 
-		LEFT JOIN ".TB_PREF."bank_trans b ON b.trans_no = P.trans_no AND b.type = ".ST_BANKPAYMENT." OR b.type = ".ST_BANKDEPOSIT." 
+		LEFT JOIN ".TB_PREF."bank_trans b ON b.trans_no = P.trans_no AND (b.type = ".ST_BANKPAYMENT." OR b.type = ".ST_BANKDEPOSIT.") 
 		LEFT JOIN ".TB_PREF."comments c ON (j.type = c.type AND j.trans_no = c.id) OR (b.type = c.type AND b.trans_no = c.id)  
 
 		WHERE P.generated_date BETWEEN '".date2sql($from)."' AND '" . date2sql($to) . "'";
@@ -147,7 +144,7 @@ function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp
 		    $sql .= " AND e.emp_id = ".db_escape($emp_id);
 
 		if($unpaid_only)
-		    $sql .= " GROUP BY P.payslip_no HAVING Paid = 1";
+		    $sql .= " AND payslip_no != 0 GROUP BY P.payslip_no HAVING Paid = 1";
 		else
 		    $sql .= " GROUP BY P.trans_no, P.type";
 	return $sql;

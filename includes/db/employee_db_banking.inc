@@ -9,20 +9,20 @@
 |                                                        |
 \=======================================================*/
 
-function write_employee_bank_transaction($trans_type, $trans_no, $from_account, $items, $date_, $person_type_id, $person_id, $person_detail_id,	$ref, $memo_, $use_transaction=true, $settled_amount=null, $payslip_no) {
+function write_employee_bank_transaction($trans_type, $trans_no, $from_account, $items, $date_, $person_type_id, $person_id, $person_detail_id,	$ref, $memo_, $use_transaction=true, $settled_amount=null, $payslip_no, $emp_id) {
 	global $Refs, $SysPrefs;
 
 	if ($trans_type != ST_BANKPAYMENT && $trans_type != ST_BANKDEPOSIT)
-		display_db_error(_('Invalid type ($trans_type) sent to add_bank_transaction'));
+		display_db_error('Invalid type ($trans_type) sent to add_bank_transaction');
 
 	$do_exchange_variance = false;
 	$exchanged = false;
 	if ($use_transaction)
 		begin_transaction();
 
-	$args = func_get_args(); if (count($args) < 12) $args[] = true;
+	$args = func_get_args(); if (count($args) < 13) $args[] = true;
 
-	$args = (object)array_combine(array('trans_type', 'trans_no', 'from_account', 'items', 'date_', 'person_type_id', 'person_id', 'person_detail_id', 'ref', 'memo_', 'use_transaction', 'settled_amount', 'payslip_no'), $args);
+	$args = (object)array_combine(array('trans_type', 'trans_no', 'from_account', 'items', 'date_', 'person_type_id', 'person_id', 'person_detail_id', 'ref', 'memo_', 'use_transaction', 'settled_amount', 'payslip_no', 'emp_id'), $args);
 
 	hook_db_prewrite($args, $trans_type);
 
@@ -91,8 +91,15 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 
 	//$total = $cart->gl_items_total_debit();
     
-    if($trans_type == ST_BANKPAYMENT && !empty($payslip_no))
-	    add_payment_advice($trans_no, $payslip_no, $date_, $person_id, $total);
+    if($trans_type == ST_BANKPAYMENT) {
+
+	    add_employee_trans($trans_no, ST_BANKPAYMENT, $payslip_no, $date_, $person_id, $total);
+
+	    $trans_counter = db_insert_id();
+
+	    if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance']))
+	        add_employee_advance($trans_counter, $emp_id);
+    }
 
 	add_comments($trans_type, $trans_no, $date_, $memo_);
 
@@ -114,14 +121,14 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 	if ($use_transaction)
 		commit_transaction();
 
-	return array($trans_type, $trans_no);
+	return array($trans_type, $trans_no, $trans_counter);
 }
 
 //--------------------------------------------------------------------------
 
-function add_payment_advice($trans_id, $payslip_no, $date, $source_ref, $pay_amount) {
+function add_employee_trans($trans_id, $type, $payslip_no, $date, $source_ref, $pay_amount) {
 
-	$sql = "INSERT INTO ".TB_PREF."employee_trans(trans_no, payslip_no, pay_date, to_the_order_of, pay_amount) VALUES (".db_escape($trans_id).", ".db_escape($payslip_no).", '".date2sql($date)."', ".db_escape($source_ref).", ".db_escape($pay_amount).")";
+	$sql = "INSERT INTO ".TB_PREF."employee_trans(trans_no, trans_type, payslip_no, pay_date, to_the_order_of, pay_amount) VALUES (".db_escape($trans_id).", ".db_escape($type).", ".db_escape($payslip_no).", '".date2sql($date)."', ".db_escape($source_ref).", ".db_escape($pay_amount).")";
 
 	db_query($sql, _('employee trans could not be inserted'));
 }
@@ -130,4 +137,32 @@ function add_payment_advice($trans_id, $payslip_no, $date, $source_ref, $pay_amo
 
 function has_payment_advice($payslip_no) {
 	return check_empty_result("SELECT id FROM ".TB_PREF."employee_trans WHERE payslip_no = ".db_escape($payslip_no));
+}
+
+//--------------------------------------------------------------------------
+
+function add_employee_advance($emp_trans_no, $emp_id) {
+	$sql = "INSERT INTO ".TB_PREF."employee_advance (emp_trans_no, emp_id) VALUES (".db_escape($emp_trans_no).",".db_escape($emp_id).")";
+
+	db_query($sql, _('could not insert employee advance data'));
+}
+
+//--------------------------------------------------------------------------
+
+function get_employee_advances($emp_id) {
+	$sql = "SELECT t.id, t.trans_no, t.trans_type, t.pay_date, t.pay_amount, SUM(IFNULL(al.amount,0)) AS amt_allocated, (t.pay_amount - SUM(IFNULL(al.amount,0))) AS remain FROM ".TB_PREF."employee_trans t LEFT JOIN ".TB_PREF."employee_advance_allocation al ON al.trans_no_to = t.id LEFT JOIN ".TB_PREF."employee_advance a ON a.emp_trans_no = t.id WHERE a.emp_id = ".db_escape($emp_id)." GROUP BY trans_no, trans_type HAVING remain > 0";
+
+	return db_query($sql, _('could not get employee advance data'));
+}
+
+//--------------------------------------------------------------------------
+
+function add_employee_allocations($trans=null, $allocs = array()) {
+
+    if(count($allocs)) {
+	    foreach($allocs as $trans_to => $amt) {
+            $sql = "INSERT INTO ".TB_PREF."employee_advance_allocation (trans_no_from, trans_no_to, amount) VALUES (".db_escape($trans).", ".db_escape($trans_to).", ".db_escape($amt).")";
+            db_query($sql, _('could not add employee allocation'));
+        }
+    }
 }
