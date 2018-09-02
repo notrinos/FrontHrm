@@ -18,3 +18,4 @@ include_once($path_to_root.'/modules/FrontHrm/includes/db/account_db.inc');
 include_once($path_to_root.'/modules/FrontHrm/includes/db/salary_structure_db.inc');
 include_once($path_to_root.'/modules/FrontHrm/includes/db/payslip_db.inc');
 include_once($path_to_root.'/modules/FrontHrm/includes/db/employee_db_banking.inc');
+include_once($path_to_root.'/modules/FrontHrm/includes/db/doc_db.inc');

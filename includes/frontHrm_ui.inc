@@ -15,6 +15,7 @@ include_once($path_to_root.'/modules/FrontHrm/includes/ui/salary_scale_ui.inc');
 include_once($path_to_root.'/modules/FrontHrm/includes/ui/overtime_ui.inc');
 include_once($path_to_root.'/modules/FrontHrm/includes/ui/payslip_ui.inc');
 include_once($path_to_root.'/modules/FrontHrm/includes/ui/employee_bank_ui.inc');
+include_once($path_to_root.'/modules/FrontHrm/includes/ui/doc_ui.inc');
 
 define('DEBIT', 1);
 define('CREDIT', 0);
