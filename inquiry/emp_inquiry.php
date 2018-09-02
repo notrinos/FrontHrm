@@ -66,14 +66,24 @@ function check_overdue($row) {
 
 }
 function trans_type($row) {
-	return $row['Type'] == 0 ? 'Payslip' : 'Payment advice';
+
+	if($row['Type'] == 0)
+		return _('Payslip');
+	elseif ($row['payslip_no'] == 0)
+		return _('Employee advance');
+	else
+		return _('Payment advice');
 }
 function view_link($row) {
-	return get_trans_view_str($row['Type'], $row['trans_no']);
+	if($row['trans_no'] != 0)
+	    return get_trans_view_str($row['Type'], $row['trans_no']);
 }
 function prt_link($row) {
-	if($row['Type'] == 1)
+	if($row['Type'] == 1 && $row['payslip_no'] != 0)
 	    return hrm_print_link($row['payslip_no'], _('Print this Payslip'), true, ST_PAYSLIP, ICON_PRINT, '', '', 0);
+}
+function payslip_no($row) {
+	return $row['payslip_no'] == 0 ? null : $row['payslip_no'];
 }
 
 $sql = get_sql_for_payslips(get_post('Ref'), get_post('Memo'), get_post('FromDate'), get_post('ToDate'), get_post('DeptId'), get_post('EmpId'), check_value('OnlyUnpaid'));
@@ -84,7 +94,7 @@ $cols = array (
 	_('Type') => array('fun'=>'trans_type'),
 	_('Employee ID'),
 	_('Employee Name'),
-	_('Payslip No') => '',
+	_('Payslip No') => array('fun'=>'payslip_no'),
 	_('Pay from') => array('type'=>'date'),
 	_('Pay to') => array('type'=>'date'),
 	_('Amount') => array('type'=>'amount'),
