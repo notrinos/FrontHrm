@@ -14,7 +14,6 @@ function employee_bank_header(&$order) {
 
 	$payment = $order->trans_type == ST_BANKPAYMENT;
 
-	$customer_error = false;
 	div_start('pmt_header');
 
 	start_outer_table(TABLESTYLE2, "width='90%'"); // outer table
@@ -71,8 +70,14 @@ function employee_bank_header(&$order) {
     if ($payment)
 		bank_balance_row($_POST['bank_account']);
 
-	if(!isset($_GET['PaymentAdvice']) && !isset($_POST['PaymentAdvice']))
+	if(!isset($_GET['PaymentAdvice']) && !isset($_POST['PaymentAdvice']) && !isset($_GET['NewAdvance']) && empty($_POST['NewAdvance']))
         employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('emp_id'), _("Select payslip"), true);
+    if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance'])) {
+        amount_row(_('Amount:').'&nbsp;', 'advance_amount', null, null, null, null, true);
+        hidden('for_payslip', null);
+    }
+
+    hidden('NewAdvance');
 
 	$bank_currency = get_bank_account_currency($_POST['bank_account']);
 
@@ -82,12 +87,13 @@ function employee_bank_header(&$order) {
 
 		$order->clear_items();
 		unset($_POST['totamount']);
+		unset($_POST['amount']);
 		$Ajax->activate('totamount');
 		$Ajax->activate('for_payslip');
 		$order->payslip_no = 0;	
 	}
 
-	if (list_updated('for_payslip') || list_updated('bank_account')) {
+	if (list_updated('for_payslip')) {
 
 		$order->clear_items();
 		$_POST['memo_'] = "";
@@ -111,7 +117,6 @@ function employee_bank_header(&$order) {
 
 				$order->payslip_trans_no = $payslip['trans_no'];
 				$order->person_id = $payslip['emp_id'];
-				//$Order->to_the_order_of = $payslip['to_the_order_of'];
 				$order->payslip_no = $_POST['PaySlipNo'] = $payslip['payslip_no'];
 			}
                 
@@ -121,18 +126,13 @@ function employee_bank_header(&$order) {
 	
 			$order->add_gl_item($Payable_act, 0, 0, $pay_amt, '');
 		}
-		$_SESSION['pay_items'] = $order;
+
 		$Ajax->activate('items_table');
 	}
 
 	end_outer_table(1);
 
 	div_end();
-	if ($customer_error){
-		end_form();
-		end_page();
-		exit;
-	}
 }
 
 //--------------------------------------------------------------------------
@@ -171,9 +171,9 @@ function display_bank_gl_items($title, &$order) {
     		if ($dim > 1)
 				label_cell(get_dimension_string($item->dimension2_id, true));
 			if ($order->trans_type == ST_BANKDEPOSIT)
-				amount_cell(-$item->amount);
+				amount_cell(-$item->amount, false, '', 'item_amount');
 			else		
-				amount_cell($item->amount);
+				amount_cell($item->amount, false, '', 'item_amount');
 			label_cell($item->reference);
 
 			edit_button_cell("Edit$line", _("Edit"), _('Edit document line'));
@@ -188,8 +188,54 @@ function display_bank_gl_items($title, &$order) {
 		//gl_edit_item_controls($order, $dim);
 
 	if ($order->count_gl_items())
-		label_row(_("Total"), number_format2(abs($order->gl_items_total()), user_price_dec()), "colspan=" . $colspan . " align=right", "align=right", 3);
+		label_row(_("Total"), number_format2(abs($order->gl_items_total()), user_price_dec()), "colspan=" . $colspan . " align=right", "align=right id='payment_total_amt'", 3);
 
     end_table();
 	div_end();
+}
+
+//--------------------------------------------------------------------------
+
+function show_employee_advances($emp_id) {
+
+	global $systypes_array;
+	
+	$k = $total_allocated = 0;
+    $advances = get_employee_advances($emp_id);
+
+	if (db_num_rows($advances) > 0) {
+		display_heading(sprintf(_("Allocated amounts in %s:"), get_company_pref('curr_default')));
+		start_table(TABLESTYLE, "width='60%'");
+   		$th = array(_("Transaction Type"), _("#"), _("Ref"), _("Date"), _("Amount"), _("Other Allocations"), _("Left to Allocate"), _("This Allocation"),'','');
+
+	   	table_header($th);
+
+		foreach ($advances as $row) {
+		    $id = $row['id'];
+		    if (floatcmp(abs($row['pay_amount']), $row['amt_allocated'])) {
+				alt_table_row_color($k);
+    			label_cell($systypes_array[$row['trans_type']]);
+	   			label_cell(get_trans_view_str($row['trans_type'], $row['trans_no']), "nowrap align='right'");
+		   		label_cell(get_reference($row['trans_type'], $row['trans_no']));
+    			label_cell($row['pay_date'], "align=right");
+	    		amount_cell(abs($row['pay_amount']));
+				amount_cell($row['amt_allocated']);
+
+		    	//$_POST['amount' . $id] = price_format($un_allocated);
+
+	    		$un_allocated = round((abs($row['pay_amount']) - $row['amt_allocated']), 6);
+	    		amount_cell($un_allocated, false,'', 'maxval'.$id);
+    			amount_cells(null, "amount" . $id);//, input_num('amount' . $id));
+				label_cell("<a href='#' name=Alloc$id onclick='emp_allocate_all(this.name.substr(5));return true;'>"._("All")."</a>");
+				label_cell("<a href='#' name=DeAll$id onclick='emp_allocate_none(this.name.substr(5));return true;'>"._("None")."</a>".hidden("un_allocated" . $id, price_format($un_allocated), false));
+				end_row();
+
+   	    		$total_allocated += input_num('amount' . $id);
+		   	}
+		}
+		label_row(_('Total Amount:'), get_post('amount'), "colspan='7' align='right'", "id='amount' align='right'");
+		hidden('amount');
+		end_table(1);
+	}
+	hidden('TotalNumberOfAllocs', count($advances));
 }
