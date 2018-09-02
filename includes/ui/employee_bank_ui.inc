@@ -88,6 +88,7 @@ function employee_bank_header(&$order) {
 		$order->clear_items();
 		unset($_POST['totamount']);
 		unset($_POST['amount']);
+		unset($_POST['memo_']);
 		$Ajax->activate('totamount');
 		$Ajax->activate('for_payslip');
 		$order->payslip_no = 0;	
@@ -96,15 +97,12 @@ function employee_bank_header(&$order) {
 	if (list_updated('for_payslip')) {
 
 		$order->clear_items();
-		$_POST['memo_'] = "";
-
-		if(list_updated('for_payslip')) {
-			unset($_POST['PaySlipNo']);
-			$order->payslip_no = 0;	
-			$order->payslip_trans_no = get_post('for_payslip');
-		}
+		$_POST['memo_'] = '';
+		unset($_POST['PaySlipNo']);
+		$order->payslip_no = 0;	
+		$order->payslip_trans_no = get_post('for_payslip');
             
-        if(!isset($order->payslip_trans_no))
+        if(empty($order->payslip_trans_no))
             $payslip = null;
         else    
             $payslip = get_payslip(false, $order->payslip_trans_no);
