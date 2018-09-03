@@ -135,6 +135,11 @@ function generate_gl_items($Order) {
 	if($Order->pay_basis == DAILY_WAGE)
         $Work_days = 1;
 
+    $deductableleaves = ($Order->pay_basis == MONTHLY_SALARY) ? ($Work_days - $workdays) : 0;
+    $leave_hours = get_leave_hours($from_date, $to_date, $emp_id);
+    $leave_hours_amount = ($salary_amount/$Work_days)/$Work_hours * $leave_hours;
+	$leave_deduct_amount = (($salary_amount/$Work_days)*$deductableleaves) + $leave_hours_amount;
+
     if(db_num_rows($salary_rules) > 0) {
         
         if(!empty($USE_DEPT_ACC) && empty($emp_dept)) {
@@ -158,20 +163,50 @@ function generate_gl_items($Order) {
 			else {
 			    if($workdays != 0) {
 			    	if((!empty($USE_DEPT_ACC) && $myrow['is_basic'] != 1) || empty($USE_DEPT_ACC))
-			            $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']*$workdays:$myrow['pay_amount']*$workdays, '');
+			            $Order->add_gl_item($myrow['pay_rule_id'], 0, 0, ($myrow['type'] == CREDIT) ? -$myrow['pay_amount']*$workdays : $myrow['pay_amount']*$workdays, '');
 			    }
 			}
                 
             if($workdays != 0) {
                 if($myrow['type'] == CREDIT) 
 				    $totalCredit += $myrow['pay_amount'];
-                else 
-				    $totalDebit += $myrow['pay_amount'];
+                else {
+                    if($Order->pay_basis == MONTHLY_SALARY)
+				        $totalDebit += $myrow['pay_amount'];
+				    else
+				        $totalDebit += $myrow['pay_amount']*$workdays;
+                }
             }
 			    
-			if($myrow['is_basic'] != 1)
-			    $allowance[$myrow['pay_rule_id']] = $myrow['pay_amount'];
+			if($myrow['is_basic'] != 1) {
 
+			    if($myrow['type'] == DEBIT) {
+			        $alw_leave_hours_amt = ($myrow['pay_amount']/$Work_days/$Work_hours)*$leave_hours;
+
+			        if($Order->pay_basis == MONTHLY_SALARY) {
+			            $alw_days_amt = ($myrow['pay_amount']/$Work_days)*$workdays;
+                        $alw_amt = $alw_days_amt - $alw_leave_hours_amt;
+			        }
+                    else
+                        $alw_amt = $myrow['pay_amount'] - $alw_leave_hours_amt;
+			    
+			        $leave_deduct_amount += ($myrow['pay_amount'] - $alw_amt);
+			    }
+			    else {
+			        $alw_leave_hours_amt = -($myrow['pay_amount']/$Work_days/$Work_hours)*$leave_hours;
+
+			        if($Order->pay_basis == MONTHLY_SALARY) {
+			            $alw_days_amt = -($myrow['pay_amount']/$Work_days)*$workdays;
+                        $alw_amt = -($alw_days_amt - $alw_leave_hours_amt);
+			        }
+                    else
+                        $alw_amt = -($myrow['pay_amount'] - $alw_leave_hours_amt);
+			    
+			        $leave_deduct_amount -= ($myrow['pay_amount'] - $alw_amt);
+			    }
+
+			    $allowance[$myrow['pay_rule_id']] = $alw_amt;
+			}
 		}
 		$Order->allowance = $allowance;
 	}
@@ -203,11 +238,6 @@ function generate_gl_items($Order) {
     $totalDebit += $overtime_amount;
 	
     //leave calculation
-    $deductableleaves = ($Order->pay_basis == MONTHLY_SALARY) ? ($Work_days - $workdays) : 0;
-    $leave_hours = get_leave_hours($from_date, $to_date, $emp_id);
-    $leave_hours_amount = ($salary_amount/$Work_days)/$Work_hours * $leave_hours;
-	$leave_deduct_amount = ($salary_amount/$Work_days*$deductableleaves) + $leave_hours_amount;
-    
 	if($leave_deduct_amount != 0) {
 
 		if(!empty($Deduct_act) && empty($USE_DEPT_ACC))
@@ -245,7 +275,7 @@ function generate_gl_items($Order) {
 	$Order->payable_amt = abs($payable_amount);
 	$Order->overtime_amt = abs($overtime_amount);
 
-	if($workdays == 0 && $total_ot == 0) {
+	if(($workdays == 0 && $total_ot == 0) || $payable_amount == 0) {
         display_warning(_('non-working period'));
         $Order->clear_items();
         set_focus('from_date');
