@@ -1,7 +1,7 @@
 # FrontHrm
 [FrontAccounting](http://frontaccounting.com/) Payroll & Human Resource Module
 
-[DEMO](http://notrinos.webstarterz.com/fa244)
+[DEMO](http://notrinos.com/fa244/index.php)
 
 [Forum Discussion](http://frontaccounting.com/punbb/viewtopic.php?id=6860)
 
