@@ -198,7 +198,7 @@ function viewing_controls() {
 	    start_row();
 	    employee_list_cells(null, 'emp_id', null, _('Select employee'), true);
 	    if (list_updated('emp_id'))
-		    $selected_id = -1;;
+		    $selected_id = -1;
 
 	    end_row();
     }
