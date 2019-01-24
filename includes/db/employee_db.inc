@@ -15,8 +15,10 @@ function db_has_employee() {
 
 //--------------------------------------------------------------------------
 
-function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mobile, $mail, $birth, $notes, $hire_date, $department, $salary, $release, $active)
-{
+function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mobile, $mail, $birth, $notes, $hire_date, $department, $salary, $release, $active) {
+
+	db_query("SET sql_mode = ''");
+
 	if(!$id) {
 		$sql = "INSERT INTO ".TB_PREF."employee VALUES ("
 		.db_escape($id).", "
