@@ -235,5 +235,5 @@ function show_employee_advances($emp_id) {
 		hidden('amount');
 		end_table(1);
 	}
-	hidden('TotalNumberOfAllocs', count($advances));
+	hidden('TotalNumberOfAllocs', count_array($advances));
 }
