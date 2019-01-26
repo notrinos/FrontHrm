@@ -29,37 +29,83 @@ include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 function can_process() {
 
-	if (!is_date($_POST['AttDate'])) {
-
+	if(!is_date($_POST['from_date'])) {
 		display_error(_('The entered date is invalid.'));
-		set_focus('AttDate');
+		set_focus('from_date');
 		return false;
 	}
-	if (date_comp($_POST['AttDate'], Today()) > 0) {
+	elseif(!is_date($_POST['to_date'])) {
+		display_error(_('The entered date is invalid.'));
+		set_focus('to_date');
+		return false;
+	}
+	elseif(date_comp($_POST['from_date'], Today()) > 0) {
 
 		display_error(_('Cannot make attendance for the date in the future.'));
-		set_focus('AttDate');
+		set_focus('from_date');
 		return false;
-	} 
+	}
+	elseif(date_comp($_POST['to_date'], Today()) > 0) {
+
+		display_error(_('Cannot make attendance for the date in the future.'));
+		set_focus('to_date');
+		return false;
+	}
 	
 	foreach(db_query(get_employees(false, false, get_post('DeptId'))) as $emp) {
 		
-		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-0']) && (!is_numeric($_POST[$emp['emp_id'].'-0']) || $_POST[$emp['emp_id'].'-0'] >= 24))) {
-			display_error(_('Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ...'));
+		$val = trim(get_post(get_post($emp['emp_id'].'-0')));
+		if(strlen($val) != 0 && !preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $val) && (!is_numeric($val) || $val >= 24)) {
+			display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
 			set_focus($emp['emp_id'].'-0');
 			return false;
 		}
 		foreach(db_query(get_overtime()) as $ot) {
-			
-			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) && (!is_numeric($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) || $_POST[$emp['emp_id'].'-'.$ot['overtime_id']] >= 24))) {
-				
-				display_error(_('Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ...'));
+			$val = trim(get_post(get_post($emp['emp_id'].'-'.$ot['overtime_id'])));
+			if(strlen($val) != 0 && !preg_match("/^\s*(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $val) && (!is_numeric($val) || $val >= 24)) {
+				display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
 				set_focus($emp['emp_id'].'-'.$ot['overtime_id']);
 				return false;
 			}
 		}
 	}
 	return true;
+}
+
+function write_attendance_range($emp_id, $time_type, $value, $rate, $from, $to) {
+
+	$from = date2sql($from);
+	$to = date2sql($to);
+	$begin = new DateTime($from);
+	$end = new DateTime($to);
+	$end = $end->modify('+1 day');
+	$interval = DateInterval::createFromDateString('1 day');
+	$period = new DatePeriod($begin, $interval, $end);
+
+	foreach ($period as $dt) {
+		$day = $dt->format("Y-m-d");
+		$day = sql2date($day);
+		write_attendance($emp_id, $time_type, $value, $rate, $day);
+	}
+}
+
+function check_paid_in_range($emp_id, $from, $to) {
+
+	$from = date2sql($from);
+	$to = date2sql($to);
+	$begin = new DateTime($from);
+	$end = new DateTime($to);
+	$end = $end->modify('+1 day');
+	$interval = DateInterval::createFromDateString('1 day');
+	$period = new DatePeriod($begin, $interval, $end);
+
+	foreach ($period as $dt) {
+		$day = $dt->format("Y-m-d");
+		$day = sql2date($day);
+		if(check_date_paid($emp_id, $day))
+			return true;
+	}
+	return false;
 }
 
 //--------------------------------------------------------------------------
@@ -70,7 +116,8 @@ start_form();
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
-date_cells(_('Date').':', 'AttDate', _('Date of attendance'));
+date_cells(_('From').':', 'from_date', _('Attendance date begin'));
+date_cells(_('To').':', 'to_date', _('Aattendance date end'));
 department_list_cells(_('For department').':', 'DeptId', null, _('All departments'), true);
 submit_cells('bulk', _('Bulk'), '', _('Record all as regular work'), true);
 end_row();
@@ -99,11 +146,11 @@ foreach ($employees as $emp) {
 }
 
 if(isset($_POST['bulk'])) {
-	foreach($emp_ids as $id) {
-		if(get_post($id) == 1)
-		    $_POST[$id.'-0'] = $Work_hours;
+	foreach($emp_ids as $emp_id) {
+		if(get_post($emp_id) == 1)
+		    $_POST[$emp_id.'-0'] = $Work_hours;
 		else
-			$_POST[$id.'-0'] = '';
+			$_POST[$emp_id.'-0'] = '';
 	}
 	$Ajax->activate('_page_body');
 }
@@ -142,34 +189,34 @@ if(isset($_POST['addatt'])) {
 		return;
     
     $att_items = 0;
-    foreach($emp_ids as $id) {
+    foreach($emp_ids as $emp_id) {
         
-		if($_POST[$id.'-0'] && check_date_paid($id, $_POST['AttDate'])) {
+		if($_POST[$emp_id.'-0'] && check_paid_in_range($emp_id, $_POST['from_date'], $_POST['to_date'])) {
 			
-			display_error(_('Attendance registration for this date has been approved, cannot be updated.'));
-            set_focus($id.'-0');
+			display_error(_('The selected date range includes a date that has been approved, cannot be updated.'));
+            set_focus('from_date');
 			exit();
 		}
 		else {
-			if(strlen($_POST[$id.'-0']) > 0)
+			if(strlen($_POST[$emp_id.'-0']) > 0)
                 $att_items ++;
 			
-			write_attendance($id, 0, time_to_float($_POST[$id.'-0']), 1, $_POST['AttDate']);
+			write_attendance_range($emp_id, 0, time_to_float($_POST[$emp_id.'-0']), 1, $_POST['from_date'], $_POST['to_date']);
 		}
         
         foreach($overtime_id as $ot) {
 			
-			if($_POST[$id.'-0'] && check_date_paid($id, $_POST['AttDate'])){
+			if($_POST[$emp_id.'-0'] && check_date_paid($emp_id, $_POST['from_date'])){
 			
-				display_error(_('Selected date has already paid for Employee $id'));
-            	set_focus($id.'-'.$ot);
+				display_error(_('Selected date has already paid for Employee ').$emp_id);
+            	set_focus($emp_id.'-'.$ot);
 				exit();
 			}
 			else {
 				$rate = get_overtime($ot)['overtime_rate'];
-				if(strlen($_POST[$id.'-'.$ot]) > 0)
+				if(strlen($_POST[$emp_id.'-'.$ot]) > 0)
 				    $att_items ++;
-				write_attendance($id, $ot, time_to_float($_POST[$id.'-'.$ot]), $rate, $_POST['AttDate']);
+				write_attendance_range($emp_id, $ot, time_to_float($_POST[$emp_id.'-'.$ot]), $rate, $_POST['from_date'], $_POST['to_date']);
 			}
         }
     }
