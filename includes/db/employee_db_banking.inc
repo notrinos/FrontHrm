@@ -20,6 +20,8 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 	if ($use_transaction)
 		begin_transaction();
 
+	db_query("SET sql_mode = ''");
+
 	$args = func_get_args(); if (count($args) < 13) $args[] = true;
 
 	$args = (object)array_combine(array('trans_type', 'trans_no', 'from_account', 'items', 'date_', 'person_type_id', 'person_id', 'person_detail_id', 'ref', 'memo_', 'use_transaction', 'settled_amount', 'payslip_no', 'emp_id'), $args);
