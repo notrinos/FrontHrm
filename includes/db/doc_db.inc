@@ -106,7 +106,7 @@ function get_sql_for_employee_documents($emp_id = 0, $type_id = 0, $alert = 0, $
 
 	$sql = "SELECT id, type_id, description, issue_date, expiry_date, alert, filename, filesize, filetype, emp_id FROM ".TB_PREF."employee_docs ";
 
-	if(empty($expired_from) && empty($expired_from) && empty($expired_from) && empty($expired_from))
+	if(empty($expired_from) && empty($expired_to) && empty($issued_from) && empty($issued_to))
 	    $sql .= " WHERE emp_id = ".db_escape($emp_id);
 	else
 	    $sql .= " WHERE issue_date BETWEEN '".date2sql($issued_from)."' AND '" . date2sql($issued_to) . "' AND expiry_date BETWEEN '".date2sql($expired_from)."' AND '".date2sql($expired_to)."' ";
