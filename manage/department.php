@@ -99,8 +99,8 @@ if($selected_id != '') {
 		$myrow = get_departments($selected_id);
 		$_POST['name']  = $myrow['dept_name'];
 		$_POST['basic_acc'] = $myrow['basic_account'];
-		hidden('selected_id', $myrow['dept_id']);
  	}
+ 	hidden('selected_id', $selected_id);
 }
 
 text_row_ex(_('Department Name').':', 'name', 50, 60);
