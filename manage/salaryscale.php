@@ -112,8 +112,8 @@ if($selected_id != -1) {
 		$_POST['AccountId']  = $myrow['pay_rule_id'];
 		$_POST['amount']  = price_format($myrow['pay_amount']);
 		$_POST['payBasis']  = $myrow['pay_basis'];
-		hidden('selected_id', $selected_id);
  	}
+ 	hidden('selected_id', $selected_id);
 }
 
 text_row_ex(_('Salary Scale Name').':', 'name', 37, 50);
