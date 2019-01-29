@@ -26,24 +26,19 @@ simple_page_mode(false);
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
-	$input_error = 0;
-
-	if (strlen($_POST['rate']) == 0 || $_POST['rate'] == '') {
-		$input_error = 1;
+	if (empty(trim($_POST['rate']))) {
 		display_error(_('The overtime rate cannot be empty.'));
 		set_focus('rate');
 	}
-    if (!is_numeric($_POST['rate'])) {
-		$input_error = 1;
+    elseif(!is_numeric($_POST['rate'])) {
 		display_error(_('Overtime rate must be a number.'));
 		set_focus('rate');
 	}
-	if (strlen($_POST['name']) == 0 || $_POST['name'] == '') {
-		$input_error = 1;
+	elseif(empty(trim($_POST['name']))) {
 		display_error(_('The overtime name cannot be empty.'));
 		set_focus('name');
 	}
-	if ($input_error !=1) {
+	else {
     	write_overtime($selected_id, $_POST['name'], $_POST['rate'] );
 		if($selected_id != '')
 			display_notification(_('Selected overtime has been updated'));
@@ -60,7 +55,6 @@ if ($Mode == 'Delete') {
 	if (overtime_used($selected_id))
 		display_error(_('This overtime cannot be deleted.'));
 	else {
-        
 		delete_overtime($selected_id);
 		display_notification(_('Selected overtime item has been deleted'));
 	}
@@ -68,8 +62,10 @@ if ($Mode == 'Delete') {
 }
 
 if ($Mode == 'RESET') {
-    
-	$selected_id = $_POST['selected_id'] = $_POST['name'] = $_POST['rate'] = '';
+	$selected_id = '';
+	$_POST['selected_id'] = '';
+	$_POST['name'] = '';
+	$_POST['rate'] = '';
 }
 
 //--------------------------------------------------------------------------
@@ -85,7 +81,6 @@ table_header($th);
 $k = 0;
 
 while ($myrow = db_fetch($result)) {
-
 	alt_table_row_color($k);
 	label_cell($myrow['overtime_id']);
 	label_cell($myrow['overtime_name']);
@@ -93,7 +88,6 @@ while ($myrow = db_fetch($result)) {
 	inactive_control_cell($myrow['overtime_id'], $myrow['inactive'], 'overtime', 'overtime_id');
  	edit_button_cell('Edit'.$myrow['overtime_id'], _('Edit'));
  	delete_button_cell('Delete'.$myrow['overtime_id'], _('Delete'));
-    
 	end_row();
 }
 
@@ -105,19 +99,19 @@ start_table(TABLESTYLE2);
 if ($selected_id != '') {
 	
  	if ($Mode == 'Edit') {
-		
 		$myrow = get_overtime($selected_id);
 		$_POST['rate'] = $myrow['overtime_rate'];
 		$_POST['name']  = $myrow['overtime_name'];
-		hidden('selected_id', $myrow['overtime_id']);
 	}
+	hidden('selected_id', $selected_id);
 }
+
 // if ($selected_id != '' && overtime_used($selected_id)) {
 //     label_row(_("Overtime rate:"), $_POST['rate']);
 //     hidden('rate', $_POST['rate']);
 // } else
-    text_row(_('Overtime rate').':', 'rate', null, 20, 20);
 
+text_row(_('Overtime rate').':', 'rate', null, 20, 20);
 text_row(_('Overtime Name').':', 'name', null, 40, 50);
 
 end_table(1);
