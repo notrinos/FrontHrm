@@ -70,9 +70,9 @@ $_POST['payroll_dept_based'] = $myrow['payroll_dept_based'];
 
 table_section_title(_('General GL'));
 
-gl_all_accounts_list_row(_('Payroll payable account').':', 'payroll_payable_act', $_POST['payroll_payable_act']);
-gl_all_accounts_list_row(_('Deductible account').':', 'payroll_deductleave_act', $_POST['payroll_deductleave_act'], false, false, _('Use Salary Basic Account'));
-gl_all_accounts_list_row(_('Overtime account').':', 'payroll_overtime_act', $_POST['payroll_overtime_act'], false, false, _('Use Salary Basic Account'));
+gl_all_accounts_list_row(_('Payroll payable account').':', 'payroll_payable_act', $_POST['payroll_payable_act'], true);
+gl_all_accounts_list_row(_('Deductible account').':', 'payroll_deductleave_act', $_POST['payroll_deductleave_act'], true, false, _('Use Salary Basic Account'));
+gl_all_accounts_list_row(_('Overtime account').':', 'payroll_overtime_act', $_POST['payroll_overtime_act'], true, false, _('Use Salary Basic Account'));
 
 table_section_title(_('Working time parameters'));
 
