@@ -106,7 +106,7 @@ if($selected_id != '') {
 text_row_ex(_('Department Name').':', 'name', 50, 60);
 
 if(!empty($USE_DEPT_ACC))
-    gl_all_accounts_list_row(_('Salary Basic Account'), 'basic_acc', null, false, false, _('Select basic account'));
+    gl_all_accounts_list_row(_('Salary Basic Account'), 'basic_acc', null, true, false, _('Select basic account'));
 else
 	hidden('basic_acc');
 
