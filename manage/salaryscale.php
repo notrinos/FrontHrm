@@ -118,7 +118,7 @@ if($selected_id != -1) {
 
 text_row_ex(_('Salary Scale Name').':', 'name', 37, 50);
 if(empty($USE_DEPT_ACC))
-    gl_all_accounts_list_row(_('Salary Basic Account'), 'AccountId');
+    gl_all_accounts_list_row(_('Salary Basic Account'), 'AccountId', null, true);
 else
 	hidden('AccountId');
 amount_row(_('Salary Amount').':', 'amount', null, null, null, null, true);
