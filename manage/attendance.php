@@ -54,16 +54,16 @@ function can_process() {
 	
 	foreach(db_query(get_employees(false, false, get_post('DeptId'))) as $emp) {
 		
-		$val = trim(get_post(get_post($emp['emp_id'].'-0')));
-		if(strlen($val) != 0 && !preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $val) && (!is_numeric($val) || $val >= 24)) {
-			display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
+		if(strlen($_POST[$emp['emp_id'].'-0']) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-0']) && (!is_numeric($_POST[$emp['emp_id'].'-0']) || $_POST[$emp['emp_id'].'-0'] >= 24))) {
+			display_error(_('Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ...'));
 			set_focus($emp['emp_id'].'-0');
 			return false;
 		}
 		foreach(db_query(get_overtime()) as $ot) {
-			$val = trim(get_post(get_post($emp['emp_id'].'-'.$ot['overtime_id'])));
-			if(strlen($val) != 0 && !preg_match("/^\s*(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $val) && (!is_numeric($val) || $val >= 24)) {
-				display_error(_("Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ..."));
+			
+			if(strlen($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) && (!is_numeric($_POST[$emp['emp_id'].'-'.$ot['overtime_id']]) || $_POST[$emp['emp_id'].'-'.$ot['overtime_id']] >= 24))) {
+				
+				display_error(_('Attendance input data must be less than 24 hours and formatted in <b>HH:MM</b> or <b>Integer</b>, example - 02:25 , 2:25, 8, 23:59 ...'));
 				set_focus($emp['emp_id'].'-'.$ot['overtime_id']);
 				return false;
 			}
