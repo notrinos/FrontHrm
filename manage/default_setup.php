@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -22,6 +22,9 @@ if ($SysPrefs->use_popup_windows)
 include_once($path_to_root . '/includes/ui.inc');
 include_once($path_to_root . '/admin/db/company_db.inc');
 
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
+include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
+
 //--------------------------------------------------------------------------
 
 function can_process() {
@@ -36,6 +39,11 @@ function can_process() {
 		set_focus('payroll_work_hours');
 		return false;
 	}
+	if(!check_num('payroll_grades', max_grade_used())) {
+		display_error(sprintf(_("Grade %s is being used by employees, cannot select a lower grade"), max_grade_used()));
+		set_focus('payroll_grades');
+		return false;
+	}
 
 	return true;
 }
@@ -44,7 +52,7 @@ function can_process() {
 
 if (isset($_POST['submit']) && can_process()) {
 
-	update_company_prefs(get_post(array('payroll_payable_act', 'payroll_deductleave_act', 'payroll_overtime_act', 'payroll_month_work_days', 'payroll_work_hours', 'payroll_dept_based')));
+	update_company_prefs(get_post(array('payroll_payable_act', 'payroll_deductleave_act', 'payroll_overtime_act', 'payroll_month_work_days', 'payroll_work_hours', 'payroll_dept_based', 'payroll_grades')));
 
 	display_notification(_('The Payroll setup has been updated.'));
 }
@@ -67,6 +75,7 @@ $_POST['payroll_overtime_act'] = $myrow['payroll_overtime_act'];
 $_POST['payroll_month_work_days'] = $myrow['payroll_month_work_days'];
 $_POST['payroll_work_hours'] = $myrow['payroll_work_hours'];
 $_POST['payroll_dept_based'] = $myrow['payroll_dept_based'];
+$_POST['payroll_grades'] = $myrow['payroll_grades'];
 
 table_section_title(_('General GL'));
 
@@ -79,8 +88,9 @@ table_section_title(_('Working time parameters'));
 text_row(_('Work days per month').':', 'payroll_month_work_days', $_POST['payroll_month_work_days'], 6, 6, '', '', _('days'));
 text_row(_('Work hours per day').':', 'payroll_work_hours', $_POST['payroll_work_hours'], 6, 6, '', '', _('hours'));
 
-table_section_title(_('Basic account type'));
+table_section_title(_('Others'));
 check_row(_('Salary based on department').':', 'payroll_dept_based', $_POST['payroll_dept_based']);
+number_list_row(_('Number of Grades').':', 'payroll_grades', null, 1, $max_grade_number);
 
 end_outer_table(1);
 

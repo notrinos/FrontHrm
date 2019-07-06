@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -44,7 +44,7 @@ function display_department_employees($dep_id, $dep_name, $gender, $from, $to, $
 		$rep->TextCol(4, 5, $emp['emp_email']);
 		$rep->DateCol(5, 6, $emp['emp_birthdate'], true);
 		$rep->DateCol(6, 7, $emp['emp_hiredate'], true);
-		$rep->TextCol(7, 8, get_salary_scale($emp['salary_scale_id'])['scale_name']);
+		$rep->TextCol(7, 8, get_position($emp['position_id'])['position_name']);
 		$rep->NewLine();
     }
     $rep->NewLine();
@@ -66,7 +66,7 @@ function print_employees_list() {
 
 	$cols = array(0, 40, 160, 210, 280, 360, 410, 480, 530);
 
-	$headers = array(_('Id'), _('Employee name'), _('Gender'), _('Mobile'), _('Email'), _('Birth date'), _('Hired date'), _('Salary scale'));
+	$headers = array(_('Id'), _('Employee name'), _('Gender'), _('Mobile'), _('Email'), _('Birth date'), _('Hired date'), _('Job Position'));
 	
 	$aligns = array('left',	'left',	'left',	'left', 'left', 'center', 'center', 'left');
 	

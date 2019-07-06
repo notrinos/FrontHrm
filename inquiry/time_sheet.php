@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -64,6 +64,7 @@ foreach($period as $day) {
 $sql = get_attendance($_POST['FromDate'], $_POST['ToDate'], $_POST['EmpId'], $_POST['DeptId'], $_POST['OvertimeId']);
 $table = & new_db_pager('emp_att_tbl', $sql, $cols);
 $table->width = '95%';
+$table->page_len = 50;
 display_db_pager($table);
 
 end_form();

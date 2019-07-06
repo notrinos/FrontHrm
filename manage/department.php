@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -32,6 +32,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 	}
 	elseif(empty($_POST['basic_acc']) && !empty($USE_DEPT_ACC)) {
 		display_error( _('Please select basic account'));
+		set_focus('basic_acc');
+	}
+	elseif(!empty($USE_DEPT_ACC) && !is_expenses_account($_POST['basic_acc'])) {
+		display_error(_('Salary Basic Account must be an expenses account.'));
 		set_focus('basic_acc');
 	}
 	else {

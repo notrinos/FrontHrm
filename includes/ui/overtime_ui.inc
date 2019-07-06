@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -35,7 +35,6 @@ function overtime_list_cells($label, $name, $id = null, $all_option = false, $su
 
 function overtime_list_row($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
 	echo "<tr><td class='label'>$label</td>";
-	overtime_list_cells(null, $name, $id, $all_option, 
-	$submit_on_change, $show_inactive);
+	overtime_list_cells(null, $name, $id, $all_option, $submit_on_change, $show_inactive);
 	echo "</tr>";
 }

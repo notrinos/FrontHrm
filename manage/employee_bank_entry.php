@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -79,7 +79,7 @@ if (isset($_GET['PayslipNo'])) {
 
 //--------------------------------------------------------------------------------------------------
 
-check_db_has_bank_accounts(_("There are no bank accounts defined in the system."));
+check_db_has_bank_accounts(_('There are no bank accounts defined in the system.'));
 
 if (isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
 	check_is_editable($_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id);
@@ -115,11 +115,11 @@ if (isset($_GET['AddedID'])) {
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), 'NewPayment=yes');
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Deposit"), 'NewDeposit=yes');
 
-	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
+	hyperlink_params($path_to_root.'/admin/attachments.php', _('Add an Attachment'), "filterType=$trans_type&trans_no=$trans_no");
 
 	display_footer_exit();
 }
@@ -132,9 +132,9 @@ if (isset($_GET['UpdatedID'])) {
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), 'NewPayment=yes');
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter A &Deposit'), 'NewDeposit=yes');
 
 	display_footer_exit();
 }
@@ -145,11 +145,11 @@ if (isset($_GET['AddedDep'])) {
 
    	display_notification_centered(sprintf(_("Deposit %d has been entered"), $trans_no));
 
-	display_note(get_gl_view_str($trans_type, $trans_no, _("View the GL Postings for this Deposit")));
+	display_note(get_gl_view_str($trans_type, $trans_no, _('View the GL Postings for this Deposit')));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter Another Deposit'), 'NewDeposit=yes');
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter A Payment'), 'NewPayment=yes');
 
 	display_footer_exit();
 }
@@ -161,9 +161,9 @@ if (isset($_GET['UpdatedDep'])) {
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Deposit")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Deposit"), 'NewDeposit=yes');
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Payment"), 'NewPayment=yes');
 
 	display_footer_exit();
 }
@@ -182,12 +182,12 @@ function create_cart($type, $trans_no, $payslip=array()) {
 	if ($trans_no) {
 
 		$bank_trans = db_fetch(get_bank_trans($type, $trans_no));
-		$_POST['bank_account'] = $bank_trans["bank_act"];
-		$_POST['PayType'] = $bank_trans["person_type_id"];
-		$cart->reference = $bank_trans["ref"];
+		$_POST['bank_account'] = $bank_trans['bank_act'];
+		$_POST['PayType'] = $bank_trans['person_type_id'];
+		$cart->reference = $bank_trans['ref'];
 
-		if ($bank_trans["person_type_id"] == PT_MISC)
-			$_POST['person_id'] = $bank_trans["person_id"];
+		if ($bank_trans['person_type_id'] == PT_MISC)
+			$_POST['person_id'] = $bank_trans['person_id'];
 
 		$cart->memo_ = get_comments_string($type, $trans_no);
 		$cart->tran_date = sql2date($bank_trans['trans_date']);
@@ -244,13 +244,13 @@ function check_trans() {
 
 	$input_error = 0;
 
-	if ($_SESSION['pay_items']->count_gl_items() < 1) {
-		display_error(_("You must enter at least one payment line."));
+	if($_SESSION['pay_items']->count_gl_items() < 1) {
+		display_error(_('You must enter at least one payment line.'));
 		set_focus('code_id');
 		$input_error = 1;
 	}
-	if ($_SESSION['pay_items']->gl_items_total() == 0.0) {
-		display_error(_("The total bank amount cannot be 0."));
+	if($_SESSION['pay_items']->gl_items_total() == 0.0) {
+		display_error(_('The total bank amount cannot be 0.'));
 		set_focus('code_id');
 		$input_error = 1;
 	}
@@ -259,47 +259,47 @@ function check_trans() {
 
 	$amnt_chg = -$_SESSION['pay_items']->gl_items_total()-$_SESSION['pay_items']->original_amount;
 
-	if ($limit !== null && floatcmp($limit, -$amnt_chg) < 0) {
+	if($limit !== null && floatcmp($limit, -$amnt_chg) < 0) {
 		display_error(sprintf(_("The total bank amount exceeds allowed limit (%s)."), price_format($limit-$_SESSION['pay_items']->original_amount)));
 		set_focus('code_id');
 		$input_error = 1;
 	}
-	if ($trans = check_bank_account_history($amnt_chg, $_POST['bank_account'], $_POST['date_'])) {
+	if($trans = check_bank_account_history($amnt_chg, $_POST['bank_account'], $_POST['date_'])) {
 
 		display_error(sprintf(_("The bank transaction would result in exceed of authorized overdraft limit for transaction: %s #%s on %s."),
 			$systypes_array[$trans['type']], $trans['trans_no'], sql2date($trans['trans_date'])));
 		set_focus('amount');
 		$input_error = 1;
 	}
-	if (!check_reference($_POST['ref'], $_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id)) {
+	if(!check_reference($_POST['ref'], $_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id)) {
 		set_focus('ref');
 		$input_error = 1;
 	}
-	if (!is_date($_POST['date_'])) {
-		display_error(_("The entered date for the payment is invalid."));
+	if(!is_date($_POST['date_'])) {
+		display_error(_('The entered date for the payment is invalid.'));
 		set_focus('date_');
 		$input_error = 1;
 	}
-	elseif (!is_date_in_fiscalyear($_POST['date_'])) {
-		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
+	elseif(!is_date_in_fiscalyear($_POST['date_'])) {
+		display_error(_('The entered date is out of fiscal year or is closed for further data entry.'));
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	if (!get_post('for_payslip') && !get_post('NewAdvance')) {
-		display_error(_("You have to select a payslip."));
+	if(!get_post('for_payslip') && !get_post('NewAdvance')) {
+		display_error(_('You have to select a payslip.'));
 		set_focus('for_payslip');
 		$input_error = 1;
 	}
-	if (!get_post('emp_id')) {
-		display_error(_("You have to select an employee."));
+	if(!get_post('emp_id')) {
+		display_error(_('You have to select an employee.'));
 		set_focus('emp_id');
 		$input_error = 1;
 	}
-	if (!db_has_currency_rates(get_bank_account_currency($_POST['bank_account']), $_POST['date_'], true))
+	if(!db_has_currency_rates(get_bank_account_currency($_POST['bank_account']), $_POST['date_'], true))
 		$input_error = 1;
 
-	if (isset($_POST['settled_amount']) && in_array(get_post('PayType'), array(PT_SUPPLIER, PT_CUSTOMER)) && (input_num('settled_amount') <= 0)) {
-		display_error(_("Settled amount have to be positive number."));
+	if(isset($_POST['settled_amount']) && in_array(get_post('PayType'), array(PT_SUPPLIER, PT_CUSTOMER)) && (input_num('settled_amount') <= 0)) {
+		display_error(_('Settled amount have to be positive number.'));
 		set_focus('person_id');
 		$input_error = 1;
 	}
@@ -316,8 +316,8 @@ if(isset($_POST['update_advances'])) {
 		display_error(_('Pay amount have to be positive number.'));
 		set_focus('advance_amount');
 	}
-	elseif (!get_post('emp_id')) {
-		display_error(_("You have to select an employee."));
+	elseif(!get_post('emp_id')) {
+		display_error(_('You have to select an employee.'));
 		set_focus('emp_id');
 	}
 	else {
@@ -363,6 +363,7 @@ if (isset($_POST['Process']) && !check_trans()) {
 
 	    $trans_type = $trans[0];
    	    $trans_no = $trans[1];
+
    	    if(!empty($trans[2]) && count($allocs)) {
    	    	$trans_counter = $trans[2];
    	        add_employee_allocations($trans_counter, $allocs);
@@ -375,7 +376,7 @@ if (isset($_POST['Process']) && !check_trans()) {
 
 	    commit_transaction();
 
-	    if ($new)
+	    if($new)
 		    meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "AddedID=$trans_no" : "AddedDep=$trans_no");
 	    else
 		    meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "UpdatedID=$trans_no" : "UpdatedDep=$trans_no");
@@ -385,13 +386,14 @@ if (isset($_POST['Process']) && !check_trans()) {
 //-----------------------------------------------------------------------------------------------
 
 function check_item_data() {
-	if (!check_num('amount', 0)) {
-		display_error( _("The amount entered is not a valid number or is less than zero."));
+
+	if(!check_num('amount', 0)) {
+		display_error( _('The amount entered is not a valid number or is less than zero.'));
 		set_focus('amount');
 		return false;
 	}
-	if (isset($_POST['_ex_rate']) && input_num('_ex_rate') <= 0) {
-		display_error( _("The exchange rate cannot be zero or a negative number."));
+	if(isset($_POST['_ex_rate']) && input_num('_ex_rate') <= 0) {
+		display_error( _('The exchange rate cannot be zero or a negative number.'));
 		set_focus('_ex_rate');
 		return false;
 	}
@@ -402,21 +404,19 @@ function check_item_data() {
 //-----------------------------------------------------------------------------------------------
 
 function handle_update_item() {
+
 	$amount = ($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? 1:-1) * input_num('amount');
+
     if($_POST['UpdateItem'] != "" && check_item_data())
     	$_SESSION['pay_items']->update_gl_item($_POST['Index'], $_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount , $_POST['LineMemo']);
     
 	line_start_focus();
 }
 
-//-----------------------------------------------------------------------------------------------
-
 function handle_delete_item($id) {
 	$_SESSION['pay_items']->remove_gl_item($id);
 	line_start_focus();
 }
-
-//-----------------------------------------------------------------------------------------------
 
 function handle_new_item() {
 	if (!check_item_data())
@@ -429,15 +429,15 @@ function handle_new_item() {
 //-----------------------------------------------------------------------------------------------
 
 $id = find_submit('Delete');
-if ($id != -1)
+if($id != -1)
 	handle_delete_item($id);
-if (isset($_POST['AddItem']))
+if(isset($_POST['AddItem']))
 	handle_new_item();
-if (isset($_POST['UpdateItem']))
+if(isset($_POST['UpdateItem']))
 	handle_update_item();
-if (isset($_POST['CancelItemChanges']))
+if(isset($_POST['CancelItemChanges']))
 	line_start_focus();
-if (isset($_POST['go'])) {
+if(isset($_POST['go'])) {
 	display_quick_entries($_SESSION['pay_items'], $_POST['person_id'], input_num('totamount'), $_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? QE_PAYMENT : QE_DEPOSIT);
 	$_POST['totamount'] = price_format(0); $Ajax->activate('totamount');
 	line_start_focus();
@@ -472,5 +472,4 @@ if($_SESSION['pay_items']->count_gl_items() > 0)
     submit_center_last('Process', $_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Process Payment"):_("Process Deposit"), '', 'default');
 
 end_form();
-
 end_page();

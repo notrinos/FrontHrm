@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -99,8 +99,8 @@ $day_amount = get_day_amount($payslip_no);
 $basic_amount = ($day_amount* $work_days) - (($day_amount/$Work_hours)*$leave_hours);
 $total_earn = $basic_amount;
 
-$contents .= "<td>$work_days days</td>
-			 <td>$leave_hours hours</td>
+$contents .= "<td>$work_days".'&nbsp;'._('days')."</td>
+			 <td>$leave_hours".'&nbsp;'._('hours')."</td>
 			 <td style='text-align:right'>".price_format($basic_amount)."</td>
 			 </tr>";
 
@@ -132,10 +132,11 @@ foreach(db_query($overtimes) as $overtime) {
 	$contents .= "</tr>";
 }
 foreach (get_payslip_allowance($payslip_no) as $row) {
-	$account_name = get_gl_account($row['detail'])['account_name'];
+	$element = get_payroll_elements(false, $row['detail']);
+	$element_name = $element['element_name'];
 	$allowance_amount = $row['amount'];
 	$total_earn += $allowance_amount;
-	$contents .= "<tr><td colspan='3'>$account_name</td><td style='text-align:right'>".price_format($allowance_amount)."</td></tr>";
+	$contents .= "<tr><td colspan='3'>$element_name</td><td style='text-align:right'>".price_format($allowance_amount)."</td></tr>";
 }
 
 $allocated = get_payslip_allocated_advances($payslip_no);
@@ -203,16 +204,16 @@ $pdf->writeHTMLCell($x/3-30, 0, 2*$x/3+20, 45, _('Date:').'&nbsp;'.Today(), 0, 0
 $pdf->writeHTMLCell($x, 0, 15, 45, _('Address:').'&nbsp;'.$comp_adrs, 0, 0, 0, true);
 $pdf->writeHTMLCell($x, 0, 15, 50, _('Phone:').'&nbsp;'.$comp_phone, 0, 0, 0, true);
 
-$pdf->SetFont('dejavu', 'BI', 25);
+$pdf->SetFont('', 'BI', 25);
 $pdf->Write(0, _('Payslip'), '', 0, 'C', true, 0, false, false, 0);
 
-$pdf->SetFont('dejavu', '', 10);
+$pdf->SetFont('', '', 10);
 $pdf->writeHTMLCell($x-30, 0, 15, 85, $head, 0, 0, 0, true);
 $pdf->writeHTML("");
 
-$pdf->SetFont('helvetica', 'B', 10);
+$pdf->SetFont('', 'B', 10);
 $pdf->writeHTMLCell($x-30, 0, 15, 123.5, $title, 0, 0, 0, true, 'C');
-$pdf->setFont('dejavu', '', 10);
+$pdf->setFont('', '', 10);
 $pdf->writeHTMLCell($x-30, 0, 15, 130, $contents, 0, 0, 0, true);
 
 //--------------------------------------------------------------------------

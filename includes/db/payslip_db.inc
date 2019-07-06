@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -21,8 +21,8 @@ function get_next_payslip_no() {
 //--------------------------------------------------------------------------
 
 function write_payslip(&$cart, $reverse, $use_transaction = true) {
-
 	global $Refs;
+
 	$date       = $cart->tran_date;
 	$ref        = $cart->reference;
 	$source_ref = $cart->to_the_order_of;
@@ -33,25 +33,25 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 	$payslip_no = $cart->payslip_no;
 	$new = $cart->order_id == 0;
 	
-	if ($new)
+	if($new)
 	    $cart->order_id = get_next_trans_no($trans_type);
 
     $trans_id = $cart->order_id;
 
-	if ($use_transaction)
+	if($use_transaction)
 		begin_transaction();
 	
 	if(!$new)
 		void_journal_trans($trans_type, $trans_id, false);
 	
-	foreach ($cart->gl_items as $journal_item) {
+	foreach($cart->gl_items as $journal_item) {
     
 		// post to first found bank account using given gl acount code.
 		$is_bank_to = is_bank_account($journal_item->code_id);
 
 		add_gl_trans($trans_type, $trans_id, $date, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, $journal_item->amount, null, $cart->paytype);
 
-	    if ($is_bank_to)
+	    if($is_bank_to)
 	        add_bank_trans($trans_type, $trans_id, $is_bank_to, $ref, $date, $journal_item->amount, $cart->paytype, $cart->person_id, get_company_currency(), "Cannot insert a destination bank transaction");
 
 		// store tax details if the gl account is a tax account
@@ -69,27 +69,25 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 	
 	$Refs->save($trans_type, $trans_id, $ref);
     
-	if ($new)
+	if($new)
 		add_comments($trans_type, $trans_id, $date, $memo_);
 	else
 		update_comments($trans_type, $trans_id, null, $memo_);
 
 	add_audit_trail($trans_type, $trans_id, $date);
 
-	if ($reverse) {
-    
-    	//$reversingDate = date(user_date_display(),
-    	//	Mktime(0,0,0,get_month($date)+1,1,get_year($date)));
+	if($reverse) {
+
     	$reversingDate = begin_month(add_months($date, 1));
 
     	$trans_id_reverse = get_next_trans_no($trans_type);
 
-    	foreach ($cart->gl_items as $journal_item) {
+    	foreach($cart->gl_items as $journal_item) {
 			$is_bank_to = is_bank_account($journal_item->code_id);
 
     		add_gl_trans($trans_type, $trans_id_reverse, $reversingDate, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, -$journal_item->amount);
                 
-    		if ($is_bank_to) {
+    		if($is_bank_to) {
     			add_bank_trans($trans_type, $trans_id_reverse, $is_bank_to, $ref, $reversingDate, -$journal_item->amount, 0, '', get_company_currency(), "Cannot insert a destination bank transaction");
     		}
 			// store tax details if the gl account is a tax account
@@ -102,7 +100,7 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 		add_audit_trail($trans_type, $trans_id_reverse, $reversingDate);
 	}
 
-	if ($use_transaction)
+	if($use_transaction)
 		commit_transaction();
 
 	return $trans_id;
@@ -160,8 +158,21 @@ function get_payslip($trans_no=false, $payslip_no=false) {
 	elseif($payslip_no)
         $sql .= " WHERE payslip_no = ".db_escape($payslip_no);
 		
-	$result = db_query($sql, _('Could retreive payslip data'));
+	$result = db_query($sql, _('Could not retreive payslip data'));
     return db_fetch($result);
+}
+
+//--------------------------------------------------------------------------
+
+function get_employee_payslip($emp_id, $all=false) {
+	$sql = "SELECT p.* FROM ".TB_PREF."payslip p LEFT JOIN ".TB_PREF."employee_trans t ON p.payslip_no = t.payslip_no WHERE p.emp_id = ".db_escape($emp_id);
+
+	if(!$all)
+		$sql .= " AND t.payslip_no IS NULL";
+
+	$result = db_query($sql, _('could not not retreive payslip data'));
+
+	return $result;
 }
 
 //--------------------------------------------------------------------------
@@ -169,7 +180,7 @@ function get_payslip($trans_no=false, $payslip_no=false) {
 function get_payslip_from_advice($trans_no) {
 	$sql = "SELECT p.* FROM ".TB_PREF."employee_trans t, ".TB_PREF."payslip p WHERE p.payslip_no = t.payslip_no AND t.trans_no = ".db_escape($trans_no);
 
-	$result = db_query($sql, _('Could retreive payslip data'));
+	$result = db_query($sql, _('Could not retreive payslip data'));
     return db_fetch($result);
 }
 
@@ -228,5 +239,4 @@ function add_payslip_details($payslip, $allowances) {
 
         db_query($sql, _('could not insert payslip details'));
     }
-
 }

@@ -2,7 +2,7 @@
 /*=======================================================\
 |                        FrontHrm                        |
 |--------------------------------------------------------|
-|   Creator: Phương                                      |
+|   Creator: Phương <trananhphuong83@gmail.com>          |
 |   Date :   09-Jul-2017                                 |
 |   Description: Frontaccounting Payroll & Hrm Module    |
 |   Free software under GNU GPL                          |
@@ -29,14 +29,14 @@ include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 page(_($help_context = 'Manage Salary Structure'), false, false, '', $js); 
 
-$selected_id = get_post('salary_scale_id','');
+$selected_id = get_post('position_id','');
 
 function can_process($selected_id) {
     
-	if (!$selected_id) {
+	if(!$selected_id) {
         
-		display_error(_('Select salary scale'));
-		set_focus('salary_scale_id');
+		display_error(_('Select job position'));
+		set_focus('position_id');
 		return false;
 	} 
 
@@ -59,7 +59,7 @@ function can_process($selected_id) {
 function handle_submit(&$selected_id) {
 	global $Ajax;
 
-	if (!can_process($selected_id))
+	if(!can_process($selected_id))
 		return;
 
 	$payroll_rules = array();
@@ -77,7 +77,8 @@ function handle_submit(&$selected_id) {
 
 			if($amount > 0)
 				$payroll_rules[] = array(
-					'salary_scale_id' => $selected_id,
+					'position_id' => $selected_id,
+					'grade_id' => get_post('_tabs_sel'),
 					'pay_rule_id' => $val,
 					'pay_amount' => $amount,
 					'type' => $type
@@ -85,8 +86,8 @@ function handle_submit(&$selected_id) {
 		}
 	}
 	
-	delete_salary_structure($selected_id);
-	add_salary_structure($payroll_rules);	
+	delete_salary_structure($selected_id, get_post('_tabs_sel'));
+	add_salary_structure($payroll_rules);
 	
 	display_notification(_('Salary structure has been updated.'));
 	$Ajax->activate('_page_body');
@@ -98,24 +99,24 @@ if (isset($_POST['submit']))
 	handle_submit($selected_id);
 
 if (isset($_POST['delete'])) {
-
 	delete_salary_structure($selected_id);
 	display_notification(_('Selected structure has been deleted.'));
-	$_POST['salary_scale_id'] = $selected_id = '';
+	$_POST['position_id'] = $selected_id = '';
 	$Ajax->activate('_page_body');
 }
 
 //--------------------------------------------------------------------------
 
-function payroll_rules_settings($selected_id) {
+function payroll_rules_settings($selected_id, $grade_id=0) {
     global $USE_DEPT_ACC;
 
 	$new = true;
 	$rules = array();
     $basic_salary = '';
 	$payroll_structure = get_payroll_structure($selected_id);
-	$pay_basis = get_salary_scale($selected_id)['pay_basis'];
-	foreach(get_salary_structure($selected_id) as $row) {
+	$pay_basis = get_position($selected_id)['pay_basis'];
+
+	foreach(get_salary_structure($selected_id, $grade_id) as $row) {
 		if($row['is_basic'] == 1)
             $basic_salary = $row;
 	}
@@ -124,21 +125,24 @@ function payroll_rules_settings($selected_id) {
 
 		foreach($payroll_structure['payroll_rule'] as $code) {
 			$ac = get_gl_account($code);
+			$pay_element = get_payroll_elements(false, $code);
 			$rules[] = array(
 				'account_input' => 'Account'.$code,
 				'debit_input' 	=> 'Debit'.$code,
 				'credit_input'	=> 'Credit'.$code,
 				'account_code'	=> $code,
 				'account_name'	=> $ac['account_name'],
+				'element_name'  => $pay_element['element_name'],
             );
 			$_POST['Debit'.$code] = price_format(0);
 			$_POST['Credit'.$code] = price_format(0);
-
 		}
-		$rsStr = get_salary_structure($selected_id);
+
+		$rsStr = get_salary_structure($selected_id, $grade_id);
         
 		if(db_num_rows($rsStr) > 0) {
             $new = false;
+
 			while($rowStr = db_fetch($rsStr)) {
                 
 				if($rowStr['type'] == DEBIT)
@@ -151,22 +155,21 @@ function payroll_rules_settings($selected_id) {
 		br();
 		start_table(TABLESTYLE2);
 		if($pay_basis == MONTHLY_SALARY)
-		    $th = array(_('Payroll Rules'),_('Monthly Earnings'),_('Monthly Deductions'));
+		    $th = array(_('Pay Element'), _('Monthly Earnings'),_('Monthly Deductions'));
 		if($pay_basis == DAILY_WAGE)
-			$th = array(_('Payroll Rules'),_('Daily Earnings'),_('Daily Deductions'));
+			$th = array(_('Pay Element'), _('Daily Earnings'),_('Daily Deductions'));
+
 		table_header($th);
         start_row("class='inquirybg'");
-        if(empty($USE_DEPT_ACC))
-            label_cell($basic_salary['account_name']);
-        else
-        	label_cell(_('Basic salary'));
-        amount_cell($basic_salary['pay_amount']);
+        label_cell(_('Basic Salary'));
+        amount_cell(@$basic_salary['pay_amount']);
         amount_cell('0');
         end_row();
+
 		foreach($rules as $rule) {			
 			start_row();
 			hidden($rule['account_input'],$rule['account_code']);
-			label_cell($rule['account_name']);
+			label_cell($rule['element_name']);
 			amount_cells(null, $rule['debit_input']);
 			amount_cells(null, $rule['credit_input']);
 			end_row();
@@ -184,30 +187,40 @@ function payroll_rules_settings($selected_id) {
 		div_end();
     }
     else
-		display_error(_('Payroll rules not defined for this salary scale'));
+		display_error(_('Payroll rules not defined for this job position'));
+	br();
 }
 
 //--------------------------------------------------------------------------
  
 start_form();
 
-if (db_has_salary_scale()) {
+if(db_has_position()) {
 	start_table(TABLESTYLE2);
-	start_row();
-    
-	salaryscale_list_cells(_('Salary scale').':', 'salary_scale_id', null, _('Select salary scale'), true);
-	
-	end_row();
+	position_list_row(_('Job Position').':', 'position_id', null, _('Select Job Position'), true);
 	end_table();
 } 
 else {
-	hidden('salary_scale_id');
-	display_note(_('Before you can run this function Salary Scales must be defined and add Payroll Rules to them.'));
+	hidden('position_id');
+	display_note(_('Before you can run this function Job Positions must be defined and add Payroll Rules to them.'));
 }
 
-if($selected_id)
-	payroll_rules_settings($selected_id); 
+$tabs = array(0 => array(_('Basic'), 999));
+$grades = get_company_pref('payroll_grades');
+for($i=1; $i<=$grades; $i++)
+	$tabs[$i] = array(_('Grade ').$i, 999);
+
+tabbed_content_start('tabs', $tabs);
+
+if($selected_id) {
+	if(grade_exist(get_post('_tabs_sel'), $selected_id) || get_post('_tabs_sel') == 0)
+		payroll_rules_settings($selected_id, get_post('_tabs_sel'));
+	else
+		display_note(_('Please define grade amount for the selected job position first.'), 1, 1);
+}
+
+tabbed_content_end();
 
 hidden('popup', @$_REQUEST['popup']);
-end_form();
+end_form(1);
 end_page();
