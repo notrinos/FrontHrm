@@ -78,6 +78,11 @@ if($Mode == 'RESET') {
 
 start_form();
 
+if(!db_has_position()) {
+	display_note(_('Please define Job Positions First'));
+	display_footer_exit();
+}
+
 start_table(TABLESTYLE);
 
 $th = array(_('Job Position'), _('Basic Amount'));
