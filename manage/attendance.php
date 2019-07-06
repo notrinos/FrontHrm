@@ -67,7 +67,7 @@ function can_process() {
 
 			$ot_id = $ot['overtime_id'];
 			
-			if(strlen($_POST[$emp_id.'-'.$ot_id]) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp_id.'-'.$ot_id]) && (!is_numeric($_POST[$emp_id.'-'.$ot_id]) || $_POST[$emp_id.'-'.$ot_id] >= 24 || $_POST[$emp_id.'-0'] <= 0)) && empty($_POST[$emp_id.'-leave'])) {
+			if(strlen($_POST[$emp_id.'-'.$ot_id]) != 0 && (!preg_match("/^(?(?=\d{2})(?:2[0-3]|[01][0-9])|[0-9]):[0-5][0-9]$/", $_POST[$emp_id.'-'.$ot_id]) && (!is_numeric($_POST[$emp_id.'-'.$ot_id]) || $_POST[$emp_id.'-'.$ot_id] >= 24 || $_POST[$emp_id.'-'.$ot_id] <= 0)) && empty($_POST[$emp_id.'-leave'])) {
 				
 				display_error($err);
 				set_focus($emp_id.'-'.$ot_id);
