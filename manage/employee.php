@@ -442,7 +442,7 @@ if(isset($_POST['addupdate'])) {
 				$pay_elements[] = array(
 					'emp_id' => $emp_id,
 					'pay_rule_id' => substr($p, 4),
-					'pay_amount' => $val,
+					'pay_amount' => input_num($p),
 					'type' => input_num($p) > 0 ? DEBIT : CREDIT,
 					'is_basic' => 0
 				);
