@@ -338,10 +338,10 @@ if (isset($_POST['Process']) && !check_trans()) {
 	$allocs = array();
 	foreach ($_POST as $k => $v) {
 		if(strlen($k) > 6 && substr($k, 0, 6) == 'amount' && $v > 0)
-			$allocs[substr($k,6)] = $v;
+			$allocs[substr($k,6)] = input_num($k);
 	}
 
-	if(@$_POST['amount'] >= $_SESSION['pay_items']->gl_items_total()) {
+	if(input_num('amount') >= $_SESSION['pay_items']->gl_items_total()) {
 		add_employee_trans(0, ST_BANKPAYMENT, $_POST['for_payslip'], $_POST['date_'], $_POST['person_id'], 0);
 		$id_counter = db_insert_id();
 		add_employee_allocations($id_counter, $allocs);
