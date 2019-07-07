@@ -303,7 +303,7 @@ function check_trans() {
 		set_focus('person_id');
 		$input_error = 1;
 	}
-	if(isset($_POST['amount']) && $_POST['amount'] > $_SESSION['pay_items']->gl_items_total()) {
+	if(isset($_POST['amount']) && input_num('amount') > $_SESSION['pay_items']->gl_items_total()) {
 		display_error(_('Payment cannot be processed because the amount allocated is more than the total payslip amount'));
 		set_focus('amount');
 		$input_error = 1;

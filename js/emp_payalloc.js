@@ -11,7 +11,7 @@
 
 function blur_alloc(i) {
 		var change = get_amount(i.name);
-		payment_amt = document.getElementById('item_amount').innerHTML;
+		payment_amt = get_amount('item_amount', true);
 		
 		if (i.name != 'amount' && i.name != 'charge' && i.name != 'discount')
 			change = Math.min(change, get_amount('maxval'+i.name.substr(6), 1))
@@ -33,28 +33,33 @@ function blur_alloc(i) {
 function emp_allocate_all(doc) {
 	var amount = get_amount('amount'+doc);
 	var unallocated = get_amount('un_allocated'+doc);
-	var total = get_amount('amount');
+	var total = get_amount('amount', true);
+	var gl_payments = document.getElementById('item_amount');
+	var payment_amt = gl_payments == null ? 0 : get_amount('item_amount', true);
 	var left = 0;
-	var payment_amt = document.getElementById('item_amount').innerHTML;
 	total -=  (amount-unallocated);
 	left -= (amount-unallocated);
 	amount = unallocated;
+
 	if(left<0) {
 		total  += left;
 		amount += left;
 		left = 0;
 	}
-	price_format('amount'+doc, amount, user.pdec);
-	price_format('amount', total, user.pdec);
-	price_format('amount', total, user.pdec, 'amount');
-	price_format('item_amount', parseFloat(payment_amt) - amount, user.pdec, 'item_amount');
-	price_format('payment_total_amt', parseFloat(payment_amt) - amount, user.pdec, 'payment_total_amt');
+
+	if(gl_payments != null) {
+		price_format('amount'+doc, amount, user.pdec);
+		price_format('amount', total, user.pdec);
+		price_format('amount', total, user.pdec, 'amount');
+		price_format('item_amount', payment_amt - amount, user.pdec, 'item_amount');
+		price_format('payment_total_amt', parseFloat(payment_amt) - amount, user.pdec, 'payment_total_amt');
+	}
 }
 
 function emp_allocate_none(doc) {
 	amount = get_amount('amount'+doc);
-	total = get_amount('amount');
-	payment_amt = document.getElementById('item_amount').innerHTML;
+	total = get_amount('amount', true);
+	payment_amt = get_amount('item_amount', true);
 	price_format('amount'+doc, 0, user.pdec);
 	price_format('amount', total-amount, user.pdec);
 	price_format('amount', total-amount, user.pdec, 'amount');

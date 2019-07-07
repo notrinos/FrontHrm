@@ -205,7 +205,7 @@ function show_employee_advances($emp_id) {
 	if(db_num_rows($advances) > 0) {
 		display_heading(sprintf(_("Allocated amounts in %s:"), get_company_pref('curr_default')));
 		start_table(TABLESTYLE, "width='60%'");
-   		$th = array(_("Transaction Type"), _("#"), _("Ref"), _("Date"), _("Amount"), _("Other Allocations"), _("Left to Allocate"), _("This Allocation"),'','');
+   		$th = array(_('Transaction Type'), _('#'), _('Ref'), _('Date'), _('Amount'), _('Other Allocations'), _('Left to Allocate'), _('This Allocation'),'','');
 
 	   	table_header($th);
 
@@ -217,7 +217,7 @@ function show_employee_advances($emp_id) {
     			label_cell($systypes_array[$row['trans_type']]);
 	   			label_cell(get_trans_view_str($row['trans_type'], $row['trans_no']), "nowrap align='right'");
 		   		label_cell(get_reference($row['trans_type'], $row['trans_no']));
-    			label_cell($row['pay_date'], "align=right");
+    			label_cell(sql2date($row['pay_date']), "align='center'");
 	    		amount_cell(abs($row['pay_amount']));
 				amount_cell($row['amt_allocated']);
 
