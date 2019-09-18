@@ -130,7 +130,7 @@ end_row();
 end_table(1);
 
 start_table(TABLESTYLE2);
-$initial_cols = array('ID', _('Employee'), _('Regular time'));
+$initial_cols = array(_('ID'), _('Employee'), _('Regular time'));
 $overtimes = db_query(get_overtime());
 $remaining_cols = array();
 $overtime_id    = array();

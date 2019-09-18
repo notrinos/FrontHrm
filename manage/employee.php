@@ -355,7 +355,7 @@ function employee_settings($cur_id) {
 	table_section_title(_('Pay Elements'));
 
 	start_row();
-	label_cell('(?)', "title='"._('Enter negative amount for deduction, positive for earning')."' align='right' colspan='2'");
+	label_cell(_('(?)'), "title='"._('Enter negative amount for deduction, positive for earning')."' align='right' colspan='2'");
 	end_row();
 
 	yesno_list_row(_('Use Personal Salary Structure:'), 'personal_salary');
