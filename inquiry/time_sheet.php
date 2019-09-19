@@ -47,7 +47,7 @@ end_table(1);
     
 //-------------------------------------------------------------------------- 
     
-$cols = array('Id'=>array('align'=>'center'), 'Employee Name');
+$cols = array(_('Id')=>array('align'=>'center'), _('Employee Name'));
     
 $from = new DateTime(date2sql($_POST['FromDate']));
 $to = new DateTime(date2sql($_POST['ToDate']).'+1 day');
