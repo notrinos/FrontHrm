@@ -12,15 +12,18 @@
 function employee_list($name, $id=null, $spec_option=false, $submit_on_change=false, $show_inactive=false, $dept=false, $multi=false) {
 	$sql = "SELECT emp_id, CONCAT(emp_first_name, ' ', emp_last_name) AS name, inactive FROM ".TB_PREF."employee ";
 
-	return combo_input($name, $id, $sql, 'emp_id', 'name',
-	array(
+	$options = array(
 		'spec_option' => $spec_option,
 		'select_submit' => $submit_on_change,
-		'where' => $dept == false ? 1 : array("department_id = $dept"),
+		'where' => $dept == false ? array('1') : array("department_id = $dept"),
 		'async' => false,
 		'multi' => $multi,
 		'show_inactive' => $show_inactive
-	));
+	);
+	if(is_array($id))
+		$options['where'][] = "emp_id IN (".implode(',', $id).")";
+
+	return combo_input($name, $id, $sql, 'emp_id', 'name', $options);
 }
 
 //--------------------------------------------------------------------------
