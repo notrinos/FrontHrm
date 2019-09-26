@@ -90,7 +90,7 @@ function get_employees($id = false, $all=false, $department=false, $gender=false
 	if($grade_id >= 0)
 		$where[] = "grade_id = ".db_escape($grade_id);
 	if(!empty($str))
-		$where[] = "(emp_first_name LIKE ".db_escape("%$str%")." OR emp_last_name LIKE ".db_escape("%$str%")." OR emp_email LIKE ".db_escape("%$str%")." OR emp_address LIKE ".db_escape("%$str%")."  OR emp_mobile LIKE ".db_escape("%$str%")."  OR national_id LIKE ".db_escape("%$str%")."  OR passport LIKE ".db_escape("%$str%")."  OR tax_number LIKE ".db_escape("%$str%").")";
+		$where[] = "(CONCAT(emp_first_name, ' ', emp_last_name) LIKE ".db_escape("%$str%")." OR emp_email LIKE ".db_escape("%$str%")." OR emp_address LIKE ".db_escape("%$str%")."  OR emp_mobile LIKE ".db_escape("%$str%")."  OR national_id LIKE ".db_escape("%$str%")."  OR passport LIKE ".db_escape("%$str%")."  OR tax_number LIKE ".db_escape("%$str%").")";
 
 		
 	if(count($where))
@@ -98,7 +98,7 @@ function get_employees($id = false, $all=false, $department=false, $gender=false
 	else
 		$sql .= ' WHERE 1';
 
-	$result = db_query($sql, _('Could not get employee data.'));
+	$result = db_query($sql, 'Could not get employee data.');
 	
 	if($id)
 		return db_fetch($result);
