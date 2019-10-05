@@ -16,7 +16,7 @@ include_once($path_to_root . '/includes/db_pager.inc');
 include_once($path_to_root . '/includes/session.inc');
 add_access_extensions();
 
-$js = "";
+$js = '';
 if($SysPrefs->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if(user_use_date_picker())
@@ -112,12 +112,12 @@ if(isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 
 function can_process() {
 	
-	if(strlen($_POST['emp_first_name']) == 0 || $_POST['emp_first_name'] == '') {
+	if(empty(trim($_POST['emp_first_name']))) {
 		display_error(_('The employee first name must be entered.'));
 		set_focus('emp_first_name');
 		return false;
 	}
-	if(strlen($_POST['emp_last_name']) == 0 || $_POST['emp_last_name'] == '') {
+	if(empty(trim($_POST['emp_last_name']))) {
 		display_error(_('Employee last name must be entered.'));
 		set_focus('emp_last_name');
 		return false;
@@ -134,6 +134,11 @@ function can_process() {
 	}
 	if(!is_date($_POST['emp_hiredate']) && $_POST['emp_hiredate'] != null && $_POST['emp_hiredate'] != '00/00/0000') {
 		display_error(_('Invalid hire date.'));
+		set_focus('emp_hiredate');
+		return false;
+	}
+	if(is_date($_POST['emp_hiredate']) && date1_greater_date2($_POST['emp_birthdate'], $_POST['emp_hiredate'])) {
+		display_error(_('Hire date can not be before Birth date.'));
 		set_focus('emp_hiredate');
 		return false;
 	}
@@ -176,7 +181,7 @@ function id_link($row) {
 	return button($row['emp_id'], $row['emp_id']);
 }
 function get_name($row) {
-	return "<b>".button($row['emp_id'], $row['emp_first_name'].' '.$row['emp_last_name'])."</b>";
+	return '<b>'.button($row['emp_id'], $row['emp_first_name'].'&nbsp;'.$row['emp_last_name']).'</b>';
 }
 function gender_name($row) {
 	if($row['gender'] == 0)
@@ -207,7 +212,7 @@ function employees_table() {
 		
 		start_table(TABLESTYLE_NOBORDER);
 		start_row();
-		ref_cells(_("Enter Search String:"), 'string', _('Enter fragment or leave empty'), null, null, true);
+		ref_cells(_('Enter Search String:'), 'string', _('Enter fragment or leave empty'), null, null, true);
 		department_list_cells(null, 'DeptId', null, _('All departments'), true);
 		position_list_cells(null, 'position', null, _('All Positions'), true);
 		number_list_cells(null, 'grade', null, 1, $sys_grades, _('All Grades'), true);
@@ -269,7 +274,9 @@ function employee_settings($cur_id) {
 		$_POST['inactive'] = $employee['inactive'];
 
 		if(!empty($employee['personal_salary'])) {
+
 			$emp_salary = get_emp_salary_structure($cur_id);
+
 			foreach($emp_salary as $pay_element) {
 
 				$element_code = $pay_element['pay_rule_id'];
@@ -298,7 +305,7 @@ function employee_settings($cur_id) {
 	else 
 		$emp_img_link .= "<img id='emp_img' alt = '.jpg' src='".$path_to_root."/modules/FrontHrm/images/avatar/no_image.svg' height='100'>";
 
-	label_row("&nbsp;", $emp_img_link);
+	label_row('&nbsp;', $emp_img_link);
 	if($check_remove_image)
 		check_row(_('Delete Image:'), 'del_image');
 	
@@ -361,7 +368,9 @@ function employee_settings($cur_id) {
 	yesno_list_row(_('Use Personal Salary Structure:'), 'personal_salary');
 
 	amount_row(_('Basic Salary Amount:'), 'basic_amt', null, null, null, null, true);
+
 	$elements = get_payroll_elements();
+	
 	while($row = db_fetch($elements)) {
 		amount_row($row['element_name'].':', 'amt_'.$row['account_code'], null, null, null, null, true);
 	}
