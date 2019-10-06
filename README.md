@@ -5,7 +5,7 @@
 
 [Forum Discussion](http://frontaccounting.com/punbb/viewtopic.php?id=6860)
 
-![dashboard](http://notrinos.com/misc/dashboard.jpg)
+![dashboard](https://a.fsdn.com/con/app/proj/fronthrm/screenshots/Untitled-6972.png)
 
 Requirement
 -----------
