@@ -314,25 +314,25 @@ function employee_settings($cur_id) {
 	if($cur_id)
 		label_row(_('Employee Id:'), $cur_id);
 
-	text_row(_('First Name:'), 'emp_first_name', get_post('emp_first_name'), 37, 50);
-	text_row(_('Last Name:'), 'emp_last_name', get_post('emp_last_name'), 37, 50);
+	text_row(_('First Name:'), 'emp_first_name', get_post('emp_first_name'), 35, 50);
+	text_row(_('Last Name:'), 'emp_last_name', get_post('emp_last_name'), 35, 50);
 	gender_radio_row(_('Gender:'), 'gender', get_post('gender'));
-	textarea_row(_('Address:'), 'emp_address', get_post('emp_address'), 35, 5);
-	text_row(_('Mobile:'), 'emp_mobile', get_post('emp_mobile'), 37, 30);
-	email_row(_('e-Mail:'), 'emp_email', get_post('emp_email'), 37, 100);
+	textarea_row(_('Address:'), 'emp_address', get_post('emp_address'), 31, 5);
+	text_row(_('Mobile:'), 'emp_mobile', get_post('emp_mobile'), 35, 30);
+	email_row(_('e-Mail:'), 'emp_email', get_post('emp_email'), 35, 100);
 	date_row(_('Birth Date:'), 'emp_birthdate', null, null, 0, 0, -18);
 	
 	table_section(2);
 	
 	table_section_title(_('Personal Information'));
-	text_row(_('National ID:'), 'national_id', get_post('national_id'), 37, 50);
-	text_row(_('Passport:'), 'passport', get_post('passport'), 37, 50);
-	text_row(_('Bank Name/Account:'), 'bank_account', get_post('bank_account'), 37, 50);
-	text_row(_('Tax ID Number:'), 'tax_number', get_post('tax_number'), 37, 50);
+	text_row(_('National ID:'), 'national_id', get_post('national_id'), 35, 50);
+	text_row(_('Passport:'), 'passport', get_post('passport'), 35, 50);
+	text_row(_('Bank Name/Account:'), 'bank_account', get_post('bank_account'), 35, 50);
+	text_row(_('Tax ID Number:'), 'tax_number', get_post('tax_number'), 35, 50);
 
 	table_section_title(_('Job Information'));
 	
-	textarea_row(_('Notes:'), 'emp_notes', null, 35, 5);
+	textarea_row(_('Notes:'), 'emp_notes', null, 31, 5);
 	date_row(_('Hire Date:'), 'emp_hiredate', null, null, 0, 0, 1001);
 	
 	if($cur_id) {
