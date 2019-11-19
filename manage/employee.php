@@ -42,6 +42,7 @@ $cur_id = isset($_SESSION['EmpId']) ? $_SESSION['EmpId'] : '';
 
 $upload_file = '';
 $avatar_path = company_path().'/FrontHrm/images/';
+
 if(isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 	
 	$result = $_FILES['pic']['error'];
@@ -57,7 +58,10 @@ if(isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 		copy(company_path().'/index.php', $filename.'index.php');
 	}
 	
-	$filename .= emp_img_name($cur_id).'.jpg';
+	if(!empty($cur_id))
+		$filename .= emp_img_name($cur_id).'.jpg';
+	else
+		$filename .= emp_img_name(next_employee_number()).'.jpg';
 	
 	if($_FILES['pic']['error'] == UPLOAD_ERR_INI_SIZE) {
 

@@ -146,3 +146,12 @@ function employee_has_position($id) {
 function emp_position_has_structure($id) {
 	return check_empty_result("SELECT e.position_id, s.* FROM ".TB_PREF."employee e, ".TB_PREF."salary_structure s WHERE e.position_id = s.position_id AND e.emp_id = ".db_escape($id));
 }
+
+//--------------------------------------------------------------------------
+
+function next_employee_number() {
+	$sql = "SELECT MAX(emp_id) FROM ".TB_PREF."employee";
+	$result = db_query($sql, 'error getting employee number data');
+
+	return db_fetch($result)[0];
+}
