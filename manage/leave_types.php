@@ -26,11 +26,7 @@ simple_page_mode();
 
 if($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
-	if(empty(trim($_POST['pay_rate']))) {
-		display_error(_('The Salary rate field cannot be empty.'));
-		set_focus('pay_rate');
-	}
-    elseif(!is_numeric($_POST['pay_rate'])) {
+	if(!is_numeric($_POST['pay_rate'])) {
 		display_error(_('Salary rate must be a number.'));
 		set_focus('pay_rate');
 	}
