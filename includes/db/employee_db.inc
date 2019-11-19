@@ -153,5 +153,5 @@ function next_employee_number() {
 	$sql = "SELECT MAX(emp_id) FROM ".TB_PREF."employee";
 	$result = db_query($sql, 'error getting employee number data');
 
-	return db_fetch($result)[0];
+	return db_fetch($result)[0] + 1;
 }
