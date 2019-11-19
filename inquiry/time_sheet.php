@@ -12,8 +12,8 @@
 $page_security = 'SA_EMPL';
 $path_to_root  = '../../..';
 
-include_once($path_to_root . "/includes/db_pager.inc");
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/db_pager.inc');
+include_once($path_to_root . '/includes/session.inc');
 add_access_extensions();
 
 $js = '';
@@ -34,12 +34,12 @@ start_form();
 start_table(TABLESTYLE_NOBORDER);
 start_row();
 
-department_list_cells(_('Department:'), 'DeptId', null, _('All departments'), true);
-employee_list_cells(_('Employee:'), 'EmpId', null, _('All employees'), true, false, get_post('DeptId'));
+department_list_cells(null, 'DeptId', null, _('All departments'), true);
+employee_list_cells(null, 'EmpId', null, _('All employees'), true, false, get_post('DeptId'));
 
 date_cells(_('From:'), 'FromDate', '', null, 0, -1, 0, null, true);
 date_cells(_('To:'), 'ToDate', '', null, 0, 0, 0, null, true);
-overtime_list_cells(_('Select time type:'), 'OvertimeId', '', _('Regular time'), true);
+overtime_list_cells(null, 'OvertimeId', '', _('Regular time'), true);
 submit_cells('Search', _('Search'), '', '', 'default');
 
 end_row();

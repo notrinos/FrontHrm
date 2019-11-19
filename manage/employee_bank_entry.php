@@ -10,19 +10,19 @@
 \=======================================================*/
 
 $path_to_root = '../../..';
-include_once($path_to_root . "/includes/ui/items_cart.inc");
-include_once($path_to_root . "/includes/session.inc");
+include_once($path_to_root . '/includes/ui/items_cart.inc');
+include_once($path_to_root . '/includes/session.inc');
 
 $page_security = isset($_GET['NewPayment']) || @($_SESSION['pay_items']->trans_type == ST_BANKPAYMENT) ? 'SA_PAYMENT' : 'SA_DEPOSIT';
 
 include_once($path_to_root . '/includes/ui.inc');
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
+include_once($path_to_root . '/includes/date_functions.inc');
+include_once($path_to_root . '/includes/data_checks.inc');
 
 include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
 include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 include_once($path_to_root . '/reporting/includes/reporting.inc');
-include_once($path_to_root . "/admin/db/attachments_db.inc");
+include_once($path_to_root . '/admin/db/attachments_db.inc');
 
 $js = '';
 if ($SysPrefs->use_popup_windows)
@@ -33,24 +33,24 @@ add_js_file('payalloc.js');
 add_js_ufile($path_to_root.'/modules/FrontHrm/js/emp_payalloc.js');
 
 if (isset($_GET['NewPayment'])) {
-	$_SESSION['page_title'] = _($help_context = "Employee Payment Entry");
+	$_SESSION['page_title'] = _($help_context = 'Employee Payment Entry');
 	create_cart(ST_BANKPAYMENT, 0);
 }
 if(isset($_GET['NewAdvance'])) {
 	$_POST['NewAdvance'] = $_GET['NewAdvance'];
-	$_SESSION['page_title'] = _($help_context = "Employee Advance Entry");
+	$_SESSION['page_title'] = _($help_context = 'Employee Advance Entry');
 	create_cart(ST_BANKPAYMENT, 0);
 }
 elseif(isset($_GET['NewDeposit'])) {
-	$_SESSION['page_title'] = _($help_context = "Employee Deposit Entry");
+	$_SESSION['page_title'] = _($help_context = 'Employee Deposit Entry');
 	create_cart(ST_BANKDEPOSIT, 0);
 }
 elseif(isset($_GET['ModifyPayment'])) {
-	$_SESSION['page_title'] = _($help_context = "Modify Bank Account Entry")." #".$_GET['trans_no'];
+	$_SESSION['page_title'] = _($help_context = 'Modify Bank Account Entry').' #'.$_GET['trans_no'];
 	create_cart(ST_BANKPAYMENT, $_GET['trans_no']);
 }
 elseif(isset($_GET['ModifyDeposit'])) {
-	$_SESSION['page_title'] = _($help_context = "Modify Bank Deposit Entry")." #".$_GET['trans_no'];
+	$_SESSION['page_title'] = _($help_context = 'Modify Bank Deposit Entry').' #'.$_GET['trans_no'];
 	create_cart(ST_BANKDEPOSIT, $_GET['trans_no']);
 }
 
@@ -61,15 +61,15 @@ if (isset($_GET['PayslipNo'])) {
 	if(has_payment_advice($_GET['PayslipNo'])) {
 
 		display_error(_('Payment advice already exists'));
-		hyperlink_params($path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php',_('Payment Advices'), 'NewPayment=yes');
+		hyperlink_params($path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php', _('Payment Advices'), 'NewPayment=yes');
 		display_footer_exit();
 	}
 	elseif(get_payslip(false, $_GET['PayslipNo'])['payslip_no'] == null) {
 		display_error(_('Payslip number does not exist'));
-		hyperlink_params($path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php',_('Payment Advices'), 'NewPayment=yes');
+		hyperlink_params($path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php', _('Payment Advices'), 'NewPayment=yes');
 		display_footer_exit();
 	}
-    else {
+	else {
 		$payslip = get_payslip(false, $_GET['PayslipNo']);
 		$_POST['PaySlipNo'] = $payslip['payslip_no'];
 	}
@@ -108,18 +108,18 @@ if (isset($_GET['AddedID'])) {
 	$trans_type = ST_BANKPAYMENT;
 	$payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
 
-   	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
-    
-    if($payslip_no)
-   	    display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
+	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
+	
+	if($payslip_no)
+		display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
 
-	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
+	display_note(get_gl_view_str($trans_type, $trans_no, _('&View the GL Postings for this Payment')));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), 'NewPayment=yes');
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter Another &Payment'), 'NewPayment=yes');
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Deposit"), 'NewDeposit=yes');
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter A &Deposit'), 'NewDeposit=yes');
 
-	hyperlink_params($path_to_root.'/admin/attachments.php', _('Add an Attachment'), "filterType=$trans_type&trans_no=$trans_no");
+	hyperlink_params($path_to_root.'/admin/attachments.php', _('Add an Attachment'), 'filterType='.$trans_type.'&trans_no='.$trans_no);
 
 	display_footer_exit();
 }
@@ -128,11 +128,11 @@ if (isset($_GET['UpdatedID'])) {
 	$trans_no = $_GET['UpdatedID'];
 	$trans_type = ST_BANKPAYMENT;
 
-   	display_notification_centered(sprintf(_("Payment %d has been modified"), $trans_no));
+	display_notification_centered(sprintf(_('Payment #%d has been modified'), $trans_no));
 
-	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
+	display_note(get_gl_view_str($trans_type, $trans_no, _('&View the GL Postings for this Payment')));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), 'NewPayment=yes');
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter Another &Payment'), 'NewPayment=yes');
 
 	hyperlink_params($_SERVER['PHP_SELF'], _('Enter A &Deposit'), 'NewDeposit=yes');
 
@@ -143,7 +143,7 @@ if (isset($_GET['AddedDep'])) {
 	$trans_no = $_GET['AddedDep'];
 	$trans_type = ST_BANKDEPOSIT;
 
-   	display_notification_centered(sprintf(_("Deposit %d has been entered"), $trans_no));
+	display_notification_centered(sprintf(_('Deposit #%d has been entered'), $trans_no));
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _('View the GL Postings for this Deposit')));
 
@@ -157,13 +157,13 @@ if (isset($_GET['UpdatedDep'])) {
 	$trans_no = $_GET['UpdatedDep'];
 	$trans_type = ST_BANKDEPOSIT;
 
-   	display_notification_centered(sprintf(_("Deposit %d has been modified"), $trans_no));
+	display_notification_centered(sprintf(_('Deposit #%d has been modified'), $trans_no));
 
-	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Deposit")));
+	display_note(get_gl_view_str($trans_type, $trans_no, _('&View the GL Postings for this Deposit')));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Deposit"), 'NewDeposit=yes');
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter Another &Deposit'), 'NewDeposit=yes');
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Payment"), 'NewPayment=yes');
+	hyperlink_params($_SERVER['PHP_SELF'], _('Enter A &Payment'), 'NewPayment=yes');
 
 	display_footer_exit();
 }
@@ -177,7 +177,7 @@ function create_cart($type, $trans_no, $payslip=array()) {
 		unset ($_SESSION['pay_items']);
 
 	$cart = new items_cart($type);
-    $cart->order_id = $trans_no;
+	$cart->order_id = $trans_no;
 
 	if ($trans_no) {
 
@@ -217,9 +217,9 @@ function create_cart($type, $trans_no, $payslip=array()) {
 
 		$cart->person_id = $payslip['emp_id'];
 		$cart->payslip_no = $payslip['payslip_no'];
-        $_POST['emp_id'] = $cart->person_id;
-        $_POST['for_payslip'] = $cart->payslip_no;
-        $cart->memo_ = _('Payment advice gl entry For Payslip #').$cart->payslip_no;
+		$_POST['emp_id'] = $cart->person_id;
+		$_POST['for_payslip'] = $cart->payslip_no;
+		$cart->memo_ = _('Payment advice gl entry For Payslip #').$cart->payslip_no;
 
 		$pay_amt = $payslip['payable_amount'];
 
@@ -260,13 +260,13 @@ function check_trans() {
 	$amnt_chg = -$_SESSION['pay_items']->gl_items_total()-$_SESSION['pay_items']->original_amount;
 
 	if($limit !== null && floatcmp($limit, -$amnt_chg) < 0) {
-		display_error(sprintf(_("The total bank amount exceeds allowed limit (%s)."), price_format($limit-$_SESSION['pay_items']->original_amount)));
+		display_error(sprintf(_('The total bank amount exceeds allowed limit (%s).'), price_format($limit-$_SESSION['pay_items']->original_amount)));
 		set_focus('code_id');
 		$input_error = 1;
 	}
 	if($trans = check_bank_account_history($amnt_chg, $_POST['bank_account'], $_POST['date_'])) {
 
-		display_error(sprintf(_("The bank transaction would result in exceed of authorized overdraft limit for transaction: %s #%s on %s."),
+		display_error(sprintf(_('The bank transaction would result in exceed of authorized overdraft limit for transaction: %s #%s on %s.'),
 			$systypes_array[$trans['type']], $trans['trans_no'], sql2date($trans['trans_date'])));
 		set_focus('amount');
 		$input_error = 1;
@@ -350,37 +350,37 @@ if (isset($_POST['Process']) && !check_trans()) {
 		display_notification(_('Employee advances have been allocated, no bank payment has been made.'));
 		$Ajax->activate('_page_body');
 	}
-    else {
-        
-        if(input_num('amount') > 0) {
-        	$old_amt = $_SESSION['pay_items']->gl_items_total();
-        	$this_alloc = input_num('amount');
-            $_SESSION['pay_items']->clear_items();
-    	    $_SESSION['pay_items']->add_gl_item($Payable_act, 0, 0, $old_amt - $this_alloc, '');
-        }
+	else {
+		
+		if(input_num('amount') > 0) {
+			$old_amt = $_SESSION['pay_items']->gl_items_total();
+			$this_alloc = input_num('amount');
+			$_SESSION['pay_items']->clear_items();
+			$_SESSION['pay_items']->add_gl_item($Payable_act, 0, 0, $old_amt - $this_alloc, '');
+		}
 
-        $trans = write_employee_bank_transaction($_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id, $_POST['bank_account'], $_SESSION['pay_items'], $_POST['date_'], $_POST['PayType'], $_POST['person_id'], get_post('PersonDetailID'), $_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null), $_POST['for_payslip'], $_POST['emp_id']);
+		$trans = write_employee_bank_transaction($_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id, $_POST['bank_account'], $_SESSION['pay_items'], $_POST['date_'], $_POST['PayType'], $_POST['person_id'], get_post('PersonDetailID'), $_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null), $_POST['for_payslip'], $_POST['emp_id']);
 
-	    $trans_type = $trans[0];
-   	    $trans_no = $trans[1];
+		$trans_type = $trans[0];
+		$trans_no = $trans[1];
 
-   	    if(!empty($trans[2]) && count($allocs)) {
-   	    	$trans_counter = $trans[2];
-   	        add_employee_allocations($trans_counter, $allocs);
-   	    }
-   	    
-	    new_doc_date($_POST['date_']);
+		if(!empty($trans[2]) && count($allocs)) {
+			$trans_counter = $trans[2];
+			add_employee_allocations($trans_counter, $allocs);
+		}
+		
+		new_doc_date($_POST['date_']);
 
-	    $_SESSION['pay_items']->clear_items();
-	    unset($_SESSION['pay_items']);
+		$_SESSION['pay_items']->clear_items();
+		unset($_SESSION['pay_items']);
 
-	    commit_transaction();
+		commit_transaction();
 
-	    if($new)
-		    meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "AddedID=$trans_no" : "AddedDep=$trans_no");
-	    else
-		    meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? "UpdatedID=$trans_no" : "UpdatedDep=$trans_no");
-    }
+		if($new)
+			meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? 'AddedID='.$trans_no : 'AddedDep='.$trans_no);
+		else
+			meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ? 'UpdatedID='.$trans_no : 'UpdatedDep='.$trans_no);
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -407,9 +407,9 @@ function handle_update_item() {
 
 	$amount = ($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? 1:-1) * input_num('amount');
 
-    if($_POST['UpdateItem'] != "" && check_item_data())
-    	$_SESSION['pay_items']->update_gl_item($_POST['Index'], $_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount , $_POST['LineMemo']);
-    
+	if($_POST['UpdateItem'] != "" && check_item_data())
+		$_SESSION['pay_items']->update_gl_item($_POST['Index'], $_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount , $_POST['LineMemo']);
+	
 	line_start_focus();
 }
 
@@ -450,26 +450,26 @@ start_form();
 employee_bank_header($_SESSION['pay_items']);
 
 if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance'])) {
-    submit_center('update_advances', _('Generate Payment Items'), true, _('Generate Payment GL Items'), true, 'default');
-    br();
+	submit_center('update_advances', _('Generate Payment Items'), true, _('Generate Payment GL Items'), true, 'default');
+	br();
 }
 
 if(!empty($_POST['emp_id']) && empty($_POST['NewAdvance']))
-    show_employee_advances($_POST['emp_id']);
+	show_employee_advances($_POST['emp_id']);
 
 start_table(TABLESTYLE2, "width='90%'", 10);
 start_row();
 echo "<td>";
 if($_SESSION['pay_items']->count_gl_items() > 0)
-    display_bank_gl_items($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Payment Items"):_("Deposit Items"), $_SESSION['pay_items']);
+	display_bank_gl_items($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Payment Items"):_("Deposit Items"), $_SESSION['pay_items']);
 gl_options_controls($_SESSION['pay_items']);
 echo "</td>";
 end_row();
 end_table(1);
 
-submit_center_first('Update', _("Update"), '', null);
+submit_center_first('Update', _('Update'), '', null);
 if($_SESSION['pay_items']->count_gl_items() > 0)
-    submit_center_last('Process', $_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Process Payment"):_("Process Deposit"), '', 'default');
+	submit_center_last('Process', $_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _('Process Payment') : _('Process Deposit'), '', 'default');
 
 end_form();
 end_page();

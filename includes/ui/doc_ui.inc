@@ -25,7 +25,7 @@ function doctype_list($name, $id = null, $spec_option = false, $submit_on_change
 
 function doctype_list_cells($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
 	if ($label != null)
-		echo "<td>$label</td>\n";
+		echo '<td>'.$label."</td>\n";
 	echo "<td>";
 	echo doctype_list($name, $id, $all_option, $submit_on_change, $show_inactive);
 	echo "</td>\n";
@@ -34,14 +34,8 @@ function doctype_list_cells($label, $name, $id = null, $all_option = false, $sub
 //--------------------------------------------------------------------------
 
 function doctype_list_row($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
-	echo "<tr><td class='label'>$label</td>";
+	echo "<tr><td class='label'>".$label.'</td>';
 	doctype_list_cells(null, $name, $id, $all_option, 
 	$submit_on_change, $show_inactive);
-	echo "</tr>";
-}
-
-//--------------------------------------------------------------------------
-
-function display_warning_delete() {
-	
+	echo '</tr>';
 }

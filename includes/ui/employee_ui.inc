@@ -30,7 +30,7 @@ function employee_list($name, $id=null, $spec_option=false, $submit_on_change=fa
 
 function employee_list_cells($label, $name, $id=null, $all_option=false, $submit_on_change=false, $show_inactive=false, $dept=false, $multi=false) {
 	if ($label != null)
-		echo "<td>$label</td>\n";
+		echo '<td>'.$label."</td>\n";
 	echo "<td>";
 	echo employee_list($name, $id, $all_option, $submit_on_change, $show_inactive, $dept, $multi);
 	echo "</td>\n";
@@ -39,31 +39,31 @@ function employee_list_cells($label, $name, $id=null, $all_option=false, $submit
 //--------------------------------------------------------------------------
 
 function employee_list_row($label, $name, $id=null, $all_option=false, $submit_on_change=false, $show_inactive=false, $dept=false, $multi=false) {
-	echo "<tr><td class='label'>$label</td>";
+	echo "<tr><td class='label'>".$label.'</td>';
 	employee_list_cells(null, $name, $id, $all_option, $submit_on_change, $show_inactive, $dept, $multi);
-	echo "</tr>";
+	echo '</tr>';
 }
 
 //--------------------------------------------------------------------------
 
 function gender_radio_row($label, $name, $gender=null) {
 
-	echo "<tr><td class='label'>$label</td><td>";
+	echo "<tr><td class='label'>".$label.'</td><td>';
 	
 	if($gender==0){
-		echo "<input type='radio' name=$name value='1'>"._('Male')."&nbsp;&nbsp;&nbsp;";
-		echo "<input type='radio' name=$name value='0' checked>"._('Female')."&nbsp;&nbsp;&nbsp;";
-		echo "<input type='radio' name=$name value='2'>"._('Other');
+		echo "<input type='radio' name=".$name." value='1'>"._('Male')."&nbsp;&nbsp;&nbsp;";
+		echo "<input type='radio' name=".$name." value='0' checked>"._('Female')."&nbsp;&nbsp;&nbsp;";
+		echo "<input type='radio' name=".$name." value='2'>"._('Other');
 	}
 	elseif($gender==1) {
-		echo "<input type='radio' name=$name value='1' checked>"._('Male')."&nbsp;&nbsp;&nbsp;";
-		echo "<input type='radio' name=$name value='0'>"._('Female')."&nbsp;&nbsp;&nbsp;";
-		echo "<input type='radio' name=$name value='2'>"._('Other');
+		echo "<input type='radio' name=".$name." value='1' checked>"._('Male')."&nbsp;&nbsp;&nbsp;";
+		echo "<input type='radio' name=".$name." value='0'>"._('Female')."&nbsp;&nbsp;&nbsp;";
+		echo "<input type='radio' name=".$name." value='2'>"._('Other');
 	}
 	else {
-		echo "<input type='radio' name=$name value='1'>"._('Male')."&nbsp;&nbsp;&nbsp;";
-		echo "<input type='radio' name=$name value='0'>"._('Female')."&nbsp;&nbsp;&nbsp;";
-		echo "<input type='radio' name=$name value='2' checked>"._('Other');
+		echo "<input type='radio' name=".$name." value='1'>"._('Male')."&nbsp;&nbsp;&nbsp;";
+		echo "<input type='radio' name=".$name." value='0'>"._('Female')."&nbsp;&nbsp;&nbsp;";
+		echo "<input type='radio' name=".$name." value='2' checked>"._('Other');
 	}
-	echo "</td></tr>";
+	echo '</td></tr>';
 }

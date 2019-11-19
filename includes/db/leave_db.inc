@@ -22,7 +22,7 @@ function write_leave($id = false, $leave_name, $leave_code, $pay_rate) {
 	else
 		$sql = "UPDATE ".TB_PREF."leave_type SET leave_name = ".db_escape($leave_name).", leave_code = ".db_escape($leave_code).", pay_rate = ".db_escape($pay_rate)." WHERE leave_id = ".db_escape($id);
 	
-	db_query($sql, _('Could not write leave data'));
+	db_query($sql, 'Could not write leave data');
 }
 
 //--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ function get_leave_type($id = false, $all = false) {
 	
 	$sql .= " ORDER BY leave_id";
 
-	$result = db_query($sql, _('Could not get leave data.'));
+	$result = db_query($sql, 'Could not get leave data.');
 	
 	if($id)
 		return db_fetch($result);
@@ -54,7 +54,7 @@ function get_leave_type($id = false, $all = false) {
 
 function delete_leave_type($id) {
 	$sql = "DELETE FROM ".TB_PREF."leave_type WHERE leave_id = ".db_escape($id);
-	db_query($sql, _('Could not delete leave type.'));
+	db_query($sql, 'Could not delete leave type.');
 }
 
 //--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ function get_leave($emp_id=false, $leave_id=false, $from=false, $to=false) {
 	if(count($where))
 		$sql .= ' WHERE '.implode(' AND ', $where);
 	
-	$result = db_query($sql, _('could not get leave data.'));
+	$result = db_query($sql, 'could not get leave data.');
 
 	return $result;
 }
@@ -92,7 +92,7 @@ function get_leave($emp_id=false, $leave_id=false, $from=false, $to=false) {
 function get_employee_leave($emp_id, $leave_id, $from, $to) {
 
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."leave WHERE emp_id = ".db_escape($emp_id)." AND leave_id = ".db_escape($leave_id)." AND date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
-	$result = db_query($sql, _('could not get leave data'));
+	$result = db_query($sql, 'could not get leave data');
 
 	return db_fetch($result)[0];
 }

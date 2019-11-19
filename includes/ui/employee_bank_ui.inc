@@ -20,25 +20,25 @@ function employee_bank_header(&$order) {
 
 	table_section(1);
 	
-    date_row(_("Date:"), 'date_', '', true, 0, 0, 0, null, true);
+    date_row(_('Date:'), 'date_', '', true, 0, 0, 0, null, true);
 
-	ref_row(_("Reference:"), 'ref', '', $order->reference, false, $order->trans_type, get_post('date_'));
+	ref_row(_('Reference:'), 'ref', '', $order->reference, false, $order->trans_type, get_post('date_'));
 
-	table_section(2, "33%");
+	table_section(2, '33%');
 
 	if(!isset($_POST['PayType'])) {
 
 		if(isset($_GET['PayType']))
 			$_POST['PayType'] = $_GET['PayType'];
 		else
-			$_POST['PayType'] = "";
+			$_POST['PayType'] = '';
 	}
 	if(!isset($_POST['person_id'])) {
 
 		if(isset($_GET['PayPerson']))
 			$_POST['person_id'] = $_GET['PayPerson'];
 		else
-			$_POST['person_id'] = "";
+			$_POST['person_id'] = '';
 	}
 	if(isset($_POST['_PayType_update'])) {
 		$_POST['person_id'] = '';
@@ -49,15 +49,15 @@ function employee_bank_header(&$order) {
 		$Ajax->activate('footer');
 	}
     hidden('PayType');
-    employee_list_row(_("Pay To:")."&nbsp;", 'emp_id', null, _("Select Employee"), true, false, false);
+    employee_list_row(_('Pay To:')."&nbsp;", 'emp_id', null, _('Select Employee'), true, false, false);
 
     switch($_POST['PayType']) {
 		case PT_MISC :
-    		text_row_ex($payment ?_("To the Order of:"):_("Name:"), 'person_id', 40, 50);
+    		text_row_ex($payment ? _('To the Order of:') : _('Name:'), 'person_id', 40, 50);
     		break;
     }
 
-	table_section(3, "33%");
+	table_section(3, '33%');
 
 	if(!$order->order_id && !get_post('bank_account')) {
 
@@ -69,12 +69,12 @@ function employee_bank_header(&$order) {
 			unset($_POST['bank_account']);
 	}		
     
-    bank_accounts_list_row( $payment ? _("From:") : _("Into:"), 'bank_account', null, true);
+    bank_accounts_list_row( $payment ? _('From:') : _('Into:'), 'bank_account', null, true);
     if($payment)
 		bank_balance_row($_POST['bank_account']);
 
 	if(!isset($_GET['PaymentAdvice']) && !isset($_POST['PaymentAdvice']) && !isset($_GET['NewAdvance']) && empty($_POST['NewAdvance']))
-        employee_payslip_list_row(_("Pay Slip:"), 'for_payslip', null, get_post('emp_id'), _("Select payslip"), true);
+        employee_payslip_list_row(_('Pay Slip:'), 'for_payslip', null, get_post('emp_id'), _('Select payslip'), true);
     if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance'])) {
         amount_row(_('Amount:').'&nbsp;', 'advance_amount', null, null, null, null, true);
         hidden('for_payslip', null);
@@ -112,7 +112,7 @@ function employee_bank_header(&$order) {
                 
 		
 		if($payslip) {
-			$_POST['memo_'] = "Payment advice gl entry For Payslip #".$payslip['payslip_no'];
+			$_POST['memo_'] = 'Payment advice gl entry For Payslip #'.$payslip['payslip_no'];
 
 			if(list_updated('for_payslip')) {
 
@@ -149,11 +149,11 @@ function display_bank_gl_items($title, &$order) {
 	start_table(TABLESTYLE, "width='95%'");
 
 	if($dim == 2)
-		$th = array(_("Account Code"), _("Account Description"), _("Dimension")." 1", _("Dimension")." 2", _("Amount"), _("Memo"), "");
+		$th = array(_('Account Code'), _('Account Description'), _('Dimension 1'), _('Dimension 2'), _('Amount'), _('Memo'), '');
 	elseif($dim == 1)
-		$th = array(_("Account Code"), _("Account Description"), _("Dimension"), _("Amount"), _("Memo"), "");
+		$th = array(_('Account Code'), _('Account Description'), _('Dimension'), _('Amount'), _('Memo'), '');
 	else
-		$th = array(_("Account Code"), _("Account Description"), _("Amount"), _("Memo"), "");
+		$th = array(_('Account Code'), _('Account Description'), _('Amount'), _('Memo'), '');
 
 	if(count($order->gl_items)) $th[] = '';
 
@@ -178,8 +178,8 @@ function display_bank_gl_items($title, &$order) {
 				amount_cell($item->amount, false, '', 'item_amount');
 			label_cell($item->reference);
 
-			edit_button_cell("Edit$line", _("Edit"), _('Edit document line'));
-			delete_button_cell("Delete$line", _("Delete"), _('Remove line from document'));
+			edit_button_cell('Edit'.$line, _('Edit'), _('Edit document line'));
+			delete_button_cell('Delete'.$line, _('Delete'), _('Remove line from document'));
     		end_row();
 		}
 		else
@@ -187,7 +187,7 @@ function display_bank_gl_items($title, &$order) {
 	}
 
 	if($order->count_gl_items())
-		label_row(_("Total"), number_format2(abs($order->gl_items_total()), user_price_dec()), "colspan=" . $colspan . " align=right", "align=right id='payment_total_amt'", 3);
+		label_row(_('Total'), number_format2(abs($order->gl_items_total()), user_price_dec()), 'colspan='.$colspan." align=right", "align=right id='payment_total_amt'", 3);
 
     end_table();
 	div_end();
@@ -203,9 +203,9 @@ function show_employee_advances($emp_id) {
     $advances = get_employee_advances($emp_id);
 
 	if(db_num_rows($advances) > 0) {
-		display_heading(sprintf(_("Allocated amounts in %s:"), get_company_pref('curr_default')));
+		display_heading(sprintf(_('Allocated amounts in %s:'), get_company_pref('curr_default')));
 		start_table(TABLESTYLE, "width='60%'");
-   		$th = array(_('Transaction Type'), _('#'), _('Ref'), _('Date'), _('Amount'), _('Other Allocations'), _('Left to Allocate'), _('This Allocation'),'','');
+   		$th = array(_('Transaction Type'), _('#'), _('Ref'), _('Date'), _('Amount'), _('Other Allocations'), _('Left to Allocate'), _('This Allocation'), '', '');
 
 	   	table_header($th);
 
@@ -223,12 +223,12 @@ function show_employee_advances($emp_id) {
 
 	    		$un_allocated = round((abs($row['pay_amount']) - $row['amt_allocated']), 6);
 	    		amount_cell($un_allocated, false,'', 'maxval'.$id);
-    			amount_cells(null, "amount" . $id);
-				label_cell("<a href='#' name=Alloc$id onclick='emp_allocate_all(this.name.substr(5));return true;'>"._("All")."</a>");
-				label_cell("<a href='#' name=DeAll$id onclick='emp_allocate_none(this.name.substr(5));return true;'>"._("None")."</a>".hidden("un_allocated" . $id, price_format($un_allocated), false));
+    			amount_cells(null, 'amount'.$id);
+				label_cell("<a href='#' name=Alloc$id onclick='emp_allocate_all(this.name.substr(5));return true;'>"._('All').'</a>');
+				label_cell("<a href='#' name=DeAll$id onclick='emp_allocate_none(this.name.substr(5));return true;'>"._('None').'</a>'.hidden('un_allocated'.$id, price_format($un_allocated), false));
 				end_row();
 
-   	    		$total_allocated += input_num('amount' . $id);
+   	    		$total_allocated += input_num('amount'.$id);
 		   	}
 		}
 		label_row(_('Total Amount:'), get_post('amount'), "colspan='7' align='right'", "id='amount' align='right'");

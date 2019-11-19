@@ -22,7 +22,7 @@ function write_doc_type($id = false, $name, $days) {
 	else
 		$sql = "UPDATE ".TB_PREF."document_types SET type_name = ".db_escape($name).", notify_before = ".db_escape($days)." WHERE type_id = ".db_escape($id);
 	
-	db_query($sql, _('Could not write document type data'));
+	db_query($sql, 'Could not write document type data');
 }
 
 //--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ function get_doc_types($id = false, $all = false) {
 	
 	$sql .= " ORDER BY type_id";
 
-	$result = db_query($sql, _('Could not get document type data.'));
+	$result = db_query($sql, 'Could not get document type data.');
 	
 	if($id)
 		return db_fetch($result);
@@ -54,7 +54,7 @@ function get_doc_types($id = false, $all = false) {
 
 function delete_doc_type($id) {
 	$sql = "DELETE FROM ".TB_PREF."document_types WHERE type_id = ".db_escape($id);
-	db_query($sql, _('Could not delete document type.'));
+	db_query($sql, 'Could not delete document type.');
 }
 
 //--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ function add_document($emp_id, $type_id, $description, $issue_date, $expiry_date
 
 	$sql = "INSERT INTO ".TB_PREF."employee_docs (emp_id, type_id, description, issue_date, expiry_date, alert, filename, unique_name, filesize, filetype) VALUES (".db_escape($emp_id).", ".db_escape($type_id).",".db_escape($description).", '".date2sql($issue_date)."', '".date2sql($expiry_date)."', ".db_escape($alert).", ".db_escape($filename).", ".db_escape($unique_name).", ".db_escape($filesize).", ".db_escape($filetype).")";
 
-	db_query($sql, _('Attachment could not be inserted'));		
+	db_query($sql, 'Attachment could not be inserted');		
 }
 
 //--------------------------------------------------------------------------
@@ -82,21 +82,21 @@ function update_document($selected_id, $emp_id, $type_id, $description, $issue_d
 		$sql .= ", filename = ".db_escape($filename).", unique_name = ".db_escape($unique_name).", filesize = ".db_escape($filesize).", filetype = ".db_escape($filetype);
 
 	$sql .= " WHERE id = ".db_escape($selected_id);
-	db_query($sql, _('Attachment could not be updated'));		
+	db_query($sql, 'Attachment could not be updated');		
 }
 
 //--------------------------------------------------------------------------
 
 function delete_document($id) {
 	$sql = "DELETE FROM ".TB_PREF."employee_docs WHERE id = ".db_escape($id);
-	db_query($sql, _('Could not delete attachment'));
+	db_query($sql, 'Could not delete attachment');
 }
 
 //--------------------------------------------------------------------------
 
 function get_document($id) {
 	$sql = "SELECT * FROM ".TB_PREF."employee_docs WHERE id = ".db_escape($id);
-	$result = db_query($sql, _('Could not retrieve attachments'));
+	$result = db_query($sql, 'Could not retrieve attachments');
 	return db_fetch($result);
 }
 
@@ -133,7 +133,7 @@ function get_sql_for_employee_documents($emp_id = 0, $type_id = 0, $alert = 0, $
 
 function get_alert_from($type_id, $expiry_date) {
 	$sql = "SELECT notify_before FROM ".TB_PREF."document_types WHERE type_id = ".db_escape($type_id);
-	$result = db_query($sql, _('could not get document type data'));
+	$result = db_query($sql, 'could not get document type data');
 
 	$row = db_fetch($result);
 

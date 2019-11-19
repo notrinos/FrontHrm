@@ -72,7 +72,7 @@ function handle_submit(&$selected_id) {
 			}
             else {
 				$type = CREDIT;
-				$amount = @input_num("Credit".$val);
+				$amount = @input_num('Credit'.$val);
 			}
 
 			if($amount > 0)
@@ -101,7 +101,8 @@ if (isset($_POST['submit']))
 if (isset($_POST['delete'])) {
 	delete_salary_structure($selected_id);
 	display_notification(_('Selected structure has been deleted.'));
-	$_POST['position_id'] = $selected_id = '';
+	$_POST['position_id'] = '';
+	$selected_id = '';
 	$Ajax->activate('_page_body');
 }
 
@@ -155,9 +156,9 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		br();
 		start_table(TABLESTYLE2);
 		if($pay_basis == MONTHLY_SALARY)
-		    $th = array(_('Pay Element'), _('Monthly Earnings'),_('Monthly Deductions'));
+		    $th = array(_('Pay Element'), _('Monthly Earnings'), _('Monthly Deductions'));
 		if($pay_basis == DAILY_WAGE)
-			$th = array(_('Pay Element'), _('Daily Earnings'),_('Daily Deductions'));
+			$th = array(_('Pay Element'), _('Daily Earnings'), _('Daily Deductions'));
 
 		table_header($th);
         start_row("class='inquirybg'");
@@ -182,7 +183,7 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
             submit_center('submit', _('Save salary structure'), true, '', 'default');
         else {
             submit_center_first('submit', _('Update'), _('Update salary structure data'), 'default');
-            submit_center_last('delete', _("Delete"), _('Delete salary structure if have been never used'), false, ICON_DELETE);
+            submit_center_last('delete', _('Delete'), _('Delete salary structure if have been never used'), false, ICON_DELETE);
         }
 		div_end();
     }
@@ -197,7 +198,7 @@ start_form();
 
 if(db_has_position()) {
 	start_table(TABLESTYLE2);
-	position_list_row(_('Job Position').':', 'position_id', null, _('Select Job Position'), true);
+	position_list_row(_('Job Position:'), 'position_id', null, _('Select Job Position'), true);
 	end_table();
 } 
 else {

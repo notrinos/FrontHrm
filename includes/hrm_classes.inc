@@ -9,7 +9,7 @@
 |                                                        |
 \=======================================================*/
 
-include_once($path_to_root."/includes/db_pager.inc");
+include_once($path_to_root.'/includes/db_pager.inc');
 
 function display_FrontHrm_pager(&$pager) {
     global $path_to_root;
@@ -168,10 +168,10 @@ function display_FrontHrm_pager(&$pager) {
 		$all = $pager->rec_count;
 		echo sprintf(_('Records %d-%d of %d'), $from, $to, $all);
 		echo $inact;
-		echo "</td>";
+		echo '</td>';
 	}
 	else
-	  	label_cell( _('No records') . $inact, "colspan=$colspan class='navibar'");
+	  	label_cell( _('No records') . $inact, "colspan=".$colspan." class='navibar'");
 
 	end_row();
 	end_table();

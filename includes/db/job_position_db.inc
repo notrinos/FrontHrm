@@ -21,7 +21,7 @@ function set_basic_salary($account, $amount, $position_id, $new=false) {
 	else
 		$sql = "UPDATE ".TB_PREF."salary_structure SET pay_rule_id = ".db_escape($account).", pay_amount = ".db_escape($amount)." WHERE position_id = ".db_escape($position_id);
 	
-	    db_query($sql, _('Could not write salary structure data'));
+	    db_query($sql, 'Could not write salary structure data');
 }
 
 function write_position($id = false, $name, $pay_basis) {
@@ -31,12 +31,12 @@ function write_position($id = false, $name, $pay_basis) {
 	else
 		$sql = "UPDATE ".TB_PREF."position SET position_name = ".db_escape($name).", pay_basis = ".db_escape($pay_basis)." WHERE position_id = ".db_escape($id);
 	
-	db_query($sql, _('Could not write job position data'));
+	db_query($sql, 'Could not write job position data');
 }
 
 function delete_position($id) {
 	$sql = "DELETE FROM ".TB_PREF."position WHERE position_id = ".db_escape($id);;
-	db_query($sql, _('could not delete job position'));
+	db_query($sql, 'could not delete job position');
 }
 
 function get_position($id = false, $all = false) {
@@ -54,7 +54,7 @@ function get_position($id = false, $all = false) {
 	else
 		$sql .= ' WHERE 1';
 
-	$result = db_query($sql, _('Could not get job position data.'));
+	$result = db_query($sql, 'Could not get job position data.');
 	
 	if($id)
 		return db_fetch($result);
@@ -75,14 +75,14 @@ function get_emp_basic_salary($emp_id, $new_staff = false) {
 	else
 		$sql = "SELECT pay_amount, pay_rule_id FROM ".TB_PREF."personal_salary_structure WHERE is_basic = 1 AND emp_id = ".db_escape($emp_id);
 
-	$result = db_query($sql, _('could not get salary structure'));
+	$result = db_query($sql, 'could not get salary structure');
 	return db_fetch($result);
 }
 
 function is_expenses_account($acc) {
 	$sql = "SELECT act_class.ctype FROM ".TB_PREF."chart_class act_class, ".TB_PREF."chart_types act_type, ".TB_PREF."chart_master coa WHERE coa.account_type=act_type.id AND act_type.class_id=act_class.cid AND coa.account_code=".db_escape($acc);
 
-	$result = db_query($sql, _('could not retreive the account class for ').$acc);
+	$result = db_query($sql, 'could not retreive the account class for '.$acc);
 	$row = db_fetch_row($result);
 	return $row[0] == CL_EXPENSE;
 }

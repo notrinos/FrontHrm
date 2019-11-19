@@ -41,10 +41,10 @@ start_form();
 start_table(TABLESTYLE_NOBORDER);
 start_row();
 
-ref_cells(_('Reference').':', 'Ref', _('Enter reference fragment or leave empty'), null, null, true);
-ref_cells(_('Memo').':', 'Memo', _('Enter memo fragment or leave empty'), null, null, true);
-date_cells(_('From').':', 'FromDate', '', null, $days_no, 0, 0, null, true);
-date_cells(_('To').':', 'ToDate', '', null, 0, 0, 0, null, true);
+ref_cells(_('Reference:'), 'Ref', _('Enter reference fragment or leave empty'), null, null, true);
+ref_cells(_('Memo:'), 'Memo', _('Enter memo fragment or leave empty'), null, null, true);
+date_cells(_('From:'), 'FromDate', '', null, $days_no, 0, 0, null, true);
+date_cells(_('To:'), 'ToDate', '', null, 0, 0, 0, null, true);
 
 end_row();
 // end_table();
@@ -53,7 +53,7 @@ end_row();
 start_row();
 
 department_list_cells(null, 'DeptId', null, _('All departments'), true);
-employee_list_cells(null, "EmpId", null, _('All employees'), true, false, get_post('DeptId'));
+employee_list_cells(null, 'EmpId', null, _('All employees'), true, false, get_post('DeptId'));
 check_cells(_('Only unpaid:'), 'OnlyUnpaid', null, true);
 submit_cells('Search', _('Search'), '', '', 'default');
 

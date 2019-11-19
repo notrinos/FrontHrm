@@ -27,17 +27,17 @@ simple_page_mode(false);
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
 	$input_error = 0;
-    
-    if(empty(trim($_POST['element_name']))) {
+	
+	if(empty(trim($_POST['element_name']))) {
 		$input_error = 1;
 		display_error(_('Element Name cannot be empty.'));
 		set_focus('element_name');
 	}
 	elseif(payroll_account_exist($_POST['AccountId']) && $Mode=='ADD_ITEM') {
-        $input_error = 1;
-        display_error(_('Selected account has already exists.'));
-        set_focus('AccountId');
-    }
+		$input_error = 1;
+		display_error(_('Selected account has already exists.'));
+		set_focus('AccountId');
+	}
 	if($input_error != 1) {
 
 		if($selected_id == '') {
@@ -48,7 +48,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 			update_pay_element($selected_id, $_POST['element_name']);
 			display_notification(_('The selected pay element has been updated.'));
 		}
-    	
+		
 		$Mode = 'RESET';
 	}
 }
@@ -92,8 +92,8 @@ while($myrow = db_fetch($result)) {
 	label_cell($myrow['account_code'], "align='center'");
 	label_cell($myrow['account_name']);
 	edit_button_cell('Edit'.$myrow['element_id'], _('Edit'));
- 	delete_button_cell('Delete'.$myrow['element_id'], _('Delete'));
-    
+	delete_button_cell('Delete'.$myrow['element_id'], _('Delete'));
+	
 	end_row();
 }
 
@@ -105,12 +105,12 @@ start_table(TABLESTYLE_NOBORDER);
 
 if($selected_id != -1) {
 	
- 	if($Mode == 'Edit') {
+	if($Mode == 'Edit') {
 		$myrow = get_payroll_elements($selected_id);
 		$_POST['element_name']  = $myrow['element_name'];
 		$_POST['AccountId']  = $myrow['account_code'];
- 	}
- 	hidden('selected_id', $selected_id);
+	}
+	hidden('selected_id', $selected_id);
 }
 
 text_row_ex(_('Element Name:'), 'element_name', 37, 50);

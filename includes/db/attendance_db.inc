@@ -59,9 +59,9 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
     }
 
     if(!empty($sql))
-        db_query($sql, _('Could not write attendance data'));
+        db_query($sql, 'Could not write attendance data');
     if(!empty($sql2))
-        db_query($sql2, _('Could not write attendance data'));
+        db_query($sql2, 'Could not write attendance data');
 }
 
 //--------------------------------------------------------------------------

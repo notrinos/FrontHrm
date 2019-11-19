@@ -89,7 +89,7 @@ function write_attendance_range($emp_id, $time_type, $value=0, $rate, $from, $to
 	$period = new DatePeriod($begin, $interval, $end);
 
 	foreach ($period as $dt) {
-		$day = $dt->format("Y-m-d");
+		$day = $dt->format('Y-m-d');
 		$day = sql2date($day);
 		write_attendance($emp_id, $time_type, $value, $rate, $day, $leave);
 	}
@@ -106,7 +106,7 @@ function check_paid_in_range($emp_id, $from, $to) {
 	$period = new DatePeriod($begin, $interval, $end);
 
 	foreach ($period as $dt) {
-		$day = $dt->format("Y-m-d");
+		$day = $dt->format('Y-m-d');
 		$day = sql2date($day);
 		if(check_date_paid($emp_id, $day))
 			return true;
@@ -136,9 +136,9 @@ $remaining_cols = array();
 $overtime_id    = array();
 $k=0;
 while($overtime = db_fetch($overtimes)) {
-    $remaining_cols[$k] = $overtime['overtime_name'];
-    $overtime_id[$k] = $overtime['overtime_id'];
-    $k++;
+	$remaining_cols[$k] = $overtime['overtime_name'];
+	$overtime_id[$k] = $overtime['overtime_id'];
+	$k++;
 }
 $remaining_cols[] = _('Leave Type');
 
@@ -155,7 +155,7 @@ foreach ($employees as $emp) {
 if(isset($_POST['bulk'])) {
 	foreach($emp_ids as $emp_id) {
 		if(get_post($emp_id) == 1)
-		    $_POST[$emp_id.'-0'] = $Work_hours;
+			$_POST[$emp_id.'-0'] = $Work_hours;
 		else
 			$_POST[$emp_id.'-0'] = '';
 	}
@@ -165,25 +165,25 @@ if(isset($_POST['bulk'])) {
 table_header($th);
 
 foreach($employees as $employee) {
-    
-    start_row();
-    label_cell($employee['emp_id'].checkbox(null, $employee['emp_id'], isset($_POST[$employee['emp_id']]) ? $_POST[$employee['emp_id']] : 1));
-    label_cell($employee['name']);
-    $name1 = $employee['emp_id'].'-0';
-    text_cells(null, $name1, null, 10, 10);
-    
-    $i=0;
-    while($i < count($remaining_cols) - 1) {
-        $name2 = $employee['emp_id'].'-'.$overtime_id[$i];
-        text_cells(null, $name2, null, 10, 10);
-        $i++;
-    }
-    leave_types_list_cells(null, $employee['emp_id'].'-leave', null, _('Select Leave Type'), true);
-    end_row();
+	
+	start_row();
+	label_cell($employee['emp_id'].checkbox(null, $employee['emp_id'], isset($_POST[$employee['emp_id']]) ? $_POST[$employee['emp_id']] : 1));
+	label_cell($employee['name']);
+	$name1 = $employee['emp_id'].'-0';
+	text_cells(null, $name1, null, 10, 10);
+	
+	$i=0;
+	while($i < count($remaining_cols) - 1) {
+		$name2 = $employee['emp_id'].'-'.$overtime_id[$i];
+		text_cells(null, $name2, null, 10, 10);
+		$i++;
+	}
+	leave_types_list_cells(null, $employee['emp_id'].'-leave', null, _('Select Leave Type'), true);
+	end_row();
 }
 
 end_table(1);
-    
+	
 submit_center('addatt', _('Save attendance'), true, '', 'default');
 
 //--------------------------------------------------------------------------
@@ -195,14 +195,14 @@ if(isset($_POST['addatt'])) {
 	
 	if(!can_process())
 		return;
-    
-    $att_items = 0;
-    foreach($emp_ids as $emp_id) {
-        
+	
+	$att_items = 0;
+	foreach($emp_ids as $emp_id) {
+		
 		if($_POST[$emp_id.'-0'] && check_paid_in_range($emp_id, $_POST['from_date'], $_POST['to_date'])) {
 			
 			display_error(_('The selected date range includes a date that has been approved, please select another date range.'));
-            set_focus('from_date');
+			set_focus('from_date');
 			exit();
 		}
 		elseif(!empty($_POST[$emp_id.'-leave'])) {
@@ -214,7 +214,7 @@ if(isset($_POST['addatt'])) {
 		else {
 
 			if(strlen($_POST[$emp_id.'-0']) > 0)
-                $att_items ++;
+				$att_items ++;
 			
 			write_attendance_range($emp_id, 0, time_to_float($_POST[$emp_id.'-0']), 1, $_POST['from_date'], $_POST['to_date']);
 
@@ -223,9 +223,9 @@ if(isset($_POST['addatt'])) {
 				if(strlen($_POST[$emp_id.'-'.$ot]) > 0)
 					$att_items ++;
 				write_attendance_range($emp_id, $ot, time_to_float($_POST[$emp_id.'-'.$ot]), $rate, $_POST['from_date'], $_POST['to_date']);
-        	}
+			}
 		}
-    }
+	}
 	if($att_items > 0)
 		display_notification(_('Attendance has been saved.'));
 	else

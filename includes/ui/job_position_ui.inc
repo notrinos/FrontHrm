@@ -9,7 +9,7 @@
 |                                                        |
 \=======================================================*/
 
-function position_list($name, $id = null, $spec_option = false, $submit_on_change = false, $show_inactive = false) {
+function position_list($name, $id = null, $spec_option=false, $submit_on_change=false, $show_inactive=false) {
 	$sql = "SELECT position_id, position_name, inactive FROM ".TB_PREF."position ";
 
 	return combo_input($name, $id, $sql, 'position_id', 'position_name',
@@ -23,18 +23,18 @@ function position_list($name, $id = null, $spec_option = false, $submit_on_chang
 
 //--------------------------------------------------------------------------
 
-function position_list_cells($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
+function position_list_cells($label, $name, $id=null, $all_option=false, $submit_on_change=false, $show_inactive=false) {
 	if ($label != null)
-		echo "<td>$label</td>\n";
-	echo "<td>";
+		echo '<td>'.$label."</td>\n";
+	echo '<td>';
 	echo position_list($name, $id, $all_option, $submit_on_change, $show_inactive);
 	echo "</td>\n";
 }
 
 //--------------------------------------------------------------------------
 
-function position_list_row($label, $name, $id = null, $all_option = false, $submit_on_change = false, $show_inactive = false) {
-	echo "<tr><td class='label'>$label</td>";
+function position_list_row($label, $name, $id=null, $all_option=false, $submit_on_change=false, $show_inactive=false) {
+	echo "<tr><td class='label'>".$label.'</td>';
 	position_list_cells(null, $name, $id, $all_option, $submit_on_change, $show_inactive);
-	echo "</tr>";
+	echo '</tr>';
 }

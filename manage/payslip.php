@@ -118,7 +118,7 @@ function create_cart($type=0, $trans_no=0) {
 		if($result) {
 
 			while($row = db_fetch($result)) {
-                $curr_amount = $cart->rate ? round($row['amount']/$cart->rate, $_SESSION["wa_current_user"]->prefs->price_dec()) : $row['amount'];
+                $curr_amount = $cart->rate ? round($row['amount']/$cart->rate, $_SESSION['wa_current_user']->prefs->price_dec()) : $row['amount'];
                 if($curr_amount)
 					$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'], $curr_amount, $row['memo_'], '', $row['person_id']);
 			}
@@ -341,7 +341,7 @@ function check_item_data() {
 
 function handle_update_item() {
     
-    if($_POST['UpdateItem'] != "" && check_item_data()) {
+    if($_POST['UpdateItem'] != '' && check_item_data()) {
     	if (input_num('AmountDebit') > 0)
     		$amount = input_num('AmountDebit');
     	else
@@ -411,10 +411,10 @@ if(count($_SESSION['journal_items']->gl_items)) {
 
 	start_table(TABLESTYLE_NOBORDER, "width='90%'", 10);
 	start_row();
-	echo "<td>";
-	display_gl_items(_("Rows"), $_SESSION['journal_items']);
+	echo '<td>';
+	display_gl_items(_('Rows'), $_SESSION['journal_items']);
 	gl_options_controls();
-	echo "</td>";
+	echo '</td>';
 	end_row();
 	end_table(1);
 

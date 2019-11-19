@@ -78,7 +78,7 @@ $result = db_query(get_leave_type(false, check_value('show_inactive')));
 
 start_form();
 start_table(TABLESTYLE);
-$th = array(_('Id'), _('Leave Type Name'), _('Leave Type Code'), _('Salary Rate (%)'), "", "");
+$th = array(_('Id'), _('Leave Type Name'), _('Leave Type Code'), _('Salary Rate (%)'), '', '');
 inactive_control_column($th);
 
 table_header($th);

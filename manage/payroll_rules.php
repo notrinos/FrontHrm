@@ -89,7 +89,7 @@ function payroll_rule_settings($selected_id) {
 	}
 	
 	start_table(TABLESTYLE2);
-	$th = array(_('Pay Element'), _('Account'),'');
+	$th = array(_('Pay Element'), _('Account'), '');
 	table_header($th);
 	
 	$rules = get_payroll_rules();
@@ -143,7 +143,7 @@ if(db_has_position()) {
 	start_row();
     
 	position_list_cells(null, 'PositionId', null, _('Select Job Position'), true, check_value('show_inactive'));
-	check_cells(_('Show inactive').':', 'show_inactive', null, true);
+	check_cells(_('Show inactive:'), 'show_inactive', null, true);
     
 	end_row();
 	end_table(1);

@@ -51,7 +51,7 @@ function display_payslip_header(&$Order) {
 
 	table_section(2);
 	hidden('PayType', PT_EMPLOYEE);
-	employee_list_row(_('Pay To:'), 'person_id', null, _("Select employee"), true, false);
+	employee_list_row(_('Pay To:'), 'person_id', null, _('Select employee'), true, false);
 		
 	if(!isset($_POST['PaySlipNo']))
 		$_POST['PaySlipNo'] = get_next_payslip_no();
@@ -322,11 +322,11 @@ function display_gl_items($title, &$order) {
     div_start('items_table');
 	start_table(TABLESTYLE, "width='80%'");
 	if($dim == 2)
-		$th = array(_("Account Code"), _("Account Description"), _("Dimension")." 1", _("Dimension")." 2", _("Debit"), _("Credit"), _("Memo"), "");
+		$th = array(_('Account Code'), _('Account Description'), _('Dimension 1'), _('Dimension 2'), _('Debit'), _('Credit'), _('Memo'), '');
 	elseif($dim == 1)
-		$th = array(_("Account Code"), _("Account Description"), _("Dimension"), _("Debit"), _("Credit"), _("Memo"), "");
+		$th = array(_('Account Code'), _('Account Description'), _('Dimension'), _('Debit'), _('Credit'), _('Memo'), '');
 	else
-		$th = array(_("Account Code"), _("Account Description"), _("Debit"), _("Credit"), _("Memo"), "");
+		$th = array(_('Account Code'), _('Account Description'), _('Debit'), _('Credit'), _('Memo'), '');
 
 	if(count($order->gl_items)) $th[] = '';
 
@@ -347,16 +347,16 @@ function display_gl_items($title, &$order) {
 	            label_cell(get_dimension_string($item->dimension2_id, true));
 	        if($item->amount > 0) {
 	            amount_cell(abs($item->amount));
-	            label_cell("");
+	            label_cell('');
 	        }	
 	        else {
-	            label_cell("");
+	            label_cell('');
 	            amount_cell(abs($item->amount));
 	        }	
             label_cell($item->reference);
 
-            edit_button_cell("Edit$line", _("Edit"), _('Edit journal line'));
-            delete_button_cell("Delete$line", _("Delete"), _('Remove line from journal'));
+            edit_button_cell('Edit'.$line, _('Edit'), _('Edit journal line'));
+            delete_button_cell('Delete'.$line, _('Delete'), _('Remove line from journal'));
 	        end_row();
 		} 
 		else
@@ -364,12 +364,12 @@ function display_gl_items($title, &$order) {
 	}
 
 	if($order->count_gl_items()!=null) {
-		$colspan = ($dim == 2 ? "4" : ($dim == 1 ? "3" : "2"));
+		$colspan = ($dim == 2 ? "4" : ($dim == 1 ? '3' : '2'));
 		start_row();
-		label_cell(_("Total Salary"), "align=right colspan=" . $colspan);
+		label_cell(_('Total Salary'), 'align=right colspan='.$colspan);
 		amount_cell($order->gl_items_total_debit());
 		amount_cell(abs($order->gl_items_total_credit()));
-		label_cell('', "colspan=3");
+		label_cell('', 'colspan=3');
 		end_row();
 	}
     end_table();
@@ -393,22 +393,22 @@ function gl_edit_item_controls(&$order, $dim, $Index=null) {
 
 		if($item->amount > 0) {
 			$_POST['AmountDebit'] = price_format($item->amount);
-			$_POST['AmountCredit'] = "";
+			$_POST['AmountCredit'] = '';
 		}
 		else {
-			$_POST['AmountDebit'] = "";
+			$_POST['AmountDebit'] = '';
 			$_POST['AmountCredit'] = price_format(abs($item->amount));
 		}	
 		$_POST['description'] = $item->description;
 		$_POST['LineMemo'] = $item->reference;
 
 		hidden('Index', $id);
-		$skip_bank = !$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL');
+		$skip_bank = !$_SESSION['wa_current_user']->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true);
 		if($dim >= 1) 
-			dimensions_list_cells(null, 'dimension_id', null, true, " ", false, 1);
+			dimensions_list_cells(null, 'dimension_id', null, true, ' ', false, 1);
 		if($dim > 1) 
-			dimensions_list_cells(null, 'dimension2_id', null, true, " ", false, 2);
+			dimensions_list_cells(null, 'dimension2_id', null, true, ' ', false, 2);
 	    $Ajax->activate('items_table');
 	}
 	else {
@@ -417,18 +417,18 @@ function gl_edit_item_controls(&$order, $dim, $Index=null) {
 		$_POST['AmountCredit'] = ''; //price_format(0);
 		$_POST['dimension_id'] = 0;
 		$_POST['dimension2_id'] = 0;
-		$_POST['_code_id_edit'] = "";
-		$_POST['code_id'] = "";
+		$_POST['_code_id_edit'] = '';
+		$_POST['code_id'] = '';
 
 		if(isset($_POST['_code_id_update']))
 			    $Ajax->activate('code_id');
 		
-		$skip_bank = !$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL');
+		$skip_bank = !$_SESSION['wa_current_user']->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true);
 		if($dim >= 1)
-			dimensions_list_cells(null, 'dimension_id', null, true, " ", false, 1);
+			dimensions_list_cells(null, 'dimension_id', null, true, ' ', false, 1);
 		if($dim > 1)
-			dimensions_list_cells(null, 'dimension2_id', null, true, " ", false, 2);
+			dimensions_list_cells(null, 'dimension2_id', null, true, ' ', false, 2);
 	}
 
 	if ($dim < 1)
@@ -441,12 +441,12 @@ function gl_edit_item_controls(&$order, $dim, $Index=null) {
 	text_cells_ex(null, 'LineMemo', 35, 255);
 
 	if($id != -1) {
-		button_cell('UpdateItem', _("Update"), _('Confirm changes'), ICON_UPDATE);
-		button_cell('CancelItemChanges', _("Cancel"), _('Cancel changes'), ICON_CANCEL);
+		button_cell('UpdateItem', _('Update'), _('Confirm changes'), ICON_UPDATE);
+		button_cell('CancelItemChanges', _('Cancel'), _('Cancel changes'), ICON_CANCEL);
  		set_focus('amount');
 	} 
 	else 
-		submit_cells('AddItem', _("Add Item"), "colspan=2", _('Add new line to journal'), true);
+		submit_cells('AddItem', _('Add Item'), 'colspan=2', _('Add new line to journal'), true);
 
 	end_row();
 }
@@ -456,22 +456,20 @@ function gl_edit_item_controls(&$order, $dim, $Index=null) {
 function gl_options_controls() {
 
 	  echo "<br><table align='center'>";
-	  textarea_row(_("Memo"), 'memo_', null, 50, 3);
-	  echo "</table>";
+	  textarea_row(_('Memo'), 'memo_', null, 50, 3);
+	  echo '</table>';
 }
 
-
 //--------------------------------------------------------------------------
-
 
 function _format_emp_payslip($row) {
 
-	return "Trans# ".$row['type_no'] ." - ". $row['position_name'];
+	return 'Trans# '.$row['type_no'] ." - ". $row['position_name'];
 }
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list($name, $selected_id = null, $emp_id, $spec_option = false, $submit_on_change = false, $show_inactive = false) {
+function employee_payslip_list($name, $selected_id=null, $emp_id, $spec_option=false, $submit_on_change=false, $show_inactive=false) {
 	global $all_items;
 
 	if($emp_id) {
@@ -495,10 +493,10 @@ function _format_payslip_date($row) {
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_cells($label, $name, $selected_id = null, $employee_id, $all_option = false, $submit_on_change = false, $show_inactive = false) {
+function employee_payslip_list_cells($label, $name, $selected_id=null, $employee_id, $all_option=false, $submit_on_change=false, $show_inactive=false) {
 
 	if($label != null)
-		echo "<td>$label</td>\n";
+		echo "<td class='label'>".$label."</td>\n";
 	echo "<td nowrap>";
 	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change, $show_inactive);
 	echo "</td>\n";
@@ -506,9 +504,9 @@ function employee_payslip_list_cells($label, $name, $selected_id = null, $employ
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_row($label, $name, $selected_id = null, $employee_id, $all_option = false, $submit_on_change = false, $show_inactive = false) {
+function employee_payslip_list_row($label, $name, $selected_id=null, $employee_id, $all_option=false, $submit_on_change=false, $show_inactive=false) {
 
-	echo "<tr><td class='label'>$label</td><td>";
+	echo "<tr><td class='label'>".$label.'</td><td>';
 	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change, $show_inactive);
 	echo "</td></tr>\n";
 }

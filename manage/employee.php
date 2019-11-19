@@ -40,18 +40,18 @@ foreach(db_query(get_employees(false, true)) as $emp_row) {
 
 $cur_id = isset($_SESSION['EmpId']) ? $_SESSION['EmpId'] : '';
 
-$upload_file = "";
+$upload_file = '';
 $avatar_path = company_path().'/FrontHrm/images/';
 if(isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 	
 	$result = $_FILES['pic']['error'];
- 	$upload_file = 'Yes';
+	$upload_file = 'Yes';
 	$filename = $avatar_path;
-    
-    if(!file_exists(company_path().'/FrontHrm')) {
+	
+	if(!file_exists(company_path().'/FrontHrm')) {
 		mkdir(company_path().'/FrontHrm');
 		copy(company_path().'/index.php', company_path().'/FrontHrm/index.php');
-    }
+	}
 	if(!file_exists($filename)) {
 		mkdir($filename);
 		copy(company_path().'/index.php', $filename.'index.php');
@@ -92,7 +92,7 @@ if(isset($_FILES['pic']) && $_FILES['pic']['name'] != '') {
 	elseif( $_FILES['pic']['type'] == "text/plain" ) {
 
 		display_warning( _('Only graphics files can be uploaded'));
-        $upload_file ='No';
+		$upload_file ='No';
 	}
 	elseif(file_exists($filename)) {
 
@@ -153,11 +153,11 @@ function can_process() {
 		return false;
 	}
 	if(get_post('inactive') == 1) {
-	    if(!is_date($_POST['emp_releasedate'])) {
-	    	display_error( _('Invalid release date.'));
-	    	set_focus('emp_releasedate');
-	    	return false;
-	    }
+		if(!is_date($_POST['emp_releasedate'])) {
+			display_error( _('Invalid release date.'));
+			set_focus('emp_releasedate');
+			return false;
+		}
 	}
 	return true;
 }
@@ -187,9 +187,9 @@ function gender_name($row) {
 	if($row['gender'] == 0)
 		return  _('Female');
 	elseif($row['gender'] == 1)
-	    return _('Male');
+		return _('Male');
 	else
-	    return _('Other');
+		return _('Other');
 }
 function emp_hired($row) {
 	return ($row['emp_hiredate'] == '0000-00-00') ? _('Not hired') : '<center>'.sql2date($row['emp_hiredate']).'</center>';
@@ -221,26 +221,26 @@ function employees_table() {
 		end_row();
 		end_table(1);
 		
-        $cols = array(
-          _('ID'),
-		  'first_name' => 'skip',
-          _('Name') => array('fun'=>'get_name'),
-		  _('Gender') => array('fun'=>'gender_name'),
-		  'address' => 'skip',
-		  _('Mobile') => array(),
-		  _('Email'),
-		  _('Birth') => array('type'=>'date'),
-		  'notes' => 'skip',
-		  _('Hired Date') => array('fun'=>'emp_hired'),
-		  _('Department') => array('fun'=>'emp_department')
-        );
+		$cols = array(
+			_('ID'),
+			'first_name' => 'skip',
+			_('Name') => array('fun'=>'get_name'),
+			_('Gender') => array('fun'=>'gender_name'),
+			'address' => 'skip',
+			_('Mobile') => array(),
+			_('Email'),
+			_('Birth') => array('type'=>'date'),
+			'notes' => 'skip',
+			_('Hired Date') => array('fun'=>'emp_hired'),
+			_('Department') => array('fun'=>'emp_department')
+		);
 
-        $table =& new_db_pager('emp_tbl', $sql, $cols);
-        $table->width = "80%";
-        $table->page_len = 50;
+		$table =& new_db_pager('emp_tbl', $sql, $cols);
+		$table->width = '80%';
+		$table->page_len = 50;
 	
-	    // display_note(_('Press name to edit employee details.'));
-        display_db_pager($table);
+		// display_note(_('Press name to edit employee details.'));
+		display_db_pager($table);
 	}
 	else
 		display_note(_('No employee defined.'), 1);
@@ -297,12 +297,10 @@ function employee_settings($cur_id) {
 	$emp_img_link = '';
 	$check_remove_image = false;
 	if($cur_id && file_exists($avatar_path.emp_img_name($cur_id).'.jpg')) {
-		$emp_img_link .= "<img id='emp_img' alt = '[".$cur_id.".jpg".
-			"]' src='".$avatar_path.emp_img_name($cur_id).
-			".jpg?nocache=".rand()."'"." height='100'>";
+		$emp_img_link .= "<img id='emp_img' alt = '[".$cur_id.".jpg"."]' src='".$avatar_path.emp_img_name($cur_id).".jpg?nocache=".rand()."'"." height='100'>";
 		$check_remove_image = true;
-	} 
-	else 
+	}
+	else
 		$emp_img_link .= "<img id='emp_img' alt = '.jpg' src='".$path_to_root."/modules/FrontHrm/images/avatar/no_image.svg' height='100'>";
 
 	label_row('&nbsp;', $emp_img_link);
@@ -462,7 +460,7 @@ if(isset($_POST['addupdate'])) {
 	}
 
 	if(check_value('del_image')) {
-		$filename = $avatar_path.emp_img_name($cur_id).".jpg";
+		$filename = $avatar_path.emp_img_name($cur_id).'.jpg';
 		if (file_exists($filename))
 			unlink($filename);
 	}

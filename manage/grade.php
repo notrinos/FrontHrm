@@ -134,7 +134,7 @@ if($selected_id != -1) {
  	hidden('selected_id', $selected_id);
 }
 
-position_list_row(_('Job Position').':', 'position_id');
+position_list_row(_('Job Position:'), 'position_id');
 
 if($selected_id != -1) {
 	$position = get_position($selected_id);

@@ -74,7 +74,7 @@ $result = db_query(get_overtime(false, check_value('show_inactive')));
 
 start_form();
 start_table(TABLESTYLE);
-$th = array(_('Id'), _('Overtime Name'), _('Overtime Rate'), "", "");
+$th = array(_('Id'), _('Overtime Name'), _('Overtime Rate'), '', '');
 inactive_control_column($th);
 
 table_header($th);
@@ -111,8 +111,8 @@ if ($selected_id != '') {
 //     hidden('rate', $_POST['rate']);
 // } else
 
-text_row(_('Overtime rate').':', 'rate', null, 20, 20);
-text_row(_('Overtime Name').':', 'name', null, 40, 50);
+text_row(_('Overtime rate:'), 'rate', null, 20, 20);
+text_row(_('Overtime Name:'), 'name', null, 40, 50);
 
 end_table(1);
 

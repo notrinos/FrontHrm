@@ -41,9 +41,9 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 	else {
 		write_department($selected_id, $_POST['name'], $_POST['basic_acc']);
 
-    	if ($selected_id != '')
+		if ($selected_id != '')
 			display_notification(_('Selected department has been updated'));
-    	else
+		else
 			display_notification(_('New department has been added'));
 		
 		$Mode = 'RESET';
@@ -70,7 +70,7 @@ start_form();
 
 start_table(TABLESTYLE);
 if(!empty($USE_DEPT_ACC))
-    $th = array(_('Id'), _('Department Name'), _('Salary Basic Account'), '', '');
+	$th = array(_('Id'), _('Department Name'), _('Salary Basic Account'), '', '');
 else
 	$th = array(_('Id'), _('Department Name'), '', '');
 inactive_control_column($th);
@@ -98,19 +98,19 @@ start_table(TABLESTYLE2);
 
 if($selected_id != '') {
 	
- 	if ($Mode == 'Edit') {
+	if($Mode == 'Edit') {
 		
 		$myrow = get_departments($selected_id);
 		$_POST['name']  = $myrow['dept_name'];
 		$_POST['basic_acc'] = $myrow['basic_account'];
- 	}
- 	hidden('selected_id', $selected_id);
+	}
+	hidden('selected_id', $selected_id);
 }
 
-text_row_ex(_('Department Name').':', 'name', 50, 60);
+text_row_ex(_('Department Name:'), 'name', 50, 60);
 
 if(!empty($USE_DEPT_ACC))
-    gl_all_accounts_list_row(_('Salary Basic Account'), 'basic_acc', null, true, false, _('Select basic account'));
+	gl_all_accounts_list_row(_('Salary Basic Account'), 'basic_acc', null, true, false, _('Select basic account'));
 else
 	hidden('basic_acc');
 

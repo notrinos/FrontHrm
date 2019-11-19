@@ -79,18 +79,18 @@ $_POST['payroll_grades'] = $myrow['payroll_grades'];
 
 table_section_title(_('General GL'));
 
-gl_all_accounts_list_row(_('Payroll payable account').':', 'payroll_payable_act', $_POST['payroll_payable_act'], true);
-gl_all_accounts_list_row(_('Deductible account').':', 'payroll_deductleave_act', $_POST['payroll_deductleave_act'], true, false, _('Use Salary Basic Account'));
-gl_all_accounts_list_row(_('Overtime account').':', 'payroll_overtime_act', $_POST['payroll_overtime_act'], true, false, _('Use Salary Basic Account'));
+gl_all_accounts_list_row(_('Payroll payable account:'), 'payroll_payable_act', $_POST['payroll_payable_act'], true);
+gl_all_accounts_list_row(_('Deductible account:'), 'payroll_deductleave_act', $_POST['payroll_deductleave_act'], true, false, _('Use Salary Basic Account'));
+gl_all_accounts_list_row(_('Overtime account:'), 'payroll_overtime_act', $_POST['payroll_overtime_act'], true, false, _('Use Salary Basic Account'));
 
 table_section_title(_('Working time parameters'));
 
-text_row(_('Work days per month').':', 'payroll_month_work_days', $_POST['payroll_month_work_days'], 6, 6, '', '', _('days'));
-text_row(_('Work hours per day').':', 'payroll_work_hours', $_POST['payroll_work_hours'], 6, 6, '', '', _('hours'));
+text_row(_('Work days per month:'), 'payroll_month_work_days', $_POST['payroll_month_work_days'], 6, 6, '', '', _('days'));
+text_row(_('Work hours per day:'), 'payroll_work_hours', $_POST['payroll_work_hours'], 6, 6, '', '', _('hours'));
 
 table_section_title(_('Others'));
-check_row(_('Salary based on department').':', 'payroll_dept_based', $_POST['payroll_dept_based']);
-number_list_row(_('Number of Grades').':', 'payroll_grades', null, 1, $max_grade_number);
+check_row(_('Salary based on department:'), 'payroll_dept_based', $_POST['payroll_dept_based']);
+number_list_row(_('Number of Grades:'), 'payroll_grades', null, 1, $max_grade_number);
 
 end_outer_table(1);
 

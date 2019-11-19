@@ -67,7 +67,7 @@ function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mob
 		WHERE emp_id = ".db_escape($id);
 	}
 	
-	db_query($sql, _('Could not write employee data'));
+	db_query($sql, 'Could not write employee data');
 }
 
 //--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ function get_employees($id = false, $all=false, $department=false, $gender=false
 
 function delete_employee($id) {
 	$sql = "DELETE FROM ".TB_PREF."employee WHERE emp_id = ".db_escape($id);
-	db_query($sql, _('Could not delete employee data.'));
+	db_query($sql, 'Could not delete employee data.');
 }
 
 //--------------------------------------------------------------------------
@@ -126,7 +126,7 @@ function emp_img_name($emp_id) {
 function check_employee_hired($id, $date) {
 
     $sql = "SELECT emp_hiredate FROM ".TB_PREF."employee WHERE emp_id = ".db_escape($id);
-    $result = db_query($sql, _('could not get employee data'));
+    $result = db_query($sql, 'could not get employee data');
     $check = db_fetch($result);
     
     if(sql_date_comp(date2sql($date), $check[0]) < 0)

@@ -12,7 +12,7 @@
 function get_next_payslip_no() {
 
 	$sql = "SELECT MAX(payslip_no)+1 FROM ".TB_PREF."payslip";
-	$result = db_query($sql, "The next payslip number could not be retreived");
+	$result = db_query($sql, 'The next payslip number could not be retreived');
     $row = db_fetch_row($result);
 
     return ($row[0])?$row[0]:1;
@@ -52,7 +52,7 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 		add_gl_trans($trans_type, $trans_id, $date, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, $journal_item->amount, null, $cart->paytype);
 
 	    if($is_bank_to)
-	        add_bank_trans($trans_type, $trans_id, $is_bank_to, $ref, $date, $journal_item->amount, $cart->paytype, $cart->person_id, get_company_currency(), "Cannot insert a destination bank transaction");
+	        add_bank_trans($trans_type, $trans_id, $is_bank_to, $ref, $date, $journal_item->amount, $cart->paytype, $cart->person_id, get_company_currency(), 'Cannot insert a destination bank transaction');
 
 		// store tax details if the gl account is a tax account
 		add_gl_tax_details($journal_item->code_id, ST_JOURNAL, $trans_id, $journal_item->amount, 1, $date, $memo_);
@@ -88,7 +88,7 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
     		add_gl_trans($trans_type, $trans_id_reverse, $reversingDate, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, -$journal_item->amount);
                 
     		if($is_bank_to) {
-    			add_bank_trans($trans_type, $trans_id_reverse, $is_bank_to, $ref, $reversingDate, -$journal_item->amount, 0, '', get_company_currency(), "Cannot insert a destination bank transaction");
+    			add_bank_trans($trans_type, $trans_id_reverse, $is_bank_to, $ref, $reversingDate, -$journal_item->amount, 0, '', get_company_currency(), 'Cannot insert a destination bank transaction');
     		}
 			// store tax details if the gl account is a tax account
 			add_gl_tax_details($journal_item->code_id, ST_JOURNAL, $trans_id, $journal_item->amount, 1, $reversingDate, $memo_);
@@ -158,7 +158,7 @@ function get_payslip($trans_no=false, $payslip_no=false) {
 	elseif($payslip_no)
         $sql .= " WHERE payslip_no = ".db_escape($payslip_no);
 		
-	$result = db_query($sql, _('Could not retreive payslip data'));
+	$result = db_query($sql, 'Could not retreive payslip data');
     return db_fetch($result);
 }
 
@@ -170,7 +170,7 @@ function get_employee_payslip($emp_id, $all=false) {
 	if(!$all)
 		$sql .= " AND t.payslip_no IS NULL";
 
-	$result = db_query($sql, _('could not not retreive payslip data'));
+	$result = db_query($sql, 'could not not retreive payslip data');
 
 	return $result;
 }
@@ -180,7 +180,7 @@ function get_employee_payslip($emp_id, $all=false) {
 function get_payslip_from_advice($trans_no) {
 	$sql = "SELECT p.* FROM ".TB_PREF."employee_trans t, ".TB_PREF."payslip p WHERE p.payslip_no = t.payslip_no AND t.trans_no = ".db_escape($trans_no);
 
-	$result = db_query($sql, _('Could not retreive payslip data'));
+	$result = db_query($sql, 'Could not retreive payslip data');
     return db_fetch($result);
 }
 
@@ -214,7 +214,7 @@ function get_expences_n_deposits($emp_id, $from_date = null, $to_date = null) {
 		$to = date2sql($to_date);
 		$sql .= " AND tran_date BETWEEN '$from' AND '$to'";
 	}
-	return db_query($sql, _('could not get gl data'));
+	return db_query($sql, 'could not get gl data');
 }
 
 //--------------------------------------------------------------------------
@@ -227,7 +227,7 @@ function add_payslip($trans_no, $emp_id, $from, $to, $leaves, $deductable_leaves
 
 	$sql = "INSERT INTO ".TB_PREF."payslip (trans_no, emp_id, generated_date, from_date, to_date, leaves, deductable_leaves, payable_amount, salary_amount) VALUES (".db_escape($trans_no).", ".db_escape($emp_id).", '$today', '$from', '$to', ".db_escape($leaves).", ".db_escape($deductable_leaves).", ".db_escape($payable_amt).", ".db_escape($salary_amt).")";
 	
-	db_query($sql, _('payslip details could not be added'));
+	db_query($sql, 'payslip details could not be added');
 }
 
 //--------------------------------------------------------------------------
@@ -237,6 +237,6 @@ function add_payslip_details($payslip, $allowances) {
     foreach($allowances as $code => $amount) {
         $sql = "INSERT INTO ".TB_PREF."payslip_details VALUES(".db_escape($payslip).",".db_escape($code).",".db_escape($amount).")";
 
-        db_query($sql, _('could not insert payslip details'));
+        db_query($sql, 'could not insert payslip details');
     }
 }

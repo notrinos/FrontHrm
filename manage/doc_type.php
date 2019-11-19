@@ -33,13 +33,13 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		display_error(_('The document type description cannot be empty.'));
 		set_focus('name');
 	}
-    elseif (!is_numeric($_POST['days'])) {
+	elseif (!is_numeric($_POST['days'])) {
 		$input_error = 1;
 		display_error(_('Days before expiry must be a number.'));
 		set_focus('days');
 	}
 	if ($input_error != 1) {
-    	write_doc_type($selected_id, $_POST['name'], $_POST['days'] );
+		write_doc_type($selected_id, $_POST['name'], $_POST['days'] );
 		if($selected_id != '')
 			display_notification(_('Selected document type has been updated'));
 		else
@@ -74,7 +74,7 @@ $result = db_query(get_doc_types(false, check_value('show_inactive')));
 
 start_form();
 start_table(TABLESTYLE);
-$th = array(_('Id'), _('Description'), _('Alert Before Expiry'), "", "");
+$th = array(_('Id'), _('Description'), _('Alert Before Expiry'), '', '');
 inactive_control_column($th);
 
 table_header($th);
@@ -87,9 +87,9 @@ while ($myrow = db_fetch($result)) {
 	label_cell($myrow['type_name']);
 	label_cell($myrow['notify_before'].'&nbsp;'._('days'));
 	inactive_control_cell($myrow['type_id'], $myrow['inactive'], 'document_types', 'type_id');
- 	edit_button_cell('Edit'.$myrow['type_id'], _('Edit'));
- 	delete_button_cell('Delete'.$myrow['type_id'], _('Delete'));
-    
+	edit_button_cell('Edit'.$myrow['type_id'], _('Edit'));
+	delete_button_cell('Delete'.$myrow['type_id'], _('Delete'));
+	
 	end_row();
 }
 
@@ -100,7 +100,7 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != '') {
 	
- 	if ($Mode == 'Edit') {
+	if ($Mode == 'Edit') {
 		
 		$myrow = get_doc_types($selected_id);
 		$_POST['days'] = $myrow['notify_before'];

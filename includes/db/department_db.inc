@@ -22,7 +22,7 @@ function write_department($id = false, $name, $basic_acc) {
 	else
 		$sql = "UPDATE ".TB_PREF."department SET dept_name = ".db_escape($name).", basic_account = ".db_escape($basic_acc)." WHERE dept_id = ".db_escape($id);
 	
-	db_query($sql, _('Could not write department data'));
+	db_query($sql, 'Could not write department data');
 }
 
 //--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ function get_departments($id = false, $all = false) {
 	else
 		$sql .= ' WHERE 1';
 
-	$result = db_query($sql, _('Could not get department data.'));
+	$result = db_query($sql, 'Could not get department data.');
 	
 	if($id)
 		return db_fetch($result);
@@ -54,7 +54,7 @@ function get_departments($id = false, $all = false) {
 
 function delete_department($id) {
 	$sql = "DELETE FROM ".TB_PREF."department WHERE dept_id = ".db_escape($id);
-	db_query($sql, _('Could not delete department.'));
+	db_query($sql, 'Could not delete department.');
 }
 
 //--------------------------------------------------------------------------

@@ -87,7 +87,8 @@ if ($Mode == 'Delete') {
 
 if($Mode == 'RESET') {
 	$selected_id = -1;
-	$_POST['name'] = $_POST['amount'] = '';
+	$_POST['name'] = '';
+	$_POST['amount'] = '';
 }
 
 //--------------------------------------------------------------------------
@@ -132,13 +133,13 @@ if($selected_id != -1) {
  	hidden('selected_id', $selected_id);
 }
 
-text_row_ex(_('Position Name').':', 'name', 37, 50);
+text_row_ex(_('Position Name:'), 'name', 37, 50);
 if(empty($USE_DEPT_ACC))
     gl_all_accounts_list_row(_('Salary Basic Account:'), 'AccountId', null, true);
 else
 	hidden('AccountId');
 amount_row(_('Salary Basic Amount').':', 'amount', null, null, null, null, true);
-label_row(_('Pay Basis').':', radio(_('Monthly salary'), 'payBasis', 0, 1).'&nbsp;&nbsp;'.radio(_('Daily wage'), 'payBasis', 1));
+label_row(_('Pay Basis:'), radio(_('Monthly salary'), 'payBasis', 0, 1).'&nbsp;&nbsp;'.radio(_('Daily wage'), 'payBasis', 1));
 
 end_table(1);
 

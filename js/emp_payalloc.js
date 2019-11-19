@@ -10,24 +10,24 @@
 \=======================================================*/
 
 function blur_alloc(i) {
-		var change = get_amount(i.name);
-		payment_amt = get_amount('item_amount', true);
+	var change = get_amount(i.name);
+	payment_amt = get_amount('item_amount', true);
 		
-		if (i.name != 'amount' && i.name != 'charge' && i.name != 'discount')
-			change = Math.min(change, get_amount('maxval'+i.name.substr(6), 1))
+	if (i.name != 'amount' && i.name != 'charge' && i.name != 'discount')
+		change = Math.min(change, get_amount('maxval'+i.name.substr(6), 1))
 
-		price_format(i.name, change, user.pdec);
-		if (i.name != 'amount' && i.name != 'charge') {
-			if (change<0) change = 0;
-			change = change-i.getAttribute('_last');
-			if (i.name == 'discount') change = -change;
+	price_format(i.name, change, user.pdec);
+	if (i.name != 'amount' && i.name != 'charge') {
+		if (change<0) change = 0;
+		change = change-i.getAttribute('_last');
+		if (i.name == 'discount') change = -change;
 
-			var total = get_amount('amount')+change;
-			price_format('amount', total, user.pdec, 0);
-			price_format('amount', total, user.pdec, 'amount');
-			price_format('item_amount', parseFloat(payment_amt) - change, user.pdec, 'item_amount');
-			price_format('payment_total_amt', parseFloat(payment_amt) - change, user.pdec, 'payment_total_amt');
-		}
+		var total = get_amount('amount')+change;
+		price_format('amount', total, user.pdec, 0);
+		price_format('amount', total, user.pdec, 'amount');
+		price_format('item_amount', parseFloat(payment_amt) - change, user.pdec, 'item_amount');
+		price_format('payment_total_amt', parseFloat(payment_amt) - change, user.pdec, 'payment_total_amt');
+	}
 }
 
 function emp_allocate_all(doc) {

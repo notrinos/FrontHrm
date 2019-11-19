@@ -60,7 +60,7 @@ function print_employees_list() {
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 
-	include_once($path_to_root . "/reporting/includes/pdf_report.inc");
+	include_once($path_to_root . '/reporting/includes/pdf_report.inc');
 
 	$orientation = ($orientation ? 'L' : 'P');
 
@@ -72,7 +72,7 @@ function print_employees_list() {
 	
 	$params = array(0 => $comments);
 
-	$rep = new FrontReport(_('Employees List'), "EmployeesList", user_pagesize(), 9, $orientation);
+	$rep = new FrontReport(_('Employees List'), 'EmployeesList', user_pagesize(), 9, $orientation);
     if ($orientation == 'L')
     	recalculate_cols($cols);
 	
