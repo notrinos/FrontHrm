@@ -524,12 +524,13 @@ function hrm_print_link($doc_no, $link_text, $link=true, $type_no, $icon=false, 
 		case ST_PAYSLIP :
 			$rep = ST_PAYSLIP;
 			$ar = array(
-				'PARAM_0' => $doc_no,  
-				'PARAM_1' => $def_orientation);
+				'PARAM_0' => $doc_no,
+				'PARAM_1' => $doc_no,
+				'PARAM_2' => 1,
+				'PARAM_3' => $def_orientation);
 			break;
 		default:
 			return null;
 	}
-
 	return print_link($link_text, $rep, $ar, $dir, $icon, $class, $id);
 }
