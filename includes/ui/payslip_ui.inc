@@ -526,7 +526,7 @@ function hrm_print_link($doc_no, $link_text, $link=true, $type_no, $icon=false, 
 			$ar = array(
 				'PARAM_0' => $doc_no,
 				'PARAM_1' => $doc_no,
-				'PARAM_2' => 1,
+				'PARAM_2' => '',
 				'PARAM_3' => $def_orientation);
 			break;
 		default:
