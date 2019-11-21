@@ -76,7 +76,7 @@ function print_employee_payslip() {
 	$x = $rep->getPageWidth();
 	$y = $rep->getPageHeight();
 
-	$cols = array(4, 60, 200, 300, 350, 400, 450, 515);
+	$cols = array(4, 70, 200, 300, 350, 400, 450, 515);
 	$headers = array(_('Pay Element'), '', _('Quantity'), _('Leaves'), '', '', _('Earnings'));
 	$aligns = array('left',	'left',	'left', 'left', 'left', 'left', 'left');
 	$params = array('comments' => '');
