@@ -118,19 +118,19 @@ function print_employee_payslip() {
 		$rep->row = $rep->row - $rep->topMargin - (7*$rep->lineHeight);
 
 		$rep->TextCol(0, 1,	_('Employee:'));
-		$rep->TextCol(1, 3,	$emp_name);
+		$rep->TextCol(1, 4,	$emp_name);
 		$rep->TextCol(4, 5,	_('Payslip #:'));
 		$rep->TextCol(5, 6,	$payslip_no);
 		$rep->NewLine();
 		$rep->TextCol(0, 1,	_('ID:'));
 		$rep->TextCol(1, 3,	'&nbsp;'.$emp_id);
 		$rep->TextCol(4, 5,	_('From:'));
-		$rep->TextCol(5, 6,	sql2date($from));
+		$rep->TextCol(5, 7,	sql2date($from));
 		$rep->NewLine();
 		$rep->TextCol(0, 1,	_('Department:'));
-		$rep->TextCol(1, 3,	'&nbsp;'.$emp_dept);
+		$rep->TextCol(1, 4,	'&nbsp;'.$emp_dept);
 		$rep->TextCol(4, 5,	_('To:'));
-		$rep->TextCol(5, 6,	sql2date($to));
+		$rep->TextCol(5, 7,	sql2date($to));
 
 		$rep->NewLine(9);
 		$rep->lineHeight *= 1.5;
