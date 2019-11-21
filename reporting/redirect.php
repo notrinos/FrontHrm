@@ -18,7 +18,7 @@ if (!isset($_POST['REP_ID'])) {
 	$def_pars = array(0, 0, '', '', 0, '', '', 0);
 	$rep = $_POST['REP_ID'] = $_GET['REP_ID'];
 
-	for($i=0; $i<3; $i++) {
+	for($i=0; $i<=3; $i++) {
 		$_POST['PARAM_'.$i] = isset($_GET['PARAM_'.$i]) ? $_GET['PARAM_'.$i] : $def_pars[$i];
 	}
 }

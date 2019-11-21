@@ -25,7 +25,7 @@ define('PT_EMPLOYEE', 6);
 define('MONTHLY_SALARY', 0);
 define('DAILY_WAGE', 1);
 
-define('ST_PAYSLIP', 889);
+define('ST_PAYSLIP', '_payslip');
 
 $Payable_act = get_company_pref('payroll_payable_act');
 $Deduct_act = get_company_pref('payroll_deductleave_act');
