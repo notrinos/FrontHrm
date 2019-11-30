@@ -150,8 +150,13 @@ function emp_position_has_structure($id) {
 //--------------------------------------------------------------------------
 
 function next_employee_number() {
-	$sql = "SELECT MAX(emp_id) FROM ".TB_PREF."employee";
+	global $db_connections;
+
+	$company = user_company();
+	$db = $db_connections[$company];
+	$sql = "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '".$db['dbname']."' AND   TABLE_NAME = '".TB_PREF."employee'";
+
 	$result = db_query($sql, 'error getting employee number data');
 
-	return db_fetch($result)[0] + 1;
+	return db_fetch($result)[0];
 }
