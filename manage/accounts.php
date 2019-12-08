@@ -57,9 +57,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
 if($Mode == 'Delete') {
 
-	if(payroll_account_used($selected_id)) {
+	if(payroll_account_used($selected_id))
 		display_error(_('Cannot delete this account because payroll rules have been created using it.'));
-	}
 	else {
 		delete_payroll_account($selected_id);
 		display_notification(_('Selected account has been deleted'));
@@ -103,7 +102,7 @@ end_table(1);
 
 start_table(TABLESTYLE_NOBORDER);
 
-if($selected_id != -1) {
+if($selected_id != '') {
 	
 	if($Mode == 'Edit') {
 		$myrow = get_payroll_elements($selected_id);
@@ -114,7 +113,13 @@ if($selected_id != -1) {
 }
 
 text_row_ex(_('Element Name:'), 'element_name', 37, 50);
-gl_all_accounts_list_row(_('Select Account:'), 'AccountId', null, true);
+
+if(empty($selected_id))
+	gl_all_accounts_list_row(_('Select Account:'), 'AccountId', null, true);
+else {
+	label_row(_('Account:'), '&nbsp;'.$myrow['account_code'].'&nbsp;&nbsp;'.$myrow['account_name']);
+	hidden('AccountId');
+}
 
 end_table(1);
 
