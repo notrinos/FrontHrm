@@ -17,20 +17,20 @@ function set_basic_salary($account, $amount, $position_id, $new=false) {
     $date = date2sql(Today());
 
 	if($new)
-	    $sql = "INSERT INTO ".TB_PREF."salary_structure(date, position_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
+	    $sql = "INSERT INTO ".TB_PREF."salary_structure (date, position_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
 	else
 		$sql = "UPDATE ".TB_PREF."salary_structure SET pay_rule_id = ".db_escape($account).", pay_amount = ".db_escape($amount)." WHERE position_id = ".db_escape($position_id);
-	
+
 	    db_query($sql, 'Could not write salary structure data');
 }
 
 function write_position($id = false, $name, $pay_basis) {
-	
+
 	if(!$id)
-		$sql = "INSERT INTO ".TB_PREF."position(position_name, pay_basis) VALUES (".db_escape($name).",".db_escape($pay_basis).")";
+		$sql = "INSERT INTO ".TB_PREF."position (position_name, pay_basis) VALUES (".db_escape($name).",".db_escape($pay_basis).")";
 	else
 		$sql = "UPDATE ".TB_PREF."position SET position_name = ".db_escape($name).", pay_basis = ".db_escape($pay_basis)." WHERE position_id = ".db_escape($id);
-	
+
 	db_query($sql, 'Could not write job position data');
 }
 
@@ -40,22 +40,22 @@ function delete_position($id) {
 }
 
 function get_position($id = false, $all = false) {
-    
+
 	$sql = "SELECT p.*, s.pay_amount, s.pay_rule_id FROM ".TB_PREF."position p, ".TB_PREF."salary_structure s";
 	$where = array("p.position_id = s.position_id AND s.is_basic = 1 AND s.grade_id = 0");
-	
+
 	if(!$all)
 		$where[] = "!inactive";
 	if($id)
 		$where[] = "p.position_id = ".db_escape($id);
-		
+
 	if(count($where))
 		$sql .= ' WHERE '.implode(' AND ', $where);
 	else
 		$sql .= ' WHERE 1';
 
 	$result = db_query($sql, 'Could not get job position data.');
-	
+
 	if($id)
 		return db_fetch($result);
 	else

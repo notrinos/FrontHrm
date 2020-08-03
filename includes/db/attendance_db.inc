@@ -16,7 +16,7 @@ function time_to_float($time) {
     }
     else
         $time_in_float = $time;
-	
+
 	return $time_in_float;
 }
 
@@ -24,7 +24,7 @@ function time_to_float($time) {
 
 function check_attended($emp_id, $overtime_id, $att_date) {
     $sql = "SELECT * FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id)." AND att_date = '".date2sql($att_date)."'";
-    
+
     return check_empty_result($sql);
 }
 
@@ -32,7 +32,7 @@ function check_attended($emp_id, $overtime_id, $att_date) {
 
 function check_leave($emp_id, $date) {
     $sql = "SELECT * FROM ".TB_PREF."leave WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($date)."'";
-    
+
     return check_empty_result($sql);
 }
 
@@ -44,7 +44,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
         if(check_leave($emp_id, $att_date))
             $sql = "UPDATE ".TB_PREF."leave SET leave_id = ".db_escape($leave_id).", pay_rate = ".db_escape($rate)." WHERE date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id);
         else
-            $sql = "INSERT INTO ".TB_PREF."leave(emp_id, leave_id, pay_rate, date) VALUES(".db_escape($emp_id).",".db_escape($leave_id).",".db_escape($rate).",'".date2sql($att_date)."')";
+            $sql = "INSERT INTO ".TB_PREF."leave (emp_id, leave_id, pay_rate, date) VALUES(".db_escape($emp_id).",".db_escape($leave_id).",".db_escape($rate).",'".date2sql($att_date)."')";
 
         $sql2 = "DELETE FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND att_date = '".date2sql($att_date)."'";
     }
@@ -53,7 +53,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
     	if(check_attended($emp_id, $overtime_id, $att_date))
     		$sql = "UPDATE ".TB_PREF."attendance SET hours_no = ".db_escape($hours_no).", rate = ".db_escape($rate)." WHERE att_date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id);
     	else
-    		$sql = "INSERT INTO ".TB_PREF."attendance(emp_id, overtime_id, hours_no, rate, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",".db_escape($rate).",'".date2sql($att_date)."')";
+    		$sql = "INSERT INTO ".TB_PREF."attendance (emp_id, overtime_id, hours_no, rate, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",".db_escape($rate).",'".date2sql($att_date)."')";
 
         $sql2 = "DELETE FROM ".TB_PREF."leave WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($att_date)."'";
     }

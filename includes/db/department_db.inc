@@ -18,32 +18,32 @@ function db_has_department() {
 function write_department($id = false, $name, $basic_acc) {
 
 	if(empty($id))
-		$sql = "INSERT INTO ".TB_PREF."department(dept_name, basic_account) VALUES (".db_escape($name).",".db_escape($basic_acc).")";
+		$sql = "INSERT INTO ".TB_PREF."department (dept_name, basic_account) VALUES (".db_escape($name).",".db_escape($basic_acc).")";
 	else
 		$sql = "UPDATE ".TB_PREF."department SET dept_name = ".db_escape($name).", basic_account = ".db_escape($basic_acc)." WHERE dept_id = ".db_escape($id);
-	
+
 	db_query($sql, 'Could not write department data');
 }
 
 //--------------------------------------------------------------------------
 
 function get_departments($id = false, $all = false) {
-	
+
 	$sql = "SELECT * FROM ".TB_PREF."department";
 	$where = array();
-	
+
 	if(!$all)
 		$where[] = "!inactive";
 	if($id)
 		$where[] = "dept_id=".db_escape($id);
-		
+
 	if(count($where))
 		$sql .= ' WHERE '.implode(' AND ', $where);
 	else
 		$sql .= ' WHERE 1';
 
 	$result = db_query($sql, 'Could not get department data.');
-	
+
 	if($id)
 		return db_fetch($result);
 	else

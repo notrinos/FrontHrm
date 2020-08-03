@@ -91,7 +91,7 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 	}
 
 	//$total = $cart->gl_items_total_debit();
-    
+
     if($trans_type == ST_BANKPAYMENT) {
 
 	    add_employee_trans($trans_no, ST_BANKPAYMENT, $payslip_no, $date_, $person_id, $total);
@@ -129,7 +129,7 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 
 function add_employee_trans($trans_id, $type, $payslip_no, $date, $source_ref, $pay_amount) {
 
-	$sql = "INSERT INTO ".TB_PREF."employee_trans(trans_no, trans_type, payslip_no, pay_date, to_the_order_of, pay_amount) VALUES (".db_escape($trans_id).", ".db_escape($type).", ".db_escape($payslip_no).", '".date2sql($date)."', ".db_escape($source_ref).", ".db_escape($pay_amount).")";
+	$sql = "INSERT INTO ".TB_PREF."employee_trans (trans_no, trans_type, payslip_no, pay_date, to_the_order_of, pay_amount) VALUES (".db_escape($trans_id).", ".db_escape($type).", ".db_escape($payslip_no).", '".date2sql($date)."', ".db_escape($source_ref).", ".db_escape($pay_amount).")";
 
 	db_query($sql, 'employee trans could not be inserted');
 }

@@ -18,32 +18,32 @@ function db_has_doc_type() {
 function write_doc_type($id = false, $name, $days) {
 
 	if(!$id)
-		$sql = "INSERT INTO ".TB_PREF."document_types(type_name, notify_before) VALUES (".db_escape($name).", ".db_escape($days).")";
+		$sql = "INSERT INTO ".TB_PREF."document_types (type_name, notify_before) VALUES (".db_escape($name).", ".db_escape($days).")";
 	else
 		$sql = "UPDATE ".TB_PREF."document_types SET type_name = ".db_escape($name).", notify_before = ".db_escape($days)." WHERE type_id = ".db_escape($id);
-	
+
 	db_query($sql, 'Could not write document type data');
 }
 
 //--------------------------------------------------------------------------
 
 function get_doc_types($id = false, $all = false) {
-	
+
 	$sql = "SELECT * FROM ".TB_PREF."document_types";
 	$where = array();
-	
+
 	if(!$all)
 		$where[] = "!inactive";
 	if($id)
 		$where[] = "type_id = ".db_escape($id);
-		
+
 	if(count($where))
 		$sql .= ' WHERE '.implode(' AND ', $where);
-	
+
 	$sql .= " ORDER BY type_id";
 
 	$result = db_query($sql, 'Could not get document type data.');
-	
+
 	if($id)
 		return db_fetch($result);
 	else
@@ -69,7 +69,7 @@ function add_document($emp_id, $type_id, $description, $issue_date, $expiry_date
 
 	$sql = "INSERT INTO ".TB_PREF."employee_docs (emp_id, type_id, description, issue_date, expiry_date, alert, filename, unique_name, filesize, filetype) VALUES (".db_escape($emp_id).", ".db_escape($type_id).",".db_escape($description).", '".date2sql($issue_date)."', '".date2sql($expiry_date)."', ".db_escape($alert).", ".db_escape($filename).", ".db_escape($unique_name).", ".db_escape($filesize).", ".db_escape($filetype).")";
 
-	db_query($sql, 'Attachment could not be inserted');		
+	db_query($sql, 'Attachment could not be inserted');
 }
 
 //--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ function update_document($selected_id, $emp_id, $type_id, $description, $issue_d
 		$sql .= ", filename = ".db_escape($filename).", unique_name = ".db_escape($unique_name).", filesize = ".db_escape($filesize).", filetype = ".db_escape($filetype);
 
 	$sql .= " WHERE id = ".db_escape($selected_id);
-	db_query($sql, 'Attachment could not be updated');		
+	db_query($sql, 'Attachment could not be updated');
 }
 
 //--------------------------------------------------------------------------
