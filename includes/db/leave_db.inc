@@ -60,14 +60,14 @@ function delete_leave_type($id) {
 //--------------------------------------------------------------------------
 
 function leave_type_used($id) {
-	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."leave WHERE leave_id = ".db_escape($id));
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."leave_details WHERE leave_id = ".db_escape($id));
 }
 
 //--------------------------------------------------------------------------
 
 function get_leave($emp_id=false, $leave_id=false, $from=false, $to=false) {
 
-	$sql = "SELECT * FROM ".TB_PREF."leave";
+	$sql = "SELECT * FROM ".TB_PREF."leave_details";
 	$where = array();
 
 	if($emp_id)
@@ -91,7 +91,7 @@ function get_leave($emp_id=false, $leave_id=false, $from=false, $to=false) {
 
 function get_employee_leave($emp_id, $leave_id, $from, $to) {
 
-	$sql = "SELECT COUNT(*) FROM ".TB_PREF."leave WHERE emp_id = ".db_escape($emp_id)." AND leave_id = ".db_escape($leave_id)." AND date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
+	$sql = "SELECT COUNT(*) FROM ".TB_PREF."leave_details WHERE emp_id = ".db_escape($emp_id)." AND leave_id = ".db_escape($leave_id)." AND date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 	$result = db_query($sql, 'could not get leave data');
 
 	return db_fetch($result)[0];

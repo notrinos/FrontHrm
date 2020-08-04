@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS `0_attendance` (
     PRIMARY KEY (`emp_id`,`overtime_id`,`att_date`)
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `0_leave`;
-CREATE TABLE IF NOT EXISTS `0_leave` (
+DROP TABLE IF EXISTS `0_leave_details`;
+CREATE TABLE IF NOT EXISTS `0_leave_details` (
     `emp_id` int(11) NOT NULL,
     `leave_id` int(11) NOT NULL,
     `pay_rate` float(5) NOT NULL DEFAULT '1',

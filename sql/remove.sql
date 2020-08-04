@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS `0_document_types`;
 DROP TABLE IF EXISTS `0_employee_docs`;
 DROP TABLE IF EXISTS `0_grade_table`;
 DROP TABLE IF EXISTS `0_leave_type`;
+DROP TABLE IF EXISTS `0_leave_details`;
 
 DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_deductleave_act';
 DELETE FROM `0_sys_prefs` WHERE `0_sys_prefs`.`name` = 'payroll_month_work_days';
