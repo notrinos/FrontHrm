@@ -109,9 +109,9 @@ if (isset($_GET['AddedID'])) {
 	$payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
 
 	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
-	
+
 	if($payslip_no)
-		display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
+		display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false));br();
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _('&View the GL Postings for this Payment')));
 
@@ -200,7 +200,7 @@ function create_cart($type, $trans_no, $payslip=array()) {
 					$ex_rate = $bank_trans['amount'] / $row['amount'];
 				else
 					$cart->add_gl_item( $row['account'], $row['dimension_id'], $row['dimension2_id'], $row['amount'], $row['memo_']);
-				
+
 			}
 		}
 		foreach($cart->gl_items as $line_no => $line)
@@ -226,7 +226,7 @@ function create_cart($type, $trans_no, $payslip=array()) {
 		$bank = get_default_bank_account();
 
 		$_POST['bank_account'] = $bank['id'];
-	
+
 		$cart->add_gl_item($Payable_act, 0, 0, $pay_amt, '');
 	}
 
@@ -284,7 +284,7 @@ function check_trans() {
 		display_error(_('The entered date is out of fiscal year or is closed for further data entry.'));
 		set_focus('date_');
 		$input_error = 1;
-	} 
+	}
 	if(!get_post('for_payslip') && !get_post('NewAdvance')) {
 		display_error(_('You have to select a payslip.'));
 		set_focus('for_payslip');
@@ -345,13 +345,13 @@ if (isset($_POST['Process']) && !check_trans()) {
 		add_employee_trans(0, ST_BANKPAYMENT, $_POST['for_payslip'], $_POST['date_'], $_POST['person_id'], 0);
 		$id_counter = db_insert_id();
 		add_employee_allocations($id_counter, $allocs);
-		
+
 		commit_transaction();
 		display_notification(_('Employee advances have been allocated, no bank payment has been made.'));
 		$Ajax->activate('_page_body');
 	}
 	else {
-		
+
 		if(input_num('amount') > 0) {
 			$old_amt = $_SESSION['pay_items']->gl_items_total();
 			$this_alloc = input_num('amount');
@@ -368,7 +368,7 @@ if (isset($_POST['Process']) && !check_trans()) {
 			$trans_counter = $trans[2];
 			add_employee_allocations($trans_counter, $allocs);
 		}
-		
+
 		new_doc_date($_POST['date_']);
 
 		$_SESSION['pay_items']->clear_items();
@@ -409,7 +409,7 @@ function handle_update_item() {
 
 	if($_POST['UpdateItem'] != "" && check_item_data())
 		$_SESSION['pay_items']->update_gl_item($_POST['Index'], $_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount , $_POST['LineMemo']);
-	
+
 	line_start_focus();
 }
 
