@@ -27,18 +27,18 @@ include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
 
 //--------------------------------------------------------------------------
 
-page(_($help_context = 'Manage Salary Structure'), false, false, '', $js); 
+page(_($help_context = 'Manage Salary Structure'), false, false, '', $js);
 
 $selected_id = get_post('position_id','');
 
 function can_process($selected_id) {
-    
+
 	if(!$selected_id) {
-        
+
 		display_error(_('Select job position'));
 		set_focus('position_id');
 		return false;
-	} 
+	}
 
 	foreach($_POST as $p=>$val) {
 
@@ -85,10 +85,10 @@ function handle_submit(&$selected_id) {
 				);
 		}
 	}
-	
+
 	delete_salary_structure($selected_id, get_post('_tabs_sel'));
 	add_salary_structure($payroll_rules);
-	
+
 	display_notification(_('Salary structure has been updated.'));
 	$Ajax->activate('_page_body');
 }
@@ -140,15 +140,15 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		}
 
 		$rsStr = get_salary_structure($selected_id, $grade_id);
-        
+
 		if(db_num_rows($rsStr) > 0) {
             $new = false;
 
 			while($rowStr = db_fetch($rsStr)) {
-                
+
 				if($rowStr['type'] == DEBIT)
 					$_POST['Debit'.$rowStr['pay_rule_id']] = price_format($rowStr['pay_amount']);
-                else 
+                else
 					$_POST['Credit'.$rowStr['pay_rule_id']] = price_format($rowStr['pay_amount']);
 			}
 		}
@@ -167,7 +167,7 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
         amount_cell('0');
         end_row();
 
-		foreach($rules as $rule) {			
+		foreach($rules as $rule) {
 			start_row();
 			hidden($rule['account_input'],$rule['account_code']);
 			label_cell($rule['element_name']);
@@ -178,7 +178,7 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		end_table(1);
 
 		div_start('controls');
-        
+
         if($new)
             submit_center('submit', _('Save salary structure'), true, '', 'default');
         else {
@@ -188,19 +188,19 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		div_end();
     }
     else
-		display_error(_('Payroll rules not defined for this job position'));
+		display_error(_('Payroll rules not defined for this job position. Click <a href=payroll_rules.php>Here</a> to add Payroll Rules'));
 	br();
 }
 
 //--------------------------------------------------------------------------
- 
+
 start_form();
 
 if(db_has_position()) {
 	start_table(TABLESTYLE2);
 	position_list_row(_('Job Position:'), 'position_id', null, _('Select Job Position'), true);
 	end_table();
-} 
+}
 else {
 	hidden('position_id');
 	display_note(_('Before you can run this function Job Positions must be defined and add Payroll Rules to them.'));

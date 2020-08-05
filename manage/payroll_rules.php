@@ -31,12 +31,12 @@ $selected_id = get_post('PositionId', '');
 
 function handle_submit(&$selected_id) {
 	global $Ajax;
-	
+
 	if($selected_id) {
 
 		$payrule = array();
 		foreach($_POST as $p => $val) {
-            
+
 			if (substr($p, 0, 7) == 'Payroll') {
 
 				$a = substr($p, 7);
@@ -51,7 +51,7 @@ function handle_submit(&$selected_id) {
 			reset_payroll($selected_id);
 		else
 			add_payroll_rule($selected_id, $payrule);
-		
+
 		$Ajax->activate('_page_body');
 		display_notification(_('Accounts have been updated, some accounts might not have been deleted because Salary Structure using them.'));
 	}
@@ -64,22 +64,22 @@ function handle_submit(&$selected_id) {
 //----------------------------------------------------------------------------
 
 function payroll_rule_settings($selected_id) {
-	
+
 	$new = true;
 	foreach($_POST as $p => $val) {
-        
+
 		if (substr($p, 0, 7) == 'Payroll')
 			$_POST[$p] = '';
 	}
-	
+
 	if($selected_id) {
-        
+
 		$payroll_structure = get_payroll_structure($selected_id);
 
 		if($payroll_structure) {
-            
+
 			$new = false;
-            
+
 			foreach($payroll_structure['payroll_rule'] as $rule_code) {
 
 				$_POST['Payroll'.$rule_code] = 1;
@@ -87,13 +87,13 @@ function payroll_rule_settings($selected_id) {
 		}
 		$_POST['PositionId'] = $selected_id;
 	}
-	
+
 	start_table(TABLESTYLE2);
 	$th = array(_('Pay Element'), _('Account'), '');
 	table_header($th);
-	
+
 	$rules = get_payroll_rules();
-	
+
 	while($rule = db_fetch($rules)) {
 		start_row();
 		label_cell($rule['element_name']);
@@ -102,9 +102,9 @@ function payroll_rule_settings($selected_id) {
 		end_row();
 	}
     end_table(1);
-    
+
 	div_start('controls');
-    
+
 	if($new)
         submit_center('submit', _('Save'), true, _('Save payroll structure'), 'default');
 	else {
@@ -135,16 +135,22 @@ if(isset($_POST['delete'])) {
 
 page(_($help_context = 'Manage Payroll Rule'), false, false, '', $js);
 
+if (!db_num_rows(get_payroll_elements())){
+	display_error ("No Payroll Accounts are Defined. Click <a href=accounts.php> Here</a> To define payroll elements. ");
+	end_page();
+	exit();
+}
+
 start_form();
 
 if(db_has_position()) {
-    
+
 	start_table(TABLESTYLE_NOBORDER);
 	start_row();
-    
+
 	position_list_cells(null, 'PositionId', null, _('Select Job Position'), true, check_value('show_inactive'));
 	check_cells(_('Show inactive:'), 'show_inactive', null, true);
-    
+
 	end_row();
 	end_table(1);
 
