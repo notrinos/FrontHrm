@@ -13,9 +13,9 @@ function get_next_payslip_no() {
 
 	$sql = "SELECT MAX(payslip_no)+1 FROM ".TB_PREF."payslip";
 	$result = db_query($sql, 'The next payslip number could not be retreived');
-    $row = db_fetch_row($result);
+	$row = db_fetch_row($result);
 
-    return ($row[0])?$row[0]:1;
+	return $row[0] ? $row[0] : 1;
 }
 
 //--------------------------------------------------------------------------
@@ -34,9 +34,9 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 	$new = $cart->order_id == 0;
 	
 	if($new)
-	    $cart->order_id = get_next_trans_no($trans_type);
+		$cart->order_id = get_next_trans_no($trans_type);
 
-    $trans_id = $cart->order_id;
+	$trans_id = $cart->order_id;
 
 	if($use_transaction)
 		begin_transaction();
@@ -45,22 +45,22 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 		void_journal_trans($trans_type, $trans_id, false);
 	
 	foreach($cart->gl_items as $journal_item) {
-    
+	
 		// post to first found bank account using given gl acount code.
 		$is_bank_to = is_bank_account($journal_item->code_id);
 
 		add_gl_trans($trans_type, $trans_id, $date, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, $journal_item->amount, null, $cart->paytype);
 
-	    if($is_bank_to)
-	        add_bank_trans($trans_type, $trans_id, $is_bank_to, $ref, $date, $journal_item->amount, $cart->paytype, $cart->person_id, get_company_currency(), 'Cannot insert a destination bank transaction');
+		if($is_bank_to)
+			add_bank_trans($trans_type, $trans_id, $is_bank_to, $ref, $date, $journal_item->amount, $cart->paytype, $cart->person_id, get_company_currency(), 'Cannot insert a destination bank transaction');
 
 		// store tax details if the gl account is a tax account
 		add_gl_tax_details($journal_item->code_id, ST_JOURNAL, $trans_id, $journal_item->amount, 1, $date, $memo_);
 	}
-    
-    $total = $cart->gl_items_total_debit();
+	
+	$total = $cart->gl_items_total_debit();
 
-    add_journal($trans_type, $trans_id, $total,	$date , $cart->currency, $ref, $cart->source_ref, $cart->rate, Today(), Today());
+	add_journal($trans_type, $trans_id, $total,	$date , $cart->currency, $ref, $cart->source_ref, $cart->rate, Today(), Today());
 
 	//add payslip details
 	add_payslip($trans_id, $cart->person_id, $from_date, $to_date, $cart->leaves, $cart->deductable_leaves, $cart->payable_amt, $cart->salary_amt);
@@ -68,7 +68,7 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 
 	
 	$Refs->save($trans_type, $trans_id, $ref);
-    
+	
 	if($new)
 		add_comments($trans_type, $trans_id, $date, $memo_);
 	else
@@ -78,25 +78,25 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 
 	if($reverse) {
 
-    	$reversingDate = begin_month(add_months($date, 1));
+		$reversingDate = begin_month(add_months($date, 1));
 
-    	$trans_id_reverse = get_next_trans_no($trans_type);
+		$trans_id_reverse = get_next_trans_no($trans_type);
 
-    	foreach($cart->gl_items as $journal_item) {
+		foreach($cart->gl_items as $journal_item) {
 			$is_bank_to = is_bank_account($journal_item->code_id);
 
-    		add_gl_trans($trans_type, $trans_id_reverse, $reversingDate, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, -$journal_item->amount);
-                
-    		if($is_bank_to) {
-    			add_bank_trans($trans_type, $trans_id_reverse, $is_bank_to, $ref, $reversingDate, -$journal_item->amount, 0, '', get_company_currency(), 'Cannot insert a destination bank transaction');
-    		}
+			add_gl_trans($trans_type, $trans_id_reverse, $reversingDate, $journal_item->code_id, $journal_item->dimension_id, $journal_item->dimension2_id, $journal_item->reference, -$journal_item->amount);
+				
+			if($is_bank_to)
+				add_bank_trans($trans_type, $trans_id_reverse, $is_bank_to, $ref, $reversingDate, -$journal_item->amount, 0, '', get_company_currency(), 'Cannot insert a destination bank transaction');
+			
 			// store tax details if the gl account is a tax account
 			add_gl_tax_details($journal_item->code_id, ST_JOURNAL, $trans_id, $journal_item->amount, 1, $reversingDate, $memo_);
-    	}
+		}
 
-    	add_comments($trans_type, $trans_id_reverse, $reversingDate, $memo_);
+		add_comments($trans_type, $trans_id_reverse, $reversingDate, $memo_);
 
-    	$Refs->save($trans_type, $trans_id_reverse, $ref);
+		$Refs->save($trans_type, $trans_id_reverse, $ref);
 		add_audit_trail($trans_type, $trans_id_reverse, $reversingDate);
 	}
 
@@ -111,11 +111,11 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp_id=0, $unpaid_only=false) {
 
 	$sql = "SELECT
-	    P.generated_date,
-	    P.trans_no,
-	    P.type AS Type,
-	    CASE WHEN e.emp_id IS NULL THEN (SELECT ad.emp_id FROM ".TB_PREF."employee_advance ad, ".TB_PREF."employee_trans tr WHERE ad.emp_trans_no = tr.id AND tr.trans_no = P.trans_no AND tr.payslip_no = 0) ELSE e.emp_id END,
-		CASE WHEN e.emp_id IS NULL THEN (SELECT CONCAT(em.emp_first_name,' ',em.emp_last_name) FROM ".TB_PREF."employee em, ".TB_PREF."employee_advance ad, ".TB_PREF."employee_trans tr WHERE ad.emp_trans_no = tr.id AND tr.trans_no = P.trans_no AND tr.payslip_no = 0 AND ad.emp_id = em.emp_id) ELSE CONCAT(e.emp_first_name,' ',e.emp_last_name) END as emp_name,
+		P.generated_date,
+		P.trans_no,
+		P.type AS Type,
+		e.emp_id,
+		CONCAT(e.emp_first_name,' ',e.emp_last_name) as emp_name,
 		P.payslip_no,
 		P.from_date,
 		P.to_date,
@@ -123,7 +123,9 @@ function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp
 		
 		COUNT(P.payslip_no) AS Paid 
 		
-		FROM (SELECT p.generated_date, p.emp_id, p.trans_no, p.payslip_no, p.from_date, p.to_date, p.payable_amount, 0 AS type FROM ".TB_PREF."payslip p UNION SELECT t.pay_date, (SELECT emp_id FROM ".TB_PREF."payslip WHERE payslip_no = t.payslip_no), t.trans_no, t.payslip_no, (SELECT from_date FROM ".TB_PREF."payslip WHERE payslip_no = t.payslip_no), (SELECT to_date FROM ".TB_PREF."payslip WHERE payslip_no = t.payslip_no), t.pay_amount, 1 FROM ".TB_PREF."employee_trans t) P 
+		FROM (SELECT p.generated_date, p.emp_id, p.trans_no, p.payslip_no, p.from_date, p.to_date, p.payable_amount, 0 AS type FROM ".TB_PREF."payslip p 
+			UNION SELECT t.pay_date, p2.emp_id, t.trans_no, t.payslip_no, p2.from_date, p2.to_date, t.pay_amount, 1 FROM ".TB_PREF."employee_trans t, ".TB_PREF."payslip p2 WHERE t.payslip_no != 0 AND t.payslip_no = p2.payslip_no
+			UNION SELECT t2.pay_date, av.emp_id, t2.trans_no, 0, NULL, NULL, t2.pay_amount, 1 FROM ".TB_PREF."employee_trans t2, ".TB_PREF."employee_advance av WHERE t2.id = av.emp_trans_no) P 
 		
 		LEFT JOIN ".TB_PREF."employee e ON P.emp_id = e.emp_id 
 		LEFT JOIN ".TB_PREF."journal j ON j.trans_no = P.trans_no 
@@ -133,18 +135,19 @@ function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp
 		WHERE P.generated_date BETWEEN '".date2sql($from)."' AND '" . date2sql($to) . "'";
 
 		if ($ref)
-		    $sql .= " AND j.reference LIKE ". db_escape("%$ref%");
-	    if ($memo)
-		    $sql .= " AND c.memo_ LIKE ". db_escape("%$memo%");
+			$sql .= " AND j.reference LIKE ". db_escape("%$ref%");
+		if ($memo)
+			$sql .= " AND c.memo_ LIKE ". db_escape("%$memo%");
 		if($dept != 0)
-		    $sql .= " AND e.department_id = ".db_escape($dept);
+			$sql .= " AND e.department_id = ".db_escape($dept);
 		if($emp_id != 0)
-		    $sql .= " AND e.emp_id = ".db_escape($emp_id);
+			$sql .= " AND e.emp_id = ".db_escape($emp_id);
 
 		if($unpaid_only)
-		    $sql .= " AND payslip_no != 0 GROUP BY P.payslip_no HAVING Paid = 1";
+			$sql .= " AND payslip_no != 0 GROUP BY P.payslip_no HAVING Paid = 1";
 		else
-		    $sql .= " GROUP BY P.trans_no, P.type";
+			$sql .= " GROUP BY P.trans_no, P.type";
+
 	return $sql;
 }
 
@@ -152,14 +155,15 @@ function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp
 
 function get_payslip($trans_no=false, $payslip_no=false) {
 
-    $sql = "SELECT * FROM ".TB_PREF."payslip";
-    if($trans_no)
-	    $sql .= " WHERE trans_no = ".db_escape($trans_no);
+	$sql = "SELECT * FROM ".TB_PREF."payslip";
+	if($trans_no)
+		$sql .= " WHERE trans_no = ".db_escape($trans_no);
 	elseif($payslip_no)
-        $sql .= " WHERE payslip_no = ".db_escape($payslip_no);
+		$sql .= " WHERE payslip_no = ".db_escape($payslip_no);
 		
 	$result = db_query($sql, 'Could not retreive payslip data');
-    return db_fetch($result);
+
+	return db_fetch($result);
 }
 
 //--------------------------------------------------------------------------
@@ -181,7 +185,8 @@ function get_payslip_from_advice($trans_no) {
 	$sql = "SELECT p.* FROM ".TB_PREF."employee_trans t, ".TB_PREF."payslip p WHERE p.payslip_no = t.payslip_no AND t.trans_no = ".db_escape($trans_no);
 
 	$result = db_query($sql, 'Could not retreive payslip data');
-    return db_fetch($result);
+
+	return db_fetch($result);
 }
 
 //--------------------------------------------------------------------------
@@ -214,6 +219,7 @@ function get_expences_n_deposits($emp_id, $from_date = null, $to_date = null) {
 		$to = date2sql($to_date);
 		$sql .= " AND tran_date BETWEEN '$from' AND '$to'";
 	}
+	
 	return db_query($sql, 'could not get gl data');
 }
 
@@ -234,9 +240,9 @@ function add_payslip($trans_no, $emp_id, $from, $to, $leaves, $deductable_leaves
 
 function add_payslip_details($payslip, $allowances) {
 
-    foreach($allowances as $code => $amount) {
-        $sql = "INSERT INTO ".TB_PREF."payslip_details VALUES(".db_escape($payslip).",".db_escape($code).",".db_escape($amount).")";
+	foreach($allowances as $code => $amount) {
+		$sql = "INSERT INTO ".TB_PREF."payslip_details VALUES(".db_escape($payslip).",".db_escape($code).",".db_escape($amount).")";
 
-        db_query($sql, 'could not insert payslip details');
-    }
+		db_query($sql, 'could not insert payslip details');
+	}
 }
