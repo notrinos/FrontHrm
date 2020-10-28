@@ -13,7 +13,7 @@ function position_list($name, $id = null, $spec_option=false, $submit_on_change=
 	$sql = "SELECT position_id, position_name, inactive FROM ".TB_PREF."position ";
 
 	return combo_input($name, $id, $sql, 'position_id', 'position_name',
-	array(       
+	array(
 		'spec_option' => $spec_option,
 		'select_submit' => $submit_on_change,
 		'async' => false,

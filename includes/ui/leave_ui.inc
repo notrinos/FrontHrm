@@ -13,7 +13,7 @@ function leave_types_list($name, $id = null, $spec_option = false, $submit_on_ch
 	$sql = "SELECT leave_id, leave_name, inactive FROM ".TB_PREF."leave_type ";
 
 	return combo_input($name, $id, $sql, 'leave_id', 'leave_name',
-	array(       
+	array(
 		'spec_option' => $spec_option,
 		'select_submit' => $submit_on_change,
 		'async' => false,

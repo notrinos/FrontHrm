@@ -13,7 +13,7 @@ function department_list($name, $id = null, $spec_option = false, $submit_on_cha
 	$sql = "SELECT dept_id, dept_name, inactive FROM ".TB_PREF."department ";
 
 	return combo_input($name, $id, $sql, 'dept_id', 'dept_name',
-	array(       
+	array(
 		'spec_option' => $spec_option,
 		'select_submit' => $submit_on_change,
 		'async' => false,

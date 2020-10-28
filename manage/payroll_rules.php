@@ -36,7 +36,7 @@ function handle_submit(&$selected_id) {
 
 		$payrule = array();
 		foreach($_POST as $p => $val) {
-            
+			
 			if (substr($p, 0, 7) == 'Payroll') {
 
 				$a = substr($p, 7);
@@ -67,19 +67,19 @@ function payroll_rule_settings($selected_id) {
 	
 	$new = true;
 	foreach($_POST as $p => $val) {
-        
+		
 		if (substr($p, 0, 7) == 'Payroll')
 			$_POST[$p] = '';
 	}
 	
 	if($selected_id) {
-        
+		
 		$payroll_structure = get_payroll_structure($selected_id);
 
 		if($payroll_structure) {
-            
+			
 			$new = false;
-            
+			
 			foreach($payroll_structure['payroll_rule'] as $rule_code) {
 
 				$_POST['Payroll'.$rule_code] = 1;
@@ -101,24 +101,24 @@ function payroll_rule_settings($selected_id) {
 		check_cells(null, 'Payroll'.$rule['account_code']);
 		end_row();
 	}
-    end_table(1);
-    
+	end_table(1);
+	
 	div_start('controls');
-    
+	
 	if($new)
-        submit_center('submit', _('Save'), true, _('Save payroll structure'), 'default');
+		submit_center('submit', _('Save'), true, _('Save payroll structure'), 'default');
 	else {
 		submit_center_first('submit', _('Update'), _('Update payroll rules data'), 'default');
 		submit_return('select', $selected_id, _('Select this job position and return to document entry.'));
 		submit_center_last('delete', _('Delete'), _('Delete payroll rules if have been never used'), true);
-    }
+	}
 	div_end();
 }
 
 //----------------------------------------------------------------------------
 
 if(isset($_POST['submit']))
-    handle_submit($selected_id);
+	handle_submit($selected_id);
 
 //----------------------------------------------------------------------------
 
@@ -138,13 +138,13 @@ page(_($help_context = 'Manage Payroll Rule'), false, false, '', $js);
 start_form();
 
 if(db_has_position()) {
-    
+	
 	start_table(TABLESTYLE_NOBORDER);
 	start_row();
-    
+	
 	position_list_cells(null, 'PositionId', null, _('Select Job Position'), true, check_value('show_inactive'));
 	check_cells(_('Show inactive:'), 'show_inactive', null, true);
-    
+	
 	end_row();
 	end_table(1);
 

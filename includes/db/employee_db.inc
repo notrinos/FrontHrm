@@ -125,14 +125,14 @@ function emp_img_name($emp_id) {
 
 function check_employee_hired($id, $date) {
 
-    $sql = "SELECT emp_hiredate FROM ".TB_PREF."employee WHERE emp_id = ".db_escape($id);
-    $result = db_query($sql, 'could not get employee data');
-    $check = db_fetch($result);
-    
-    if(sql_date_comp(date2sql($date), $check[0]) < 0)
-        return false;
-    else
-        return true;
+	$sql = "SELECT emp_hiredate FROM ".TB_PREF."employee WHERE emp_id = ".db_escape($id);
+	$result = db_query($sql, 'could not get employee data');
+	$check = db_fetch($result);
+	
+	if(sql_date_comp(date2sql($date), $check[0]) < 0)
+		return false;
+	else
+		return true;
 }
 
 //--------------------------------------------------------------------------

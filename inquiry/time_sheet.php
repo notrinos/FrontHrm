@@ -44,22 +44,22 @@ submit_cells('Search', _('Search'), '', '', 'default');
 
 end_row();
 end_table(1);
-    
+	
 //-------------------------------------------------------------------------- 
-    
+	
 $cols = array(_('Id')=>array('align'=>'center'), _('Employee Name'));
-    
+	
 $from = new DateTime(date2sql($_POST['FromDate']));
 $to = new DateTime(date2sql($_POST['ToDate']).'+1 day');
 $interval = new DateInterval('P1D');
 $period = new DatePeriod($from, $interval, $to);
-    
+	
 foreach($period as $day) {
 	
-    if($day->format('N') < 7)
-        $cols[$day->format('d').'<p hidden>'.$day->format('m').'</p>'] = array('align'=>'center');
-    else
-        $cols["<div style='background:#FFCCCC'>".$day->format('d').'</div><p hidden>'.$day->format('m').'</p>'] = array('align'=>'center');
+	if($day->format('N') < 7)
+		$cols[$day->format('d').'<p hidden>'.$day->format('m').'</p>'] = array('align'=>'center');
+	else
+		$cols["<div style='background:#FFCCCC'>".$day->format('d').'</div><p hidden>'.$day->format('m').'</p>'] = array('align'=>'center');
 }
 $sql = get_attendance($_POST['FromDate'], $_POST['ToDate'], $_POST['EmpId'], $_POST['DeptId'], $_POST['OvertimeId']);
 $table = & new_db_pager('emp_att_tbl', $sql, $cols);

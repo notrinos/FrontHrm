@@ -59,7 +59,7 @@ submit_cells('Search', _('Search'), '', '', 'default');
 
 end_row();
 end_table(1);
-    
+	
 //--------------------------------------------------------------------------
 
 function check_overdue($row) {
@@ -76,11 +76,11 @@ function trans_type($row) {
 }
 function view_link($row) {
 	if($row['trans_no'] != 0)
-	    return get_trans_view_str($row['Type'], $row['trans_no']);
+		return get_trans_view_str($row['Type'], $row['trans_no']);
 }
 function prt_link($row) {
 	if($row['Type'] == 1 && $row['payslip_no'] != 0)
-	    return hrm_print_link($row['payslip_no'], _('Print this Payslip'), true, ST_PAYSLIP, ICON_PRINT, '', '', 0);
+		return hrm_print_link($row['payslip_no'], _('Print this Payslip'), true, ST_PAYSLIP, ICON_PRINT, '', '', 0);
 }
 function payslip_no($row) {
 	return $row['payslip_no'] == 0 ? null : $row['payslip_no'];

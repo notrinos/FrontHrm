@@ -30,7 +30,7 @@ $reports->register_controls('departments');
 
 function employee_gender($name, $type) {
 	if($type == 'EMPGENDER')
-	    return "<select name = '".$name."'><option value='-1'>"._('No gender filter')."</option><option value='1'>"._('Male')."</option><option value='0'>"._('Female')."</option><option value='2'>"._('Other')."</option></select>";
+		return "<select name = '".$name."'><option value='-1'>"._('No gender filter')."</option><option value='1'>"._('Male')."</option><option value='0'>"._('Female')."</option><option value='2'>"._('Other')."</option></select>";
 }
 
 $reports->register_controls('employee_gender');
@@ -38,8 +38,8 @@ $reports->register_controls('employee_gender');
 $reports->addReportClass(_('Human Resource'), RC_HRM);
 $reports->addReport(RC_HRM, '_employees', _('List of Employees'),
 	array(	_('Gender') => 'EMPGENDER',
-		    _('Department') => 'DEPARTMENT',
-		    _('From') => 'EMPLOYEE',
+			_('Department') => 'DEPARTMENT',
+			_('From') => 'EMPLOYEE',
 			_('To') => 'EMPLOYEE',
 			_('Comments') => 'TEXTBOX',
 			_('Orientation') => 'ORIENTATION'

@@ -14,14 +14,14 @@ function db_has_position() {
 }
 
 function set_basic_salary($account, $amount, $position_id, $new=false) {
-    $date = date2sql(Today());
+	$date = date2sql(Today());
 
 	if($new)
-	    $sql = "INSERT INTO ".TB_PREF."salary_structure(date, position_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
+		$sql = "INSERT INTO ".TB_PREF."salary_structure(date, position_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
 	else
 		$sql = "UPDATE ".TB_PREF."salary_structure SET pay_rule_id = ".db_escape($account).", pay_amount = ".db_escape($amount)." WHERE position_id = ".db_escape($position_id);
 	
-	    db_query($sql, 'Could not write salary structure data');
+		db_query($sql, 'Could not write salary structure data');
 }
 
 function write_position($id = false, $name, $pay_basis) {
@@ -40,7 +40,7 @@ function delete_position($id) {
 }
 
 function get_position($id = false, $all = false) {
-    
+	
 	$sql = "SELECT p.*, s.pay_amount, s.pay_rule_id FROM ".TB_PREF."position p, ".TB_PREF."salary_structure s";
 	$where = array("p.position_id = s.position_id AND s.is_basic = 1 AND s.grade_id = 0");
 	

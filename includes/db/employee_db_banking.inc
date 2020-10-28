@@ -43,10 +43,10 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 	// the gl items are already inversed/negated for type 2 (deposit)
 	$total_amount = $items->gl_items_total();
 
-   	$trans_no = get_next_trans_no($trans_type);
-   	$do_exchange_variance = $SysPrefs->auto_currency_revaluation();
-    if($do_exchange_variance)
-    	$trans_no1 = get_next_trans_no(ST_JOURNAL);
+	$trans_no = get_next_trans_no($trans_type);
+	$do_exchange_variance = $SysPrefs->auto_currency_revaluation();
+	if($do_exchange_variance)
+		$trans_no1 = get_next_trans_no(ST_JOURNAL);
 
 	if($aid != 0) {
 		$row = get_attachment($aid);
@@ -54,7 +54,7 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 	}
 	// do the source account postings
 
-    add_bank_trans($trans_type, $trans_no, $from_account, $ref, $date_, -$total_amount, $person_type_id, $person_id, $currency, 'Cannot insert a source bank transaction');
+	add_bank_trans($trans_type, $trans_no, $from_account, $ref, $date_, -$total_amount, $person_type_id, $person_id, $currency, 'Cannot insert a source bank transaction');
 	$total = 0;
 	foreach ($items->gl_items as $gl_item) {
 		$is_bank_to = is_bank_account($gl_item->code_id);
@@ -62,15 +62,15 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 		if ($trans_type == ST_BANKPAYMENT AND $is_bank_to)
 			display_db_error(_('invalid payment entered. Cannot pay to another bank account'), '');
 
-    	// do the destination account postings
-    	$total += add_gl_trans($trans_type, $trans_no, $date_, $gl_item->code_id, $gl_item->dimension_id, $gl_item->dimension2_id, $gl_item->reference, $gl_item->amount, $currency, $person_type_id, $person_id);
+		// do the destination account postings
+		$total += add_gl_trans($trans_type, $trans_no, $date_, $gl_item->code_id, $gl_item->dimension_id, $gl_item->dimension2_id, $gl_item->reference, $gl_item->amount, $currency, $person_type_id, $person_id);
 
-    	if ($is_bank_to) {
-    		add_bank_trans($trans_type, $trans_no, $is_bank_to, $ref, $date_, $gl_item->amount, $person_type_id, $person_id, $currency, 'Cannot insert a destination bank transaction');
+		if ($is_bank_to) {
+			add_bank_trans($trans_type, $trans_no, $is_bank_to, $ref, $date_, $gl_item->amount, $person_type_id, $person_id, $currency, 'Cannot insert a destination bank transaction');
 
-    		if ($do_exchange_variance)
-    			add_exchange_variation($trans_no1, $date_, $is_bank_to, $gl_item->code_id, $currency, $person_type_id, $person_id);
-    	}
+			if ($do_exchange_variance)
+				add_exchange_variation($trans_no1, $date_, $is_bank_to, $gl_item->code_id, $currency, $person_type_id, $person_id);
+		}
 		// store tax details if the gl account is a tax account
 
 		$amount = $gl_item->amount;
@@ -80,27 +80,27 @@ function write_employee_bank_transaction($trans_type, $trans_no, $from_account, 
 	}
 
 	// do the source account postings
-    add_gl_trans($trans_type, $trans_no, $date_, $bank_gl_account, 0, 0, $memo_, -$total, null, $person_type_id, $person_id);
+	add_gl_trans($trans_type, $trans_no, $date_, $bank_gl_account, 0, 0, $memo_, -$total, null, $person_type_id, $person_id);
 
-    if ($do_exchange_variance) {
-    	if ($exchanged || add_exchange_variation($trans_no1, $date_, $from_account, $bank_gl_account, $currency, $person_type_id, $person_id)) {
-   			$ref1 = $Refs->get_next(ST_JOURNAL, null, $date_);
+	if ($do_exchange_variance) {
+		if ($exchanged || add_exchange_variation($trans_no1, $date_, $from_account, $bank_gl_account, $currency, $person_type_id, $person_id)) {
+			$ref1 = $Refs->get_next(ST_JOURNAL, null, $date_);
 			$Refs->save(ST_JOURNAL, $trans_no1, $ref1);
 			add_audit_trail(ST_JOURNAL, $trans_no1, $date_);
 		}
 	}
 
 	//$total = $cart->gl_items_total_debit();
-    
-    if($trans_type == ST_BANKPAYMENT) {
+	
+	if($trans_type == ST_BANKPAYMENT) {
 
-	    add_employee_trans($trans_no, ST_BANKPAYMENT, $payslip_no, $date_, $person_id, $total);
+		add_employee_trans($trans_no, ST_BANKPAYMENT, $payslip_no, $date_, $person_id, $total);
 
-	    $trans_counter = db_insert_id();
+		$trans_counter = db_insert_id();
 
-	    if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance']))
-	        add_employee_advance($trans_counter, $emp_id);
-    }
+		if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance']))
+			add_employee_advance($trans_counter, $emp_id);
+	}
 
 	add_comments($trans_type, $trans_no, $date_, $memo_);
 
@@ -160,10 +160,10 @@ function get_employee_advances($emp_id) {
 
 function add_employee_allocations($trans=null, $allocs = array()) {
 
-    if(count($allocs)) {
-	    foreach($allocs as $trans_to => $amt) {
-            $sql = "INSERT INTO ".TB_PREF."employee_advance_allocation (trans_no_from, trans_no_to, amount) VALUES (".db_escape($trans).", ".db_escape($trans_to).", ".db_escape($amt).")";
-            db_query($sql, 'could not add employee allocation');
-        }
-    }
+	if(count($allocs)) {
+		foreach($allocs as $trans_to => $amt) {
+			$sql = "INSERT INTO ".TB_PREF."employee_advance_allocation (trans_no_from, trans_no_to, amount) VALUES (".db_escape($trans).", ".db_escape($trans_to).", ".db_escape($amt).")";
+			db_query($sql, 'could not add employee allocation');
+		}
+	}
 }

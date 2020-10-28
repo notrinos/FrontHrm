@@ -120,8 +120,8 @@ start_table(TABLESTYLE2);
 
 if($selected_id != -1) {
 	
- 	if($Mode == 'Edit') {
- 		unset($_POST);
+	if($Mode == 'Edit') {
+		unset($_POST);
 		$position = get_position($selected_id);
 		$myrow = get_position_grades($selected_id);
 		$_POST['position_id'] = $selected_id;
@@ -130,8 +130,8 @@ if($selected_id != -1) {
 			$grade = $val['grade_id'];
 			$_POST['amt_'.$grade] = empty($val['amount']) ? price_format($position['pay_amount']) : price_format($val['amount']);
 		}
- 	}
- 	hidden('selected_id', $selected_id);
+	}
+	hidden('selected_id', $selected_id);
 }
 
 position_list_row(_('Job Position:'), 'position_id');

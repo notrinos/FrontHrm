@@ -13,7 +13,7 @@ function doctype_list($name, $id = null, $spec_option = false, $submit_on_change
 	$sql = "SELECT type_id, type_name, inactive FROM ".TB_PREF."document_types ";
 
 	return combo_input($name, $id, $sql, 'type_id', 'type_name',
-	array(       
+	array(
 		'spec_option' => $spec_option,
 		'select_submit' => $submit_on_change,
 		'async' => false,

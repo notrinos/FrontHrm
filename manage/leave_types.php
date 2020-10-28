@@ -39,7 +39,7 @@ if($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		set_focus('leave_code');
 	}
 	else {
-    	write_leave($selected_id, $_POST['leave_name'], $_POST['leave_code'], input_num('pay_rate'));
+		write_leave($selected_id, $_POST['leave_name'], $_POST['leave_code'], input_num('pay_rate'));
 		if($selected_id != -1)
 			display_notification(_('Selected leave type has been updated'));
 		else
@@ -87,8 +87,8 @@ while($myrow = db_fetch($result)) {
 	label_cell($myrow['leave_code']);
 	percent_cell($myrow['pay_rate']);
 	inactive_control_cell($myrow['leave_id'], $myrow['inactive'], 'leave_type', 'leave_id');
- 	edit_button_cell('Edit'.$myrow['leave_id'], _('Edit'));
- 	delete_button_cell('Delete'.$myrow['leave_id'], _('Delete'));
+	edit_button_cell('Edit'.$myrow['leave_id'], _('Edit'));
+	delete_button_cell('Delete'.$myrow['leave_id'], _('Delete'));
 	end_row();
 }
 
@@ -99,7 +99,7 @@ start_table(TABLESTYLE2);
 
 if($selected_id != -1) {
 	
- 	if($Mode == 'Edit') {
+	if($Mode == 'Edit') {
 		$myrow = get_leave_type($selected_id);
 		$_POST['pay_rate'] = $myrow['pay_rate'];
 		$_POST['leave_name']  = $myrow['leave_name'];

@@ -30,7 +30,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		display_error(_('The overtime rate cannot be empty.'));
 		set_focus('rate');
 	}
-    elseif(!is_numeric($_POST['rate'])) {
+	elseif(!is_numeric($_POST['rate'])) {
 		display_error(_('Overtime rate must be a number.'));
 		set_focus('rate');
 	}
@@ -39,7 +39,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		set_focus('name');
 	}
 	else {
-    	write_overtime($selected_id, $_POST['name'], $_POST['rate'] );
+		write_overtime($selected_id, $_POST['name'], $_POST['rate'] );
 		if($selected_id != '')
 			display_notification(_('Selected overtime has been updated'));
 		else
@@ -86,8 +86,8 @@ while ($myrow = db_fetch($result)) {
 	label_cell($myrow['overtime_name']);
 	amount_cell($myrow['overtime_rate']);
 	inactive_control_cell($myrow['overtime_id'], $myrow['inactive'], 'overtime', 'overtime_id');
- 	edit_button_cell('Edit'.$myrow['overtime_id'], _('Edit'));
- 	delete_button_cell('Delete'.$myrow['overtime_id'], _('Delete'));
+	edit_button_cell('Edit'.$myrow['overtime_id'], _('Edit'));
+	delete_button_cell('Delete'.$myrow['overtime_id'], _('Delete'));
 	end_row();
 }
 
@@ -98,7 +98,7 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != '') {
 	
- 	if ($Mode == 'Edit') {
+	if ($Mode == 'Edit') {
 		$myrow = get_overtime($selected_id);
 		$_POST['rate'] = $myrow['overtime_rate'];
 		$_POST['name']  = $myrow['overtime_name'];

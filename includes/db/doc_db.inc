@@ -107,22 +107,22 @@ function get_sql_for_employee_documents($emp_id = 0, $type_id = 0, $alert = 0, $
 	$sql = "SELECT id, type_id, description, issue_date, expiry_date, alert, filename, filesize, filetype, emp_id FROM ".TB_PREF."employee_docs ";
 
 	if(empty($expired_from) && empty($expired_to) && empty($issued_from) && empty($issued_to))
-	    $sql .= " WHERE emp_id = ".db_escape($emp_id);
+		$sql .= " WHERE emp_id = ".db_escape($emp_id);
 	else
-	    $sql .= " WHERE issue_date BETWEEN '".date2sql($issued_from)."' AND '" . date2sql($issued_to) . "' AND expiry_date BETWEEN '".date2sql($expired_from)."' AND '".date2sql($expired_to)."' ";
+		$sql .= " WHERE issue_date BETWEEN '".date2sql($issued_from)."' AND '" . date2sql($issued_to) . "' AND expiry_date BETWEEN '".date2sql($expired_from)."' AND '".date2sql($expired_to)."' ";
 
 	if(!empty($emp_id))
-	    $sql .= " AND emp_id = ".db_escape($emp_id);
+		$sql .= " AND emp_id = ".db_escape($emp_id);
 	if(!empty($type_id))
-	    $sql .= " AND type_id = ".db_escape($type_id);
+		$sql .= " AND type_id = ".db_escape($type_id);
 	if((!empty($alert) && !empty($no_alert)) || (empty($alert) && empty($no_alert)))
-	    $sql .= " AND alert >= 0 ";
+		$sql .= " AND alert >= 0 ";
 	elseif(!empty($no_alert))
-	    $sql .= " AND alert = 0 ";
+		$sql .= " AND alert = 0 ";
 	elseif(!empty($alert))
-	    $sql .= " AND alert = 1 ";
+		$sql .= " AND alert = 1 ";
 	if(!empty($string))
-        $sql .= " AND (description LIKE ".db_escape("%$string%")." OR filename LIKE ".db_escape("%$string%")." OR id LIKE ".db_escape("%$string%").")";
+		$sql .= " AND (description LIKE ".db_escape("%$string%")." OR filename LIKE ".db_escape("%$string%")." OR id LIKE ".db_escape("%$string%").")";
 
 	$sql .= " ORDER BY id";
 

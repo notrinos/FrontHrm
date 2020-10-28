@@ -70,21 +70,21 @@ function get_workdays_no($from, $to, $emp_id) {
 
 	$result = db_query($sql, 'Could not get attendance data');
 
-    return db_num_rows($result);
+	return db_num_rows($result);
 }
 
 //--------------------------------------------------------------------------
 
 function get_leave_hours($from, $to, $emp_id) {
-    global $Work_hours;
+	global $Work_hours;
 
 	$sql = "SELECT hours_no FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = 0 AND hours_no < 8 AND att_date BETWEEN '".date2sql($from)."' AND '".date2sql($to)."'";
 
 	$result = db_query($sql, 'Could not get attendance data');
 
-    $leave = 0;
+	$leave = 0;
 	while($row = db_fetch($result)) {
-        $leave += ($Work_hours - $row['hours_no']);
+		$leave += ($Work_hours - $row['hours_no']);
 	}
 	return $leave;
 }

@@ -32,9 +32,9 @@ page(_($help_context = 'Manage Salary Structure'), false, false, '', $js);
 $selected_id = get_post('position_id','');
 
 function can_process($selected_id) {
-    
+	
 	if(!$selected_id) {
-        
+		
 		display_error(_('Select job position'));
 		set_focus('position_id');
 		return false;
@@ -70,7 +70,7 @@ function handle_submit(&$selected_id) {
 				$type = DEBIT;
 				$amount = @input_num('Debit'.$val);
 			}
-            else {
+			else {
 				$type = CREDIT;
 				$amount = @input_num('Credit'.$val);
 			}
@@ -109,17 +109,17 @@ if (isset($_POST['delete'])) {
 //--------------------------------------------------------------------------
 
 function payroll_rules_settings($selected_id, $grade_id=0) {
-    global $USE_DEPT_ACC;
+	global $USE_DEPT_ACC;
 
 	$new = true;
 	$rules = array();
-    $basic_salary = '';
+	$basic_salary = '';
 	$payroll_structure = get_payroll_structure($selected_id);
 	$pay_basis = get_position($selected_id)['pay_basis'];
 
 	foreach(get_salary_structure($selected_id, $grade_id) as $row) {
 		if($row['is_basic'] == 1)
-            $basic_salary = $row;
+			$basic_salary = $row;
 	}
 
 	if($payroll_structure) {
@@ -134,21 +134,21 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 				'account_code'	=> $code,
 				'account_name'	=> $ac['account_name'],
 				'element_name'  => $pay_element['element_name'],
-            );
+			);
 			$_POST['Debit'.$code] = price_format(0);
 			$_POST['Credit'.$code] = price_format(0);
 		}
 
 		$rsStr = get_salary_structure($selected_id, $grade_id);
-        
+		
 		if(db_num_rows($rsStr) > 0) {
-            $new = false;
+			$new = false;
 
 			while($rowStr = db_fetch($rsStr)) {
-                
+				
 				if($rowStr['type'] == DEBIT)
 					$_POST['Debit'.$rowStr['pay_rule_id']] = price_format($rowStr['pay_amount']);
-                else 
+				else 
 					$_POST['Credit'.$rowStr['pay_rule_id']] = price_format($rowStr['pay_amount']);
 			}
 		}
@@ -156,16 +156,16 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		br();
 		start_table(TABLESTYLE2);
 		if($pay_basis == MONTHLY_SALARY)
-		    $th = array(_('Pay Element'), _('Monthly Earnings'), _('Monthly Deductions'));
+			$th = array(_('Pay Element'), _('Monthly Earnings'), _('Monthly Deductions'));
 		if($pay_basis == DAILY_WAGE)
 			$th = array(_('Pay Element'), _('Daily Earnings'), _('Daily Deductions'));
 
 		table_header($th);
-        start_row("class='inquirybg'");
-        label_cell(_('Basic Salary'));
-        amount_cell(@$basic_salary['pay_amount']);
-        amount_cell('0');
-        end_row();
+		start_row("class='inquirybg'");
+		label_cell(_('Basic Salary'));
+		amount_cell(@$basic_salary['pay_amount']);
+		amount_cell('0');
+		end_row();
 
 		foreach($rules as $rule) {			
 			start_row();
@@ -178,16 +178,16 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		end_table(1);
 
 		div_start('controls');
-        
-        if($new)
-            submit_center('submit', _('Save salary structure'), true, '', 'default');
-        else {
-            submit_center_first('submit', _('Update'), _('Update salary structure data'), 'default');
-            submit_center_last('delete', _('Delete'), _('Delete salary structure if have been never used'), false, ICON_DELETE);
-        }
+		
+		if($new)
+			submit_center('submit', _('Save salary structure'), true, '', 'default');
+		else {
+			submit_center_first('submit', _('Update'), _('Update salary structure data'), 'default');
+			submit_center_last('delete', _('Delete'), _('Delete salary structure if have been never used'), false, ICON_DELETE);
+		}
 		div_end();
-    }
-    else
+	}
+	else
 		display_error(_('Payroll rules not defined for this job position'));
 	br();
 }

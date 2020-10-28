@@ -13,7 +13,7 @@ function overtime_list($name, $id = null, $spec_option = false, $submit_on_chang
 	$sql = "SELECT overtime_id, overtime_name, inactive FROM ".TB_PREF."overtime ";
 
 	return combo_input($name, $id, $sql, 'overtime_id', 'overtime_name',
-	array(       
+	array(
 		'spec_option' => $spec_option,
 		'select_submit' => $submit_on_change,
 		'async' => false,

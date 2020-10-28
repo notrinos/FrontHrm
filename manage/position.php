@@ -65,9 +65,9 @@ if($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
 		commit_transaction();
 		
-    	if ($selected_id != -1)
+		if ($selected_id != -1)
 			display_notification(_('Selected job position has been updated'));
-    	else
+		else
 			display_notification(_('New job position has been added'));
 		
 		$Mode = 'RESET';
@@ -122,20 +122,20 @@ start_table(TABLESTYLE2);
 
 if($selected_id != -1) {
 	
- 	if ($Mode == 'Edit') {
+	if ($Mode == 'Edit') {
 		
 		$myrow = get_position($selected_id);
 		$_POST['name']  = $myrow['position_name'];
 		$_POST['AccountId']  = $myrow['pay_rule_id'];
 		$_POST['amount']  = price_format($myrow['pay_amount']);
 		$_POST['payBasis']  = $myrow['pay_basis'];
- 	}
- 	hidden('selected_id', $selected_id);
+	}
+	hidden('selected_id', $selected_id);
 }
 
 text_row_ex(_('Position Name:'), 'name', 37, 50);
 if(empty($USE_DEPT_ACC))
-    gl_all_accounts_list_row(_('Salary Basic Account:'), 'AccountId', null, true);
+	gl_all_accounts_list_row(_('Salary Basic Account:'), 'AccountId', null, true);
 else
 	hidden('AccountId');
 amount_row(_('Salary Basic Amount').':', 'amount', null, null, null, null, true);

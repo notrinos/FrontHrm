@@ -39,43 +39,43 @@ page($_SESSION['page_title'], false, false, '', $js);
 //--------------------------------------------------------------------------
 
 function line_start_focus() {
-    global $Ajax;
-    $Ajax->activate('items_table');
-    set_focus('_code_id_edit');
+	global $Ajax;
+	$Ajax->activate('items_table');
+	set_focus('_code_id_edit');
 }
 
 //--------------------------------------------------------------------------
 
 if (isset($_GET['AddedID'])) {
-    
+	
 	$trans_no = $_GET['AddedID'];
 	$trans_type = ST_JOURNAL;
-    $payslip_no = get_payslip($trans_no)['payslip_no'];
+	$payslip_no = get_payslip($trans_no)['payslip_no'];
 
-    if($payslip_no) {
-    	display_notification_centered( sprintf(_('Payslip #%d has been entered'), $payslip_no));
-        display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Transaction')));
+	if($payslip_no) {
+		display_notification_centered( sprintf(_('Payslip #%d has been entered'), $payslip_no));
+		display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Transaction')));
 
-	    reset_focus();
-	    hyperlink_params($path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php', _('Make Payment &Advice for this Payslip'), 'PayslipNo='.$payslip_no);
-	    hyperlink_params($_SERVER['PHP_SELF'], _('Enter &New Payslip'), 'NewPayslip=Yes');
+		reset_focus();
+		hyperlink_params($path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php', _('Make Payment &Advice for this Payslip'), 'PayslipNo='.$payslip_no);
+		hyperlink_params($_SERVER['PHP_SELF'], _('Enter &New Payslip'), 'NewPayslip=Yes');
 
-	    hyperlink_params($path_to_root.'/admin/attachments.php', _('Add an Attachment'), 'filterType='.$trans_type.'&trans_no='.$trans_no);
-    }
-   	else
-   		display_error(_('Payslip number does not exist'));
-   	
+		hyperlink_params($path_to_root.'/admin/attachments.php', _('Add an Attachment'), 'filterType='.$trans_type.'&trans_no='.$trans_no);
+	}
+	else
+		display_error(_('Payslip number does not exist'));
+	
 	display_footer_exit();
 } 
 elseif(isset($_GET['UpdatedID'])) {
-    
+	
 	$trans_no = $_GET['UpdatedID'];
 	$trans_type = ST_JOURNAL;
 
-   	display_notification_centered( _('Employee Payslip has been updated #') . $trans_no);
-    display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Journal Entry')));
+	display_notification_centered( _('Employee Payslip has been updated #') . $trans_no);
+	display_note(get_gl_view_str($trans_type, $trans_no, _('&View this Journal Entry')));
 
-   	hyperlink_no_params($path_to_root.'/gl/inquiry/payslip_inquiry.php', _('Return to Payslip &Inquiry'));
+	hyperlink_no_params($path_to_root.'/gl/inquiry/payslip_inquiry.php', _('Return to Payslip &Inquiry'));
 
 	display_footer_exit();
 }
@@ -85,8 +85,8 @@ elseif(isset($_GET['UpdatedID'])) {
 if(isset($_GET['NewPayslip']))
 	create_cart(0,0);
 elseif(isset($_GET['ModifyPaySlip'])) {
-    check_is_editable($_GET['trans_type'], $_GET['trans_no']);
-    
+	check_is_editable($_GET['trans_type'], $_GET['trans_no']);
+	
 	if(!isset($_GET['trans_type']) || $_GET['trans_type']!= 0) {
 		display_error(_('You can edit directly only journal entries created via Journal Entry page.'));
 		hyperlink_params($path_to_root.'/gl/gl_journal.php', _('Entry &New Journal Entry'), 'NewJournal=Yes');
@@ -102,32 +102,32 @@ function create_cart($type=0, $trans_no=0) {
 
 	if(isset($_SESSION['journal_items']))
 		unset($_SESSION['journal_items']);
-    
-    check_is_closed($type, $trans_no);
+	
+	check_is_closed($type, $trans_no);
 	$cart = new items_cart($type);
-    $cart->order_id = $trans_no;
-    $cart->pay_basis = '';
+	$cart->order_id = $trans_no;
+	$cart->pay_basis = '';
 	$cart->paytype = PT_EMPLOYEE;
-    
+	
 	if($trans_no) {
-        $header = get_journal($type, $trans_no);
-        $cart->tran_date = sql2date($header['tran_date']);
-        
+		$header = get_journal($type, $trans_no);
+		$cart->tran_date = sql2date($header['tran_date']);
+		
 		$result = get_gl_trans($type, $trans_no);
 
 		if($result) {
 
 			while($row = db_fetch($result)) {
-                $curr_amount = $cart->rate ? round($row['amount']/$cart->rate, $_SESSION['wa_current_user']->prefs->price_dec()) : $row['amount'];
-                if($curr_amount)
+				$curr_amount = $cart->rate ? round($row['amount']/$cart->rate, $_SESSION['wa_current_user']->prefs->price_dec()) : $row['amount'];
+				if($curr_amount)
 					$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'], $curr_amount, $row['memo_'], '', $row['person_id']);
 			}
 		}
 		$cart->memo_ = get_comments_string($type, $trans_no);
-        $cart->reference = $header['reference'];
+		$cart->reference = $header['reference'];
 	} 
-    else {
-        $cart->tran_date = new_doc_date();
+	else {
+		$cart->tran_date = new_doc_date();
 		if(!is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 		$cart->reference = $Refs->get_next(ST_JOURNAL, null, $cart->tran_date);
@@ -140,7 +140,7 @@ function create_cart($type=0, $trans_no=0) {
 	$_POST['to_date'] = '';
 	$_POST['leaves'] = '';
 	$_POST['deductableleaves'] = '';
-    $_POST['workdays'] = '';
+	$_POST['workdays'] = '';
 
 	$_SESSION['journal_items'] = &$cart;
 }
@@ -165,26 +165,26 @@ function validate_payslip_generation() {
 		return false;
 	}
 	if(payslip_generated_for_date($_POST['from_date'], $_POST['person_id'])) {
-        display_error(_('Selected date has already paid for this person'));
-        set_focus('from_date');
-        return false;
-    }
-    if(payslip_generated_for_date($_POST['to_date'], $_POST['person_id'])) {
-        display_error(_('Selected date has already paid for this person'));
-        set_focus('to_date');
-        return false;
-    }
-    if(payslip_generated_for_period($_POST['from_date'], $_POST['to_date'], $_POST['person_id'])) {
-    	display_error(_('Selected period contains a period that has already been paid for this person'));
-        set_focus('from_date');
-        return false;
-    }
-    if(date_comp($_POST['from_date'], $_POST['to_date']) > 0) {
-        display_error(_('End date cannot be before the start date'));
-        set_focus('from_date');
-        return false;
-    }
-    if(date_comp($_POST['from_date'], Today()) > 0) {
+		display_error(_('Selected date has already paid for this person'));
+		set_focus('from_date');
+		return false;
+	}
+	if(payslip_generated_for_date($_POST['to_date'], $_POST['person_id'])) {
+		display_error(_('Selected date has already paid for this person'));
+		set_focus('to_date');
+		return false;
+	}
+	if(payslip_generated_for_period($_POST['from_date'], $_POST['to_date'], $_POST['person_id'])) {
+		display_error(_('Selected period contains a period that has already been paid for this person'));
+		set_focus('from_date');
+		return false;
+	}
+	if(date_comp($_POST['from_date'], $_POST['to_date']) > 0) {
+		display_error(_('End date cannot be before the start date'));
+		set_focus('from_date');
+		return false;
+	}
+	if(date_comp($_POST['from_date'], Today()) > 0) {
 		display_error(_('Cannot pay for the date in the future.'));
 		set_focus('from_date');
 		return false;
@@ -194,22 +194,22 @@ function validate_payslip_generation() {
 		set_focus('to_date');
 		return false;
 	}
-    if(!check_employee_hired($_POST['person_id'], $_POST['from_date'])) {
-        display_error(_('Cannot pay for the date before hired date'));
-        set_focus('from_date');
-        return false;
-    }
-    // The following two cases need to be set in correct order
-    if(!employee_has_position($_POST['person_id'])) {
-    	display_error(_('Selected Employee does not have a Job Position, please define it first.'));
-    	set_focus('person_id');
-    	return false;
-    }
-    elseif(!emp_position_has_structure($_POST['person_id'])) {
-    	display_error(_("the Employee's Job Position does not have a structure, please define Salary Structure"));
-    	set_focus('person_id');
-    	return false;
-    }
+	if(!check_employee_hired($_POST['person_id'], $_POST['from_date'])) {
+		display_error(_('Cannot pay for the date before hired date'));
+		set_focus('from_date');
+		return false;
+	}
+	// The following two cases need to be set in correct order
+	if(!employee_has_position($_POST['person_id'])) {
+		display_error(_('Selected Employee does not have a Job Position, please define it first.'));
+		set_focus('person_id');
+		return false;
+	}
+	elseif(!emp_position_has_structure($_POST['person_id'])) {
+		display_error(_("the Employee's Job Position does not have a structure, please define Salary Structure"));
+		set_focus('person_id');
+		return false;
+	}
 	return true;
 }
 
@@ -244,8 +244,8 @@ if(isset($_POST['Process'])) {
 		$input_error = 1;
 	} 
 	if(!check_reference($_POST['ref'], ST_JOURNAL, $_SESSION['journal_items']->order_id)) {
-   		set_focus('ref');
-   		$input_error = 1;
+		set_focus('ref');
+		$input_error = 1;
 	}
 	if($_SESSION['journal_items']->empty_payment) {
 		display_error(_('Employee cannot getting paid for non-working period.'));
@@ -259,14 +259,14 @@ if(isset($_POST['Process'])) {
 if(isset($_POST['Process'])) {
 	$cart = &$_SESSION['journal_items'];
 	$new = $cart->order_id == 0;
-    
-    $cart->reference = $_POST['ref'];
-    $cart->tran_date = $_POST['date_'];
+	
+	$cart->reference = $_POST['ref'];
+	$cart->tran_date = $_POST['date_'];
 	$cart->person_id = $_POST['person_id'];
-    if(isset($_POST['memo_']))
+	if(isset($_POST['memo_']))
 		$cart->memo_ = $_POST['memo_'];
-    
-    
+	
+	
 	$cart->salary_amt = get_emp_basic_salary($_POST['person_id'])['pay_amount'];
 	$cart->payslip_no = $_POST['PaySlipNo'];
 	$cart->to_the_order_of = '';
@@ -275,7 +275,7 @@ if(isset($_POST['Process'])) {
 	$cart->to_date = $_POST['to_date'];
 	$cart->leaves = $_POST['leaves'];
 	$cart->deductable_leaves = $_POST['deductableleaves'];
-    $cart->work_days = $_POST['workdays'];
+	$cart->work_days = $_POST['workdays'];
 	
 	$trans_no = write_payslip($cart, check_value('Reverse'));
 
@@ -312,43 +312,43 @@ function check_item_data() {
 	if(!(input_num('AmountDebit')!=0 ^ input_num('AmountCredit')!=0) ) {
 		display_error(_('You must enter either a debit amount or a credit amount.'));
 		set_focus('AmountDebit');
-    		return false;
-  	}
+			return false;
+	}
 	if(strlen($_POST['AmountDebit']) && !check_num('AmountDebit', 0)) {
-        display_error(_('The debit amount entered is not a valid number or is less than zero.'));
+		display_error(_('The debit amount entered is not a valid number or is less than zero.'));
 		set_focus('AmountDebit');
-        return false;
-  	}
-    elseif(strlen($_POST['AmountCredit']) && !check_num('AmountCredit', 0)) {
-        display_error(_('The credit amount entered is not a valid number or is less than zero.'));
+		return false;
+	}
+	elseif(strlen($_POST['AmountCredit']) && !check_num('AmountCredit', 0)) {
+		display_error(_('The credit amount entered is not a valid number or is less than zero.'));
 		set_focus('AmountCredit');
-        return false;
-  	}
+		return false;
+	}
 	if(!is_tax_gl_unique(get_post('code_id'))) {
-   		display_error(_('Cannot post to GL account used by more than one tax type.'));
+		display_error(_('Cannot post to GL account used by more than one tax type.'));
 		set_focus('code_id');
-   		return false;
+		return false;
 	}
 	if(!$_SESSION['wa_current_user']->can_access('SA_BANKJOURNAL') && is_bank_account($_POST['code_id'])) {
 		display_error(_('Cannot make a journal entry for a bank account. Use banking functions for bank transactions.'));
 		set_focus('code_id');
 		return false;
 	}
-   	return true;
+	return true;
 }
 
 //--------------------------------------------------------------------------
 
 function handle_update_item() {
-    
-    if($_POST['UpdateItem'] != '' && check_item_data()) {
-    	if (input_num('AmountDebit') > 0)
-    		$amount = input_num('AmountDebit');
-    	else
-    		$amount = -input_num('AmountCredit');
+	
+	if($_POST['UpdateItem'] != '' && check_item_data()) {
+		if (input_num('AmountDebit') > 0)
+			$amount = input_num('AmountDebit');
+		else
+			$amount = -input_num('AmountCredit');
 
-    	$_SESSION['journal_items']->update_gl_item($_POST['Index'], $_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount, $_POST['LineMemo'], '', get_post('person_id'));
-    }
+		$_SESSION['journal_items']->update_gl_item($_POST['Index'], $_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount, $_POST['LineMemo'], '', get_post('person_id'));
+	}
 	line_start_focus();
 }
 
