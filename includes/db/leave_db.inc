@@ -67,7 +67,7 @@ function leave_type_used($id) {
 
 function get_leave($emp_id=false, $leave_id=false, $from=false, $to=false) {
 
-	$sql = "SELECT * FROM ".TB_PREF."leave";
+	$sql = "SELECT * FROM `".TB_PREF."leave`";
 	$where = array();
 
 	if($emp_id)
