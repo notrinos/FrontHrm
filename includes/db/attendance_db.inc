@@ -55,7 +55,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
 		else
 			$sql = "INSERT INTO ".TB_PREF."attendance (emp_id, overtime_id, hours_no, rate, att_date) VALUES(".db_escape($emp_id).",".db_escape($overtime_id).",".db_escape($hours_no).",".db_escape($rate).",'".date2sql($att_date)."')";
 
-		$sql2 = "DELETE FROM ".TB_PREF."leave WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($att_date)."'";
+		$sql2 = "DELETE FROM `".TB_PREF."leave` WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($att_date)."'";
 	}
 
 	if(!empty($sql))
