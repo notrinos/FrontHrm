@@ -241,7 +241,7 @@ function add_payslip($trans_no, $emp_id, $from, $to, $leaves, $deductable_leaves
 function add_payslip_details($payslip, $allowances) {
 
 	foreach($allowances as $code => $amount) {
-		$sql = "INSERT INTO ".TB_PREF."payslip_details VALUES(".db_escape($payslip).",".db_escape($code).",".db_escape($amount).")";
+		$sql = "INSERT INTO ".TB_PREF."payslip_details VALUES (".db_escape($payslip).",".db_escape($code).",".db_escape($amount).")";
 
 		db_query($sql, 'could not insert payslip details');
 	}

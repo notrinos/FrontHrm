@@ -62,7 +62,7 @@ function set_grade_salary($account, $amount, $position_id, $grade_id, $new=false
 	$date = date2sql(Today());
 
 	if($new)
-		$sql = "INSERT INTO ".TB_PREF."salary_structure(date, position_id, grade_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($grade_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
+		$sql = "INSERT INTO ".TB_PREF."salary_structure (date, position_id, grade_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($grade_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
 	else
 		$sql = "UPDATE ".TB_PREF."salary_structure SET pay_rule_id = ".db_escape($account).", pay_amount = ".db_escape($amount)." WHERE position_id = ".db_escape($position_id)." AND grade_id = ".db_escape($grade_id);
 	

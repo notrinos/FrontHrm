@@ -36,7 +36,7 @@ function write_personal_salary_structure($pay_rules=array()) {
 function insert_structure($position_id, $grade_id, $pay_rule_id, $pay_amount, $type) {
 
 	$date = date2sql(Today());
-	$sql = "INSERT INTO ".TB_PREF."salary_structure(date, position_id, grade_id, pay_rule_id, pay_amount, type) VALUES ('"
+	$sql = "INSERT INTO ".TB_PREF."salary_structure (date, position_id, grade_id, pay_rule_id, pay_amount, type) VALUES ('"
 		.$date."',"
 		.db_escape($position_id).","
 		.db_escape($grade_id).","
@@ -55,7 +55,7 @@ function write_personal_structure($emp_id, $pay_rule_id, $pay_amount, $type, $is
 	if($pay_amount == 0)
 		$sql = "DELETE FROM ".TB_PREF."personal_salary_structure WHERE emp_id = ".db_escape($emp_id)." AND pay_rule_id = ".db_escape($pay_rule_id)." AND is_basic = ".db_escape($is_basic);
 	elseif(!check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."personal_salary_structure WHERE emp_id = ".db_escape($emp_id)." AND pay_rule_id = ".db_escape($pay_rule_id)." AND is_basic = ".db_escape($is_basic))) {
-		$sql = "INSERT INTO ".TB_PREF."personal_salary_structure(date, emp_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('"
+		$sql = "INSERT INTO ".TB_PREF."personal_salary_structure (date, emp_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('"
 		.$date."',"
 		.db_escape($emp_id).","
 		.db_escape($pay_rule_id).","

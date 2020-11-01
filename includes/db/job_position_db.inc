@@ -17,7 +17,7 @@ function set_basic_salary($account, $amount, $position_id, $new=false) {
 	$date = date2sql(Today());
 
 	if($new)
-		$sql = "INSERT INTO ".TB_PREF."salary_structure(date, position_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
+		$sql = "INSERT INTO ".TB_PREF."salary_structure (date, position_id, pay_rule_id, pay_amount, type, is_basic) VALUES ('$date', ".db_escape($position_id).", ".db_escape($account).", ".db_escape($amount).", 1, 1)";
 	else
 		$sql = "UPDATE ".TB_PREF."salary_structure SET pay_rule_id = ".db_escape($account).", pay_amount = ".db_escape($amount)." WHERE position_id = ".db_escape($position_id);
 	
@@ -27,7 +27,7 @@ function set_basic_salary($account, $amount, $position_id, $new=false) {
 function write_position($id = false, $name, $pay_basis) {
 	
 	if(!$id)
-		$sql = "INSERT INTO ".TB_PREF."position(position_name, pay_basis) VALUES (".db_escape($name).",".db_escape($pay_basis).")";
+		$sql = "INSERT INTO ".TB_PREF."position (position_name, pay_basis) VALUES (".db_escape($name).",".db_escape($pay_basis).")";
 	else
 		$sql = "UPDATE ".TB_PREF."position SET position_name = ".db_escape($name).", pay_basis = ".db_escape($pay_basis)." WHERE position_id = ".db_escape($id);
 	

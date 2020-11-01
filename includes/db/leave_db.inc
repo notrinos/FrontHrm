@@ -18,7 +18,7 @@ function db_has_leave_type() {
 function write_leave($id = false, $leave_name, $leave_code, $pay_rate) {
 
 	if($id == -1)
-		$sql = "INSERT INTO ".TB_PREF."leave_type(leave_name, leave_code, pay_rate) VALUES (".db_escape($leave_name).", ".db_escape($leave_code).", ".db_escape($pay_rate).")";
+		$sql = "INSERT INTO ".TB_PREF."leave_type (leave_name, leave_code, pay_rate) VALUES (".db_escape($leave_name).", ".db_escape($leave_code).", ".db_escape($pay_rate).")";
 	else
 		$sql = "UPDATE ".TB_PREF."leave_type SET leave_name = ".db_escape($leave_name).", leave_code = ".db_escape($leave_code).", pay_rate = ".db_escape($pay_rate)." WHERE leave_id = ".db_escape($id);
 	
