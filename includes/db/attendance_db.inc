@@ -31,7 +31,7 @@ function check_attended($emp_id, $overtime_id, $att_date) {
 //--------------------------------------------------------------------------
 
 function check_leave($emp_id, $date) {
-	$sql = "SELECT * FROM ".TB_PREF."leave WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($date)."'";
+	$sql = "SELECT * FROM `".TB_PREF."leave` WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($date)."'";
 	
 	return check_empty_result($sql);
 }
@@ -44,7 +44,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
 		if(check_leave($emp_id, $att_date))
 			$sql = "UPDATE ".TB_PREF."leave SET leave_id = ".db_escape($leave_id).", pay_rate = ".db_escape($rate)." WHERE date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id);
 		else
-			$sql = "INSERT INTO ".TB_PREF."leave (emp_id, leave_id, pay_rate, date) VALUES(".db_escape($emp_id).",".db_escape($leave_id).",".db_escape($rate).",'".date2sql($att_date)."')";
+			$sql = "INSERT INTO `".TB_PREF."leave` (emp_id, leave_id, pay_rate, date) VALUES(".db_escape($emp_id).",".db_escape($leave_id).",".db_escape($rate).",'".date2sql($att_date)."')";
 
 		$sql2 = "DELETE FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND att_date = '".date2sql($att_date)."'";
 	}
@@ -80,7 +80,7 @@ function get_attendance($from, $to, $emp_id=0, $department=0, $ot_id=0) {
 	$sql = "SELECT emp.emp_id, CONCAT(emp_first_name,' ',emp_last_name) ";
 
 	while(sql_date_comp($from->format('Y-m-d'),$to->format('Y-m-d')) <= 0) {
-		$sql .= ", IFNULL((SELECT hours_no FROM ".TB_PREF."attendance WHERE ".TB_PREF."attendance.emp_id = emp.emp_id AND att_date = '".$from->format('Y-m-d')."' AND overtime_id = ".db_escape($ot_id)."), (SELECT CASE WHEN lt.pay_rate >= '100' THEN CONCAT('<b style=color:green>',leave_code,'</b>') WHEN lt.pay_rate < '100' AND lt.pay_rate > '0' THEN CONCAT('<b style=color:orange>',leave_code,'</b>') WHEN lt.pay_rate <= '0' THEN CONCAT('<b style=color:red>',lt.leave_code,'</b>') END FROM ".TB_PREF."leave_type lt, ".TB_PREF."leave l WHERE l.leave_id = lt.leave_id AND l.date = '".$from->format('Y-m-d')."' AND l.emp_id = emp.emp_id)) as '".$from->format('Y-m-d')."'";
+		$sql .= ", IFNULL((SELECT hours_no FROM ".TB_PREF."attendance WHERE ".TB_PREF."attendance.emp_id = emp.emp_id AND att_date = '".$from->format('Y-m-d')."' AND overtime_id = ".db_escape($ot_id)."), (SELECT CASE WHEN lt.pay_rate >= '100' THEN CONCAT('<b style=color:green>',leave_code,'</b>') WHEN lt.pay_rate < '100' AND lt.pay_rate > '0' THEN CONCAT('<b style=color:orange>',leave_code,'</b>') WHEN lt.pay_rate <= '0' THEN CONCAT('<b style=color:red>',lt.leave_code,'</b>') END FROM ".TB_PREF."leave_type lt, `".TB_PREF."leave` l WHERE l.leave_id = lt.leave_id AND l.date = '".$from->format('Y-m-d')."' AND l.emp_id = emp.emp_id)) as '".$from->format('Y-m-d')."'";
 		$from->modify('+1 day');
 	}
 	$sql .= " FROM ".TB_PREF."employee emp WHERE !emp.inactive";
