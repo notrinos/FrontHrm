@@ -18,15 +18,15 @@ class FrontHrm_app extends application {
 		parent::__construct('FrontHrm', _($this->help_context = '&Human Resource'));
 		
 		$this->add_module(_('Transactions'));
-		$this->add_lapp_function(0, _('Attenda&nce'), $path_to_root.'/modules/FrontHrm/manage/attendance.php?', 'SA_EMPL', MENU_TRANSACTION);
-		$this->add_lapp_function(0, _('Pay&slip Entry'), $path_to_root.'/modules/FrontHrm/manage/payslip.php?NewPayslip=Yes', 'SA_EMPL', MENU_TRANSACTION);
+		$this->add_lapp_function(0, _('Attenda&nce'), $path_to_root.'/modules/FrontHrm/manage/attendance.php?', 'SA_ATTENDANCE', MENU_TRANSACTION);
+		$this->add_lapp_function(0, _('Pay&slip Entry'), $path_to_root.'/modules/FrontHrm/manage/payslip.php?NewPayslip=Yes', 'SA_PAYSLIP', MENU_TRANSACTION);
 		$this->add_lapp_function(0, "","");
 		$this->add_lapp_function(0, _('Document E&xpiration'), $path_to_root.'/modules/FrontHrm/manage/employee_docs.php?', 'SA_ATTACHDOCUMENT', MENU_TRANSACTION);
-		$this->add_rapp_function(0, _('&Payment Advice'), $path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php?NewPayment=Yes', 'SA_EMPL', MENU_TRANSACTION);
-		$this->add_rapp_function(0, _('Employee &Advances'), $path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php?NewAdvance=Yes', 'SA_EMPL', MENU_TRANSACTION);
+		$this->add_rapp_function(0, _('&Payment Advice'), $path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php?NewPayment=Yes', 'SA_PAYSLIP', MENU_TRANSACTION);
+		$this->add_rapp_function(0, _('Employee &Advances'), $path_to_root.'/modules/FrontHrm/manage/employee_bank_entry.php?NewAdvance=Yes', 'SA_PAYSLIP', MENU_TRANSACTION);
 
 		$this->add_module(_('Inquiries and Reports'));
-		$this->add_lapp_function(1, _('&Timesheet'), $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php?', 'SA_EMPL', MENU_INQUIRY);
+		$this->add_lapp_function(1, _('&Timesheet'), $path_to_root.'/modules/FrontHrm/inquiry/time_sheet.php?', 'SA_ATTENDANCE', MENU_INQUIRY);
 		$this->add_lapp_function(1, _('Employee Transaction In&quiry'), $path_to_root.'/modules/FrontHrm/inquiry/emp_inquiry.php?', 'SA_EMPL', MENU_INQUIRY);
 		$this->add_rapp_function(1, _('Employee Document Inq&uiry'), $path_to_root.'/modules/FrontHrm/manage/employee_docs.php?View=yes', 'SA_EMPL', MENU_INQUIRY);
 		$this->add_rapp_function(1, _('Employee &Reports'), 'reporting/reports_main.php?Class=8', 'SA_EMPL', MENU_REPORT);
@@ -59,7 +59,9 @@ class hooks_FrontHrm extends hooks {
 	
 	function install_access() {
 		$security_sections[SS_HRM] =  _('Human Resource');
-		$security_areas['SA_EMPL'] = array(SS_HRM|1, _('Hrm entry'));
+		$security_areas['SA_EMPL'] = array(SS_HRM|1, _('Employee entry'));
+		$security_areas['SA_ATTENDANCE'] = array(SS_HRM|1, _('Attendance entry'));
+		$security_areas['SA_PAYSLIP'] = array(SS_HRM|1, _('Payslip entry'));
 		$security_areas['SA_HRSETUP'] = array(SS_HRM|1, _('Hrm setup'));
 		return array($security_areas, $security_sections);
 	}

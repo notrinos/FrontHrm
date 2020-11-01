@@ -126,7 +126,7 @@ function generate_gl_items($Order) {
 	global $Ajax, $Payable_act, $Deduct_act, $Overtime_act, $Work_hours, $Work_days, $USE_DEPT_ACC;
 
 	$emp_id 	= $_POST['person_id'];
-	$position = get_employees($emp_id)['position_id'];
+	$position_id = get_employees($emp_id)['position_id'];
 	$from_date 	= $_POST['from_date'];
 	$to_date 	= $_POST['to_date'];
 	$workdays = get_workdays_no($from_date, $to_date, $emp_id);
@@ -137,7 +137,8 @@ function generate_gl_items($Order) {
 	$totalDebit = 0;
 	$payable_amount = 0;
 	$Order->empty_payment = false;
-	$Order->pay_basis = get_position($position)['pay_basis'];
+	$position = get_position($position_id);
+	$Order->pay_basis = $position['pay_basis'];
 	$allowance = array();
 	$salary_rules = get_emp_salary_structure($emp_id);
 	$emp_salary = get_emp_basic_salary($emp_id);
@@ -172,6 +173,10 @@ function generate_gl_items($Order) {
 		}
 		if(!empty($USE_DEPT_ACC) && empty($dept_basic_acc)) {
 			display_error(_('Basic account has not been set for department').':&nbsp'.'<b>'.$dept_name.'</b>');
+			display_footer_exit();
+		}
+		if(empty($USE_DEPT_ACC) && empty($salary_basic_acc)) {
+			display_error(_('Basic account has not been set for job position').':&nbsp'.'<b>'.$position['position_name'].'</b>');
 			display_footer_exit();
 		}
 		if(!empty($USE_DEPT_ACC) && !empty($dept_basic_acc))

@@ -188,7 +188,7 @@ function payroll_rules_settings($selected_id, $grade_id=0) {
 		div_end();
 	}
 	else
-		display_error(_('Payroll rules not defined for this job position'));
+		display_error(_('Selected job position has not been assigned any pay element yet'));
 	br();
 }
 
@@ -203,7 +203,7 @@ if(db_has_position()) {
 } 
 else {
 	hidden('position_id');
-	display_note(_('Before you can run this function Job Positions must be defined and add Payroll Rules to them.'));
+	display_note(_('Before this function can be run, Job Positions must be defined and Pay Elements must be added.'));
 }
 
 $tabs = array(0 => array(_('Basic'), 999));

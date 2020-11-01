@@ -9,7 +9,7 @@
 |                                                        |
 \=======================================================*/
 
-$page_security = 'SA_EMPL';
+$page_security = 'SA_PAYSLIP';
 $path_to_root = '../../..';
 
 include_once($path_to_root . '/includes/ui/items_cart.inc');

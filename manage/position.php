@@ -34,7 +34,7 @@ if($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		display_error(_('Amount field value must be a positive number.'));
 		set_focus('amount');
 	}
-	elseif(isset($_POST['AccountId']) && !is_expenses_account($_POST['AccountId'])) {
+	elseif(isset($_POST['AccountId']) && !is_expenses_account($_POST['AccountId']) && empty($USE_DEPT_ACC)) {
 		display_error(_('Salary Basic Account must be an expenses account.'));
 		set_focus('AccountId');
 	}
