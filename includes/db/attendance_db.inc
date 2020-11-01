@@ -42,7 +42,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
 
 	if(!empty($leave_id)) {
 		if(check_leave($emp_id, $att_date))
-			$sql = "UPDATE ".TB_PREF."leave SET leave_id = ".db_escape($leave_id).", pay_rate = ".db_escape($rate)." WHERE date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id);
+			$sql = "UPDATE `".TB_PREF."leave` SET leave_id = ".db_escape($leave_id).", pay_rate = ".db_escape($rate)." WHERE date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id);
 		else
 			$sql = "INSERT INTO `".TB_PREF."leave` (emp_id, leave_id, pay_rate, date) VALUES(".db_escape($emp_id).",".db_escape($leave_id).",".db_escape($rate).",'".date2sql($att_date)."')";
 
