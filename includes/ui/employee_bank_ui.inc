@@ -186,8 +186,10 @@ function display_bank_gl_items($title, &$order) {
 			gl_edit_item_controls($order, $dim, $line);
 	}
 
-	if($order->count_gl_items())
+	if($order->count_gl_items()) {
 		label_row(_('Total'), number_format2(abs($order->gl_items_total()), user_price_dec()), 'colspan='.$colspan." align=right", "align=right id='payment_total_amt'", 3);
+		hidden('total_payments', $order->gl_items_total());
+	}
 
 	end_table();
 	div_end();

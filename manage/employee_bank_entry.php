@@ -25,14 +25,15 @@ include_once($path_to_root . '/reporting/includes/reporting.inc');
 include_once($path_to_root . '/admin/db/attachments_db.inc');
 
 $js = '';
-if ($SysPrefs->use_popup_windows)
+
+if($SysPrefs->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
-if (user_use_date_picker())
+if(user_use_date_picker())
 	$js .= get_js_date_picker();
 add_js_file('payalloc.js');
 add_js_ufile($path_to_root.'/modules/FrontHrm/js/emp_payalloc.js');
 
-if (isset($_GET['NewPayment'])) {
+if(isset($_GET['NewPayment'])) {
 	$_SESSION['page_title'] = _($help_context = 'Employee Payment Entry');
 	create_cart(ST_BANKPAYMENT, 0);
 }
@@ -56,7 +57,7 @@ elseif(isset($_GET['ModifyDeposit'])) {
 
 page($_SESSION['page_title'], false, false, '', $js);
 
-if (isset($_GET['PayslipNo'])) {
+if(isset($_GET['PayslipNo'])) {
 
 	if(has_payment_advice($_GET['PayslipNo'])) {
 
@@ -81,12 +82,12 @@ if (isset($_GET['PayslipNo'])) {
 
 check_db_has_bank_accounts(_('There are no bank accounts defined in the system.'));
 
-if (isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
+if(isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
 	check_is_editable($_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id);
 
 //--------------------------------------------------------------------------------------------------
 
-if (list_updated('PersonDetailID')) {
+if(list_updated('PersonDetailID')) {
 	$br = get_branch(get_post('PersonDetailID'));
 	$_POST['person_id'] = $br['debtor_no'];
 	$Ajax->activate('person_id');
@@ -103,7 +104,7 @@ function line_start_focus() {
 
 //--------------------------------------------------------------------------------------------------
 
-if (isset($_GET['AddedID'])) {
+if(isset($_GET['AddedID'])) {
 	$trans_no = $_GET['AddedID'];
 	$trans_type = ST_BANKPAYMENT;
 	$payslip_no = get_payslip_from_advice($trans_no)['payslip_no'];
@@ -124,7 +125,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 }
 
-if (isset($_GET['UpdatedID'])) {
+if(isset($_GET['UpdatedID'])) {
 	$trans_no = $_GET['UpdatedID'];
 	$trans_type = ST_BANKPAYMENT;
 
@@ -138,8 +139,7 @@ if (isset($_GET['UpdatedID'])) {
 
 	display_footer_exit();
 }
-
-if (isset($_GET['AddedDep'])) {
+if(isset($_GET['AddedDep'])) {
 	$trans_no = $_GET['AddedDep'];
 	$trans_type = ST_BANKDEPOSIT;
 
@@ -153,7 +153,7 @@ if (isset($_GET['AddedDep'])) {
 
 	display_footer_exit();
 }
-if (isset($_GET['UpdatedDep'])) {
+if(isset($_GET['UpdatedDep'])) {
 	$trans_no = $_GET['UpdatedDep'];
 	$trans_type = ST_BANKDEPOSIT;
 
@@ -173,20 +173,20 @@ if (isset($_GET['UpdatedDep'])) {
 function create_cart($type, $trans_no, $payslip=array()) {
 	global $Refs, $Payable_act;
 
-	if (isset($_SESSION['pay_items']))
+	if(isset($_SESSION['pay_items']))
 		unset ($_SESSION['pay_items']);
 
 	$cart = new items_cart($type);
 	$cart->order_id = $trans_no;
 
-	if ($trans_no) {
+	if($trans_no) {
 
 		$bank_trans = db_fetch(get_bank_trans($type, $trans_no));
 		$_POST['bank_account'] = $bank_trans['bank_act'];
 		$_POST['PayType'] = $bank_trans['person_type_id'];
 		$cart->reference = $bank_trans['ref'];
 
-		if ($bank_trans['person_type_id'] == PT_MISC)
+		if($bank_trans['person_type_id'] == PT_MISC)
 			$_POST['person_id'] = $bank_trans['person_id'];
 
 		$cart->memo_ = get_comments_string($type, $trans_no);
@@ -194,9 +194,9 @@ function create_cart($type, $trans_no, $payslip=array()) {
 
 		$cart->original_amount = $bank_trans['amount'];
 		$result = get_gl_trans($type, $trans_no);
-		if ($result) {
+		if($result) {
 			while ($row = db_fetch($result)) {
-				if (is_bank_account($row['account']))
+				if(is_bank_account($row['account']))
 					$ex_rate = $bank_trans['amount'] / $row['amount'];
 				else
 					$cart->add_gl_item( $row['account'], $row['dimension_id'], $row['dimension2_id'], $row['amount'], $row['memo_']);
@@ -209,7 +209,7 @@ function create_cart($type, $trans_no, $payslip=array()) {
 	else {
 		$cart->reference = $Refs->get_next($cart->trans_type, null, $cart->tran_date);
 		$cart->tran_date = new_doc_date();
-		if (!is_date_in_fiscalyear($cart->tran_date))
+		if(!is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 	}
 
@@ -220,11 +220,8 @@ function create_cart($type, $trans_no, $payslip=array()) {
 		$_POST['emp_id'] = $cart->person_id;
 		$_POST['for_payslip'] = $cart->payslip_no;
 		$cart->memo_ = _('Payment advice gl entry For Payslip #').$cart->payslip_no;
-
 		$pay_amt = $payslip['payable_amount'];
-
 		$bank = get_default_bank_account();
-
 		$_POST['bank_account'] = $bank['id'];
 	
 		$cart->add_gl_item($Payable_act, 0, 0, $pay_amt, '');
@@ -327,7 +324,7 @@ if(isset($_POST['update_advances'])) {
 	}
 }
 
-if (isset($_POST['Process']) && !check_trans()) {
+if(isset($_POST['Process']) && !check_trans()) {
 	begin_transaction();
 
 	$_SESSION['pay_items'] = &$_SESSION['pay_items'];
@@ -419,7 +416,7 @@ function handle_delete_item($id) {
 }
 
 function handle_new_item() {
-	if (!check_item_data())
+	if(!check_item_data())
 		return;
 	$amount = ($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? 1:-1) * input_num('amount');
 	$_SESSION['pay_items']->add_gl_item($_POST['code_id'], $_POST['dimension_id'], $_POST['dimension2_id'], $amount, $_POST['LineMemo']);
@@ -454,18 +451,20 @@ if(isset($_GET['NewAdvance']) || !empty($_POST['NewAdvance'])) {
 	br();
 }
 
-if(!empty($_POST['emp_id']) && empty($_POST['NewAdvance']))
-	show_employee_advances($_POST['emp_id']);
+if($_SESSION['pay_items']->count_gl_items() > 0) {
 
-start_table(TABLESTYLE2, "width='90%'", 10);
-start_row();
-echo "<td>";
-if($_SESSION['pay_items']->count_gl_items() > 0)
+	if(!empty($_POST['emp_id']) && empty($_POST['NewAdvance']))
+		show_employee_advances($_POST['emp_id']);
+
+	start_table(TABLESTYLE2, "width='90%'", 10);
+	start_row();
+	echo "<td>";
 	display_bank_gl_items($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? _("Payment Items"):_("Deposit Items"), $_SESSION['pay_items']);
-gl_options_controls($_SESSION['pay_items']);
-echo "</td>";
-end_row();
-end_table(1);
+	gl_options_controls($_SESSION['pay_items']);
+	echo "</td>";
+	end_row();
+	end_table(1);
+}
 
 submit_center_first('Update', _('Update'), '', null);
 if($_SESSION['pay_items']->count_gl_items() > 0)
