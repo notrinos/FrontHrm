@@ -269,12 +269,12 @@ function employee_settings($cur_id) {
 		$_POST['bank_account'] = $employee['bank_account'];
 		$_POST['tax_number'] = $employee['tax_number'];
 		$_POST['emp_notes'] = $employee['emp_notes'];
-		$_POST['emp_hiredate'] = $employee['emp_hiredate'] = '0000-00-00' ? '' : sql2date($employee['emp_hiredate']);
+		$_POST['emp_hiredate'] = $employee['emp_hiredate'] == '0000-00-00' ? '' : sql2date($employee['emp_hiredate']);
 		$_POST['department_id'] = $employee['department_id'];
 		$_POST['position_id'] = $employee['position_id'];
 		$_POST['grade_id'] = $employee['grade_id'];
 		$_POST['personal_salary'] = $employee['personal_salary'];
-		$_POST['emp_releasedate'] = $employee['emp_releasedate'] = '0000-00-00' ? '' : sql2date($employee['emp_releasedate']);
+		$_POST['emp_releasedate'] = $employee['emp_releasedate'] == '0000-00-00' ? '' : sql2date($employee['emp_releasedate']);
 		$_POST['inactive'] = $employee['inactive'];
 
 		if(!empty($employee['personal_salary'])) {
