@@ -207,19 +207,19 @@ function emp_department($row) {
 }
 
 function employees_table() {
-	
+	global $SysPrefs;
+
 	$_SESSION['EmpId'] = '';
 	if(db_has_employee()) {
 		
-		$sys_grades = get_company_pref('payroll_grades');
-		$sql = get_employees(false, check_value('show_inactive'), get_post('DeptId'), false, get_post('position'), get_post('grade'), get_post('string'));
+		$sql = get_employees(false, check_value('show_inactive'), get_post('DeptId'), false, get_post('position'), get_post('grade', -1), get_post('string'));
 		
 		start_table(TABLESTYLE_NOBORDER);
 		start_row();
 		ref_cells(_('Enter Search String:'), 'string', _('Enter fragment or leave empty'), null, null, true);
 		department_list_cells(null, 'DeptId', null, _('All departments'), true);
 		position_list_cells(null, 'position', null, _('All Positions'), true);
-		number_list_cells(null, 'grade', null, 1, $sys_grades, _('All Grades'), true);
+		number_list_cells(null, 'grade', null, 1, $SysPrefs->prefs['payroll_grades'], _('All Grades'), true);
 		check_cells(_('Show resigned:'), 'show_inactive', null, true);
 		submit_cells('Search', _('Search'), '', '', 'default');
 		end_row();
@@ -253,7 +253,7 @@ function employees_table() {
 //--------------------------------------------------------------------------
 
 function employee_settings($cur_id) {
-	global $path_to_root, $avatar_path;
+	global $path_to_root, $SysPrefs, $avatar_path;
 	
 	if($cur_id) {
 		$employee = get_employees($cur_id, true);
@@ -283,12 +283,10 @@ function employee_settings($cur_id) {
 
 			foreach($emp_salary as $pay_element) {
 
-				$element_code = $pay_element['pay_rule_id'];
-
 				if($pay_element['is_basic'] == 1)
 					$_POST['basic_amt'] = price_format($pay_element['pay_amount']);
 				else
-					$_POST['amt_'.$element_code] = price_format($pay_element['pay_amount']);
+					$_POST['amt_'.$pay_element['pay_rule_id']] = price_format($pay_element['pay_amount']);
 			}
 		}
 	}
@@ -298,17 +296,17 @@ function employee_settings($cur_id) {
 	hidden('emp_id');
 
 	file_row(_('Image File:'), 'pic', 'pic');
-	$emp_img_link = '';
-	$check_remove_image = false;
+	$emp_img = '';
+	$del_image = false;
 	if($cur_id && file_exists($avatar_path.emp_img_name($cur_id).'.jpg')) {
-		$emp_img_link .= "<img id='emp_img' alt = '[".$cur_id.".jpg"."]' src='".$avatar_path.emp_img_name($cur_id).".jpg?nocache=".rand()."'"." height='100'>";
-		$check_remove_image = true;
+		$emp_img .= "<img id='emp_img' alt = '[".$cur_id.".jpg"."]' src='".$avatar_path.emp_img_name($cur_id).".jpg?nocache=".rand()."'"." height='100'>";
+		$del_image = true;
 	}
 	else
-		$emp_img_link .= "<img id='emp_img' alt = '.jpg' src='".$path_to_root."/modules/FrontHrm/images/avatar/no_image.svg' height='100'>";
+		$emp_img .= "<img id='emp_img' alt = '.jpg' src='".$path_to_root."/modules/FrontHrm/images/avatar/no_image.svg' height='100'>";
 
-	label_row('&nbsp;', $emp_img_link);
-	if($check_remove_image)
+	label_row('&nbsp;', $emp_img);
+	if($del_image)
 		check_row(_('Delete Image:'), 'del_image');
 	
 	table_section_title(_('Personal Information'));
@@ -349,8 +347,8 @@ function employee_settings($cur_id) {
 		department_list_row(_('Department:'), 'department_id', null, _('Not selected'));
 		
 	position_list_row(_('Job Position:'), 'position_id', null, _('Not selected'));
-	$sys_grades = get_company_pref('payroll_grades');
-	number_list_row(_('Salary Grade:'), 'grade_id', null, 1, $sys_grades, _('Basic'));
+	number_list_row(_('Salary Grade:'), 'grade_id', null, 1, $SysPrefs->prefs['payroll_grades'], _('Basic'));
+
 	if($cur_id) {
 		check_row(_('Resigned:'), 'inactive');
 		date_row(_('Release Date:'), 'emp_releasedate', null, null, 0, 0, 1001);
@@ -382,7 +380,6 @@ function employee_settings($cur_id) {
 	div_start('controls');
 	
 	if($cur_id) {
-		
 		submit_center_first('addupdate', _('Update Employee'), _('Update employee details'), 'default');
 		submit_return('select', get_post('emp_id'), _('Select this employee and return to document entry.'));
 		submit_center_last('delete', _('Delete Employee'), _('Delete employee data if have been never used'), true);

@@ -72,7 +72,7 @@ function write_employee($id=false, $first_name, $last_name, $gender, $adrs, $mob
 
 //--------------------------------------------------------------------------
 
-function get_employees($id = false, $all=false, $department=false, $gender=false, $position_id=false, $grade_id = -1, $str=false) {
+function get_employees($id=false, $all=false, $department=false, $gender=false, $position_id=false, $grade_id=-1, $str=false) {
 	
 	$sql = "SELECT *, CONCAT(emp_first_name, ' ', emp_last_name) AS name FROM ".TB_PREF."employee";
 	$where = array();
@@ -87,7 +87,7 @@ function get_employees($id = false, $all=false, $department=false, $gender=false
 		$where[] = "gender = ".db_escape($gender);
 	if(!empty($position_id))
 		$where[] = "position_id = ".db_escape($position_id);
-	if($grade_id >= 0)
+	if($grade_id > 0)
 		$where[] = "grade_id = ".db_escape($grade_id);
 	if(!empty($str))
 		$where[] = "(CONCAT(emp_first_name, ' ', emp_last_name) LIKE ".db_escape("%$str%")." OR emp_email LIKE ".db_escape("%$str%")." OR emp_address LIKE ".db_escape("%$str%")."  OR emp_mobile LIKE ".db_escape("%$str%")."  OR national_id LIKE ".db_escape("%$str%")."  OR passport LIKE ".db_escape("%$str%")."  OR tax_number LIKE ".db_escape("%$str%").")";
