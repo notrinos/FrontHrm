@@ -1,4 +1,13 @@
 <?php
+/*=======================================================\
+|                        FrontHrm                        |
+|--------------------------------------------------------|
+|   Creator: Phương <trananhphuong83@gmail.com>          |
+|   Date :   09-Jul-2017                                 |
+|   Description: NotrinosERP Payroll & Hrm Module        |
+|   Free software under GNU GPL                          |
+|                                                        |
+\=======================================================*/
 
 $this->row = $this->pageHeight - $this->topMargin;
 $upper = $this->row - 2 * $this->lineHeight;
