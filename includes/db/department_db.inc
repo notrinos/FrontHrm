@@ -15,7 +15,7 @@ function db_has_department() {
 
 //--------------------------------------------------------------------------
 
-function write_department($id = false, $name, $basic_acc) {
+function write_department($id, $name, $basic_acc) {
 
 	if(empty($id))
 		$sql = "INSERT INTO ".TB_PREF."department (dept_name, basic_account) VALUES (".db_escape($name).",".db_escape($basic_acc).")";
