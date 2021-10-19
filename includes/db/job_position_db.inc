@@ -24,9 +24,9 @@ function set_basic_salary($account, $amount, $position_id, $new=false) {
 		db_query($sql, 'Could not write salary structure data');
 }
 
-function write_position($id = false, $name, $pay_basis) {
+function write_position($id, $name, $pay_basis) {
 	
-	if(!$id)
+	if(empty($id))
 		$sql = "INSERT INTO ".TB_PREF."position (position_name, pay_basis) VALUES (".db_escape($name).",".db_escape($pay_basis).")";
 	else
 		$sql = "UPDATE ".TB_PREF."position SET position_name = ".db_escape($name).", pay_basis = ".db_escape($pay_basis)." WHERE position_id = ".db_escape($id);
@@ -58,8 +58,8 @@ function get_position($id = false, $all = false) {
 	
 	if($id)
 		return db_fetch($result);
-	else
-		return $sql;
+	
+	return $sql;
 }
 
 function position_used($id) {
