@@ -15,9 +15,9 @@ function db_has_doc_type() {
 
 //--------------------------------------------------------------------------
 
-function write_doc_type($id = false, $name, $days) {
+function write_doc_type($id, $name, $days) {
 
-	if(!$id)
+	if(empty($id))
 		$sql = "INSERT INTO ".TB_PREF."document_types (type_name, notify_before) VALUES (".db_escape($name).", ".db_escape($days).")";
 	else
 		$sql = "UPDATE ".TB_PREF."document_types SET type_name = ".db_escape($name).", notify_before = ".db_escape($days)." WHERE type_id = ".db_escape($id);
