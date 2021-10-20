@@ -15,9 +15,9 @@ function db_has_overtime() {
 
 //--------------------------------------------------------------------------
 
-function write_overtime($id = false, $name, $rate) {
+function write_overtime($id, $name, $rate) {
 
-	if(!$id)
+	if(empty($id))
 		$sql = "INSERT INTO ".TB_PREF."overtime (overtime_name, overtime_rate) VALUES (".db_escape($name).", ".db_escape($rate).")";
 	else
 		$sql = "UPDATE ".TB_PREF."overtime SET overtime_name = ".db_escape($name).", overtime_rate = ".db_escape($rate)." WHERE overtime_id = ".db_escape($id);
