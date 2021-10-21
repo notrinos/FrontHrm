@@ -78,7 +78,7 @@ function can_process() {
 	return true;
 }
 
-function write_attendance_range($emp_id, $time_type, $value=0, $rate, $from, $to, $leave=false) {
+function write_attendance_range($emp_id, $time_type, $value, $rate, $from, $to, $leave=false) {
 
 	$from = date2sql($from);
 	$to = date2sql($to);
