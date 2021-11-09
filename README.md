@@ -5,7 +5,7 @@
 
 [Forum Discussion](http://forums.notrinos.com)
 
-![employee](https://user-images.githubusercontent.com/19648430/120341077-c667e700-c320-11eb-89fb-05f60f256606.jpg)
+![employee](https://notrinos.com/misc/employee.png)
 
 Requirement
 -----------
