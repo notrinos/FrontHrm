@@ -12,14 +12,14 @@
 $page_security = 'SA_EMPL';
 $path_to_root  = '../../..';
 
-include_once($path_to_root . '/includes/db_pager.inc');
-include_once($path_to_root . '/includes/session.inc');
+include_once($path_to_root.'/includes/db_pager.inc');
+include_once($path_to_root.'/includes/session.inc');
 add_access_extensions();
 
-include_once($path_to_root . '/includes/ui.inc');
-include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_db.inc');
-include_once($path_to_root . '/modules/FrontHrm/includes/frontHrm_ui.inc');
-include_once($path_to_root . '/reporting/includes/reporting.inc');
+include_once($path_to_root.'/includes/ui.inc');
+include_once($path_to_root.'/modules/FrontHrm/includes/frontHrm_db.inc');
+include_once($path_to_root.'/modules/FrontHrm/includes/frontHrm_ui.inc');
+include_once($path_to_root.'/reporting/includes/reporting.inc');
 
 $js = '';
 if ($SysPrefs->use_popup_windows)
@@ -47,9 +47,7 @@ date_cells(_('From:'), 'FromDate', '', null, $days_no, 0, 0, null, true);
 date_cells(_('To:'), 'ToDate', '', null, 0, 0, 0, null, true);
 
 end_row();
-// end_table();
 
-// start_table(TABLESTYLE_NOBORDER);
 start_row();
 
 department_list_cells(null, 'DeptId', null, _('All departments'), true);
@@ -86,7 +84,7 @@ function payslip_no($row) {
 	return $row['payslip_no'] == 0 ? null : $row['payslip_no'];
 }
 
-$sql = get_sql_for_payslips(get_post('Ref'), get_post('Memo'), get_post('FromDate'), get_post('ToDate'), get_post('DeptId'), get_post('EmpId'), check_value('OnlyUnpaid'));
+$sql = get_sql_for_payslips(get_post('FromDate'), get_post('ToDate'), get_post('Ref'), get_post('Memo'), get_post('DeptId'), get_post('EmpId'), check_value('OnlyUnpaid'));
 
 $cols = array (
 	_('Date') => array('type'=>'date'),
