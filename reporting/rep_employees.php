@@ -22,7 +22,7 @@ function get_employees_list($gender, $dep, $from, $to) {
 	if(!empty($to))
 		$sql .= " AND emp_id <= ".db_escape($to);
 
-	return db_query($sql, _('could not get employee'));
+	return db_query($sql, 'could not get employee');
 }
 
 function display_department_employees($dep_id, $dep_name, $gender, $from, $to, $rep) {

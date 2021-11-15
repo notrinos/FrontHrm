@@ -10,7 +10,7 @@
 \=======================================================*/
 
 function time_to_float($time) {
-	if(strpos($time,':') != false) {
+	if(strpos($time, ':') != false) {
 		sscanf($time, "%d:%d", $hours, $minutes);
 		$time_in_float = $hours + $minutes/60;
 	}
@@ -38,7 +38,7 @@ function check_leave($emp_id, $date) {
 
 //--------------------------------------------------------------------------
 
-function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_date, $leave_id = false) {
+function write_attendance($emp_id, $overtime_id, $hours_no, $rate, $att_date, $leave_id=false) {
 
 	if(!empty($leave_id)) {
 		if(check_leave($emp_id, $att_date))
@@ -48,7 +48,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
 
 		$sql2 = "DELETE FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND att_date = '".date2sql($att_date)."'";
 	}
-	elseif(isset($hours_no) && $hours_no != '') {
+	elseif(is_numeric($hours_no)) {
 
 		if(check_attended($emp_id, $overtime_id, $att_date))
 			$sql = "UPDATE ".TB_PREF."attendance SET hours_no = ".db_escape($hours_no).", rate = ".db_escape($rate)." WHERE att_date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id);
