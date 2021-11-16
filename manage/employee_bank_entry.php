@@ -112,7 +112,7 @@ if(isset($_GET['AddedID'])) {
 	display_notification_centered(sprintf(_('Employee Payment Advice #%d has been entered'), $trans_no));
 	
 	if($payslip_no)
-		display_note(hrm_print_link($payslip_no, _('Print this Payslip'), true, ST_PAYSLIP, false, '', '', 0));br();
+		display_note(hrm_print_link($payslip_no, _('Print this Payslip'), ST_PAYSLIP, false, '', '', 0));br();
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _('&View the GL Postings for this Payment')));
 

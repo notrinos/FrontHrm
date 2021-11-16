@@ -9,7 +9,7 @@
 |                                                        |
 \=======================================================*/
 
-function write_employee_bank_transaction($trans_type, $trans_no, $from_account, $items, $date_, $person_type_id, $person_id, $person_detail_id,	$ref, $memo_, $use_transaction=true, $settled_amount=null, $payslip_no, $emp_id) {
+function write_employee_bank_transaction($trans_type, $trans_no, $from_account, $items, $date_, $person_type_id, $person_id, $person_detail_id,	$ref, $memo_, $use_transaction, $settled_amount, $payslip_no, $emp_id) {
 	global $Refs, $SysPrefs;
 
 	if ($trans_type != ST_BANKPAYMENT && $trans_type != ST_BANKDEPOSIT)

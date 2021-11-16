@@ -15,7 +15,7 @@ function db_has_leave_type() {
 
 //--------------------------------------------------------------------------
 
-function write_leave($id = false, $leave_name, $leave_code, $pay_rate) {
+function write_leave($id, $leave_name, $leave_code, $pay_rate) {
 
 	if($id == -1)
 		$sql = "INSERT INTO ".TB_PREF."leave_type (leave_name, leave_code, pay_rate) VALUES (".db_escape($leave_name).", ".db_escape($leave_code).", ".db_escape($pay_rate).")";
@@ -27,7 +27,7 @@ function write_leave($id = false, $leave_name, $leave_code, $pay_rate) {
 
 //--------------------------------------------------------------------------
 
-function get_leave_type($id = false, $all = false) {
+function get_leave_type($id=false, $all=false) {
 	
 	$sql = "SELECT * FROM ".TB_PREF."leave_type";
 	$where = array();
@@ -46,8 +46,8 @@ function get_leave_type($id = false, $all = false) {
 	
 	if($id)
 		return db_fetch($result);
-	else
-		return $sql;
+	
+	return $sql;
 }
 
 //--------------------------------------------------------------------------

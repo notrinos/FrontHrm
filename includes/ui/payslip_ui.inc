@@ -498,7 +498,7 @@ function _format_payslip_date($row) {
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_cells($label, $name, $selected_id=null, $employee_id, $all_option=false, $submit_on_change=false, $show_inactive=false) {
+function employee_payslip_list_cells($label, $name, $selected_id, $employee_id, $all_option=false, $submit_on_change=false, $show_inactive=false) {
 
 	if($label != null)
 		echo "<td class='label'>".$label."</td>\n";
@@ -509,7 +509,7 @@ function employee_payslip_list_cells($label, $name, $selected_id=null, $employee
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list_row($label, $name, $selected_id=null, $employee_id, $all_option=false, $submit_on_change=false, $show_inactive=false) {
+function employee_payslip_list_row($label, $name, $selected_id, $employee_id, $all_option=false, $submit_on_change=false, $show_inactive=false) {
 
 	echo "<tr><td class='label'>".$label.'</td><td>';
 	echo employee_payslip_list($name, $selected_id, $employee_id, $all_option, $submit_on_change, $show_inactive);
@@ -518,7 +518,7 @@ function employee_payslip_list_row($label, $name, $selected_id=null, $employee_i
 
 //--------------------------------------------------------------------------
 
-function hrm_print_link($doc_no, $link_text, $link=true, $type_no, $icon=false, $class='', $id='', $email=0, $extra=0) {
+function hrm_print_link($doc_no, $link_text, $type_no, $icon=false, $class='', $id='', $email=0, $extra=0) {
 	global $path_to_root;
 
 	$def_orientation = (user_def_print_orientation() == 1 ? 1 : 0);
