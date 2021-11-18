@@ -44,7 +44,11 @@ function display_department_employees($dep_id, $dep_name, $gender, $from, $to, $
 		$rep->TextCol(4, 5, $emp['emp_email']);
 		$rep->DateCol(5, 6, $emp['emp_birthdate'], true);
 		$rep->DateCol(6, 7, $emp['emp_hiredate'], true);
-		$rep->TextCol(7, 8, get_position($emp['position_id'])['position_name']);
+		if(!empty($emp['position_id'])) {
+			$position = get_position($emp['position_id']);
+			$rep->TextCol(7, 8, $position['position_name']);
+		}
+		
 		$rep->NewLine();
 	}
 	$rep->NewLine();
@@ -54,14 +58,25 @@ function print_employees_list() {
 	global $path_to_root;
 	
 	$gender = $_POST['PARAM_0'];
-	$dep = $_POST['PARAM_1'] == 0 ? false : $_POST['PARAM_1'];
+	$dep = $_POST['PARAM_1'];
 	$from = $_POST['PARAM_2'];
 	$to = $_POST['PARAM_3'];
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 
-	include_once($path_to_root . '/reporting/includes/pdf_report.inc');
+	include_once($path_to_root.'/reporting/includes/pdf_report.inc');
 
+	if($gender == 0)
+		$gender = _('Female');
+	elseif($gender == 1)
+		$gender = _('Male');
+	elseif($gender == 2)
+		$gender = _('Other');
+	else
+		$gender = _('All');
+	
+	$dept = $dep ? get_departments($dep) : false;
+	$dep_filter = $dept ? $dept['dept_name'] : _('All');
 	$orientation = ($orientation ? 'L' : 'P');
 
 	$cols = array(0, 40, 160, 210, 280, 360, 410, 480, 530);
@@ -70,7 +85,10 @@ function print_employees_list() {
 	
 	$aligns = array('left',	'left',	'left',	'left', 'left', 'center', 'center', 'left');
 	
-	$params = array(0 => $comments);
+	$params = array(0 => $comments,
+					1 => array('text' => _('Department'), 'from' => $dep_filter, 'to' => ''),
+					2 => array('text' => _('Gender'), 'from' => $gender, 'to' => '')
+	);
 
 	$rep = new FrontReport(_('Employees List'), 'EmployeesList', user_pagesize(), 9, $orientation);
 	if ($orientation == 'L')
@@ -80,14 +98,12 @@ function print_employees_list() {
 	$rep->Info($params, $cols, $headers, $aligns);
 	$rep->NewPage();
 	
-	if($dep) {
-		$dep_result = get_departments($dep);
-		display_department_employees($dep_result['dept_id'], $dep_result['dept_name'], $gender, $from, $to, $rep); 
-	}
+	if($dept)
+		display_department_employees($dept['dept_id'], $dept['dept_name'], $gender, $from, $to, $rep); 
 	else {
 		$dep_result = db_query(get_departments(), _('could not get department data'));
-		while ($dept = db_fetch($dep_result)) {   
-			display_department_employees($dept['dept_id'], $dept['dept_name'], $gender, $from, $to, $rep);
+		while ($row = db_fetch($dep_result)) {   
+			display_department_employees($row['dept_id'], $row['dept_name'], $gender, $from, $to, $rep);
 		}
 	}
 	$rep->Line($rep->row + 10);
