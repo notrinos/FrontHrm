@@ -57,7 +57,7 @@ function display_department_employees($dep_id, $dep_name, $gender, $from, $to, $
 function print_employees_list() {
 	global $path_to_root;
 	
-	$gender = $_POST['PARAM_0'];
+	$gender_filter = $_POST['PARAM_0'];
 	$dep = $_POST['PARAM_1'];
 	$from = $_POST['PARAM_2'];
 	$to = $_POST['PARAM_3'];
@@ -66,11 +66,11 @@ function print_employees_list() {
 
 	include_once($path_to_root.'/reporting/includes/pdf_report.inc');
 
-	if($gender == 0)
+	if($gender_filter == 0)
 		$gender = _('Female');
-	elseif($gender == 1)
+	elseif($gender_filter == 1)
 		$gender = _('Male');
-	elseif($gender == 2)
+	elseif($gender_filter == 2)
 		$gender = _('Other');
 	else
 		$gender = _('All');
@@ -99,11 +99,11 @@ function print_employees_list() {
 	$rep->NewPage();
 	
 	if($dept)
-		display_department_employees($dept['dept_id'], $dept['dept_name'], $gender, $from, $to, $rep); 
+		display_department_employees($dept['dept_id'], $dept['dept_name'], $gender_filter, $from, $to, $rep); 
 	else {
 		$dep_result = db_query(get_departments(), _('could not get department data'));
 		while ($row = db_fetch($dep_result)) {   
-			display_department_employees($row['dept_id'], $row['dept_name'], $gender, $from, $to, $rep);
+			display_department_employees($row['dept_id'], $row['dept_name'], $gender_filter, $from, $to, $rep);
 		}
 	}
 	$rep->Line($rep->row + 10);
