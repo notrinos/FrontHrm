@@ -26,7 +26,7 @@ simple_page_mode();
 
 if($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 
-	if(!is_numeric($_POST['pay_rate'])) {
+	if(!is_numeric(input_num('pay_rate'))) {
 		display_error(_('Salary rate must be a number.'));
 		set_focus('pay_rate');
 	}
@@ -101,7 +101,7 @@ if($selected_id != -1) {
 	
 	if($Mode == 'Edit') {
 		$myrow = get_leave_type($selected_id);
-		$_POST['pay_rate'] = $myrow['pay_rate'];
+		$_POST['pay_rate'] = percent_format($myrow['pay_rate']);
 		$_POST['leave_name']  = $myrow['leave_name'];
 		$_POST['leave_code']  = $myrow['leave_code'];
 	}
