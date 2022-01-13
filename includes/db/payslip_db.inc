@@ -193,18 +193,13 @@ function get_payslip_from_advice($trans_no) {
 
 function payslip_generated_for_date($date, $employee) {
 
-	$sql = "SELECT to_date, emp_id FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND '".date2sql($date)."' BETWEEN from_date AND to_date GROUP BY to_date";
-
-	return check_empty_result($sql);
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND ('".date2sql($date)."' BETWEEN from_date AND to_date)");
 }
 
 //--------------------------------------------------------------------------
 
 function payslip_generated_for_period($from_date, $to_date, $employee) {
-
-	$sql = "SELECT to_date, emp_id FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND '".date2sql($from_date)."' <= from_date AND '".date2sql($to_date)."' >= to_date GROUP BY to_date";
-
-	return check_empty_result($sql);
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND ('".date2sql($from_date)."' <= from_date AND '".date2sql($to_date)."' >= to_date)");
 }
 
 //--------------------------------------------------------------------------
