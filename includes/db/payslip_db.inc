@@ -20,7 +20,7 @@ function get_next_payslip_no() {
 
 //--------------------------------------------------------------------------
 
-function write_payslip(&$cart, $reverse, $use_transaction = true) {
+function write_payslip(&$cart, $reverse, $use_transaction=true) {
 	global $Refs;
 
 	$date       = $cart->tran_date;
@@ -108,7 +108,7 @@ function write_payslip(&$cart, $reverse, $use_transaction = true) {
 
 //--------------------------------------------------------------------------
 
-function get_sql_for_payslips($ref=false, $memo=false, $from, $to, $dept=0, $emp_id=0, $unpaid_only=false) {
+function get_sql_for_payslips($from, $to, $ref=false, $memo=false, $dept=0, $emp_id=0, $unpaid_only=false) {
 
 	$sql = "SELECT
 		P.generated_date,
@@ -193,31 +193,23 @@ function get_payslip_from_advice($trans_no) {
 
 function payslip_generated_for_date($date, $employee) {
 
-	$sql = "SELECT to_date, emp_id FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND '".date2sql($date)."' BETWEEN from_date AND to_date GROUP BY to_date";
-
-	return check_empty_result($sql);
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND ('".date2sql($date)."' BETWEEN from_date AND to_date)");
 }
 
 //--------------------------------------------------------------------------
 
 function payslip_generated_for_period($from_date, $to_date, $employee) {
-
-	$sql = "SELECT to_date, emp_id FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND '".date2sql($from_date)."' <= from_date AND '".date2sql($to_date)."' >= to_date GROUP BY to_date";
-
-	return check_empty_result($sql);
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($employee)." AND ('".date2sql($from_date)."' <= from_date AND '".date2sql($to_date)."' >= to_date)");
 }
 
 //--------------------------------------------------------------------------
 
-function get_expences_n_deposits($emp_id, $from_date = null, $to_date = null) {
+function get_expences_n_deposits($emp_id, $from_date=null, $to_date=null) {
 
 	$sql= "SELECT * FROM ".TB_PREF."gl_trans WHERE type IN (".ST_BANKPAYMENT.",".ST_BANKDEPOSIT.") AND person_type_id = ".PT_EMPLOYEE." AND account NOT IN (SELECT account_code FROM ".TB_PREF."bank_accounts) AND person_id = ".db_escape('EMP'.$emp_id);
 
 	if($from_date != null && $to_date != null) {
-
-		$from = date2sql($from_date);
-		$to = date2sql($to_date);
-		$sql .= " AND tran_date BETWEEN '$from' AND '$to'";
+		$sql .= " AND tran_date BETWEEN '".date2sql($from_date)."' AND '".date2sql($to_date)."'";
 	}
 	
 	return db_query($sql, 'could not get gl data');

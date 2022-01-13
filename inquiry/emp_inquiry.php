@@ -86,7 +86,7 @@ function payslip_no($row) {
 	return $row['payslip_no'] == 0 ? null : $row['payslip_no'];
 }
 
-$sql = get_sql_for_payslips(get_post('Ref'), get_post('Memo'), get_post('FromDate'), get_post('ToDate'), get_post('DeptId'), get_post('EmpId'), check_value('OnlyUnpaid'));
+$sql = get_sql_for_payslips(get_post('FromDate'), get_post('ToDate'), get_post('Ref'), get_post('Memo'), get_post('DeptId'), get_post('EmpId'), check_value('OnlyUnpaid'));
 
 $cols = array (
 	_('Date') => array('type'=>'date'),

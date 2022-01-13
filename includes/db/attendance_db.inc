@@ -10,7 +10,7 @@
 \=======================================================*/
 
 function time_to_float($time) {
-	if(strpos($time,':') != false) {
+	if(strpos($time, ':') != false) {
 		sscanf($time, "%d:%d", $hours, $minutes);
 		$time_in_float = $hours + $minutes/60;
 	}
@@ -23,7 +23,7 @@ function time_to_float($time) {
 //--------------------------------------------------------------------------
 
 function check_attended($emp_id, $overtime_id, $att_date) {
-	$sql = "SELECT * FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id)." AND att_date = '".date2sql($att_date)."'";
+	$sql = "SELECT COUNT(*) FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id)." AND att_date = '".date2sql($att_date)."'";
 	
 	return check_empty_result($sql);
 }
@@ -31,14 +31,14 @@ function check_attended($emp_id, $overtime_id, $att_date) {
 //--------------------------------------------------------------------------
 
 function check_leave($emp_id, $date) {
-	$sql = "SELECT * FROM `".TB_PREF."leave` WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($date)."'";
+	$sql = "SELECT COUNT(*) FROM `".TB_PREF."leave` WHERE emp_id = ".db_escape($emp_id)." AND date = '".date2sql($date)."'";
 	
 	return check_empty_result($sql);
 }
 
 //--------------------------------------------------------------------------
 
-function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_date, $leave_id = false) {
+function write_attendance($emp_id, $overtime_id, $hours_no, $rate, $att_date, $leave_id=false) {
 
 	if(!empty($leave_id)) {
 		if(check_leave($emp_id, $att_date))
@@ -48,7 +48,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
 
 		$sql2 = "DELETE FROM ".TB_PREF."attendance WHERE emp_id = ".db_escape($emp_id)." AND att_date = '".date2sql($att_date)."'";
 	}
-	elseif(isset($hours_no) && $hours_no != '') {
+	elseif(is_numeric($hours_no)) {
 
 		if(check_attended($emp_id, $overtime_id, $att_date))
 			$sql = "UPDATE ".TB_PREF."attendance SET hours_no = ".db_escape($hours_no).", rate = ".db_escape($rate)." WHERE att_date = '".date2sql($att_date)."' AND emp_id = ".db_escape($emp_id)." AND overtime_id = ".db_escape($overtime_id);
@@ -67,7 +67,7 @@ function write_attendance($emp_id, $overtime_id, $hours_no=null, $rate=1, $att_d
 //--------------------------------------------------------------------------
 
 function check_date_paid($person_id, $att_date) {
-	return check_empty_result("SELECT payslip_no, emp_id, from_date, to_date FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($person_id)." AND '".date2sql($att_date)."' BETWEEN from_date AND to_date");
+	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."payslip WHERE emp_id = ".db_escape($person_id)." AND '".date2sql($att_date)."' BETWEEN from_date AND to_date");
 }
 
 //--------------------------------------------------------------------------
