@@ -52,7 +52,7 @@ function can_process() {
 
 if (isset($_POST['submit']) && can_process()) {
 
-	update_company_prefs(get_post(array('payroll_payable_act', 'payroll_deductleave_act', 'payroll_overtime_act', 'payroll_month_work_days', 'payroll_work_hours', 'payroll_dept_based', 'payroll_grades')));
+	update_company_prefs(get_post(array('payroll_payable_act', 'payroll_deductleave_act', 'payroll_overtime_act', 'payroll_month_work_days', 'payroll_work_hours', 'weekend_day', 'payroll_dept_based', 'payroll_grades')));
 
 	display_notification(_('The Payroll setup has been updated.'));
 }
@@ -69,10 +69,16 @@ table_section(1);
 
 $myrow = get_company_prefs();
 
+if(empty($myrow['weekend_day'])) {
+	set_company_pref('weekend_day', 'setup.company', 'tinyint', '1', '7');
+	$myrow['weekend_day'] = 7;
+}
+
 $_POST['payroll_payable_act'] = $myrow['payroll_payable_act'];
 $_POST['payroll_deductleave_act'] = $myrow['payroll_deductleave_act'];
 $_POST['payroll_overtime_act'] = $myrow['payroll_overtime_act'];
 $_POST['payroll_month_work_days'] = $myrow['payroll_month_work_days'];
+$_POST['weekend_day'] = $myrow['weekend_day'];
 $_POST['payroll_work_hours'] = $myrow['payroll_work_hours'];
 $_POST['payroll_dept_based'] = $myrow['payroll_dept_based'];
 $_POST['payroll_grades'] = $myrow['payroll_grades'];
@@ -87,6 +93,7 @@ table_section_title(_('Working time parameters'));
 
 text_row(_('Work days per month:'), 'payroll_month_work_days', $_POST['payroll_month_work_days'], 6, 6, '', '', _('days'));
 text_row(_('Work hours per day:'), 'payroll_work_hours', $_POST['payroll_work_hours'], 6, 6, '', '', _('hours'));
+weekdays_list_row(_('Weekend:'), 'weekend_day', $_POST['weekend_day']);
 
 table_section_title(_('Others'));
 check_row(_('Salary based on department:'), 'payroll_dept_based', $_POST['payroll_dept_based']);
