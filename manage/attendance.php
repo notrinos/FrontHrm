@@ -87,11 +87,14 @@ function write_attendance_range($emp_id, $time_type, $value, $rate, $from, $to, 
 	$end = $end->modify('+1 day');
 	$interval = DateInterval::createFromDateString('1 day');
 	$period = new DatePeriod($begin, $interval, $end);
+	$weekend = get_company_pref('weekend_day');
 
 	foreach ($period as $dt) {
 		$day = $dt->format('Y-m-d');
 		$day = sql2date($day);
-		write_attendance($emp_id, $time_type, $value, $rate, $day, $leave);
+
+		if($dt->format('N') != $weekend)
+			write_attendance($emp_id, $time_type, $value, $rate, $day, $leave);
 	}
 }
 
