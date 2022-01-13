@@ -53,10 +53,13 @@ $from = new DateTime(date2sql($_POST['FromDate']));
 $to = new DateTime(date2sql($_POST['ToDate']).'+1 day');
 $interval = new DateInterval('P1D');
 $period = new DatePeriod($from, $interval, $to);
+$weekend = get_company_pref('weekend_day');
+if(empty($weekend))
+	$weekend = 7;
 	
 foreach($period as $day) {
 	
-	if($day->format('N') < 7)
+	if($day->format('N') != $weekend)
 		$cols[$day->format('d').'<p hidden>'.$day->format('m').'</p>'] = array('align'=>'center');
 	else
 		$cols["<div style='background:#FFCCCC'>".$day->format('d').'</div><p hidden>'.$day->format('m').'</p>'] = array('align'=>'center');

@@ -36,3 +36,24 @@ $USE_DEPT_ACC = get_company_pref('payroll_dept_based');
 
 /* Don't change this value after setting up company grades number */
 $max_grade_number = 20;
+
+function weekdays_list_row($label, $name, $selected_id=null, $submit_on_change=false) {
+	$days = array(
+		1=>_('Monday'),
+		2=>_('Tuesday'),
+		3=>_('Wednesday'),
+		4=>_('Thursday'),
+		5=>_('Friday'),
+		6=>_('Saturday'),
+		7=>_('Sunday')
+	);
+
+	echo "<tr><td class='label'>".$label."</td><td>";
+	echo array_selector($name, $selected_id, $days, 
+		array( 
+			'select_submit'=> $submit_on_change,
+			'class' => array('nosearch'),
+			'async' => false )
+		);
+	echo "<td></tr>\n";
+}
