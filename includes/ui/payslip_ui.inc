@@ -474,7 +474,7 @@ function _format_emp_payslip($row) {
 
 //--------------------------------------------------------------------------
 
-function employee_payslip_list($name, $selected_id=null, $emp_id, $spec_option=false, $submit_on_change=false, $show_inactive=false) {
+function employee_payslip_list($name, $selected_id, $emp_id, $spec_option=false, $submit_on_change=false, $show_inactive=false) {
 	global $all_items;
 
 	if($emp_id) {
